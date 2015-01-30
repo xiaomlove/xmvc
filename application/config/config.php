@@ -1,0 +1,70 @@
+<?php
+return array(
+	'database'=>array(
+		'connectionString'=>'mysql:host=115.28.132.38;dbname=tinypt',
+		'username'=>'root',
+		'password'=>'123456',
+		'charset'=>'utf8',
+		'tablePrefix'=>'',			
+	),
+	
+	'router'=>array(
+		'mode'=>'path',//有path(index.php/user/login),normal(index.php?c=user&a=login),默认normal
+		'showScriptName'=>FALSE,
+		'ruleSeparator'=>'/',//规则分割符，默认/，可以换-等，换了rules里边也得换，要一致
+		//rules配置的左边是浏览器看到的，是域名后面不包含入口文件(如果显示入口文件)和?a=1&b=3的部分
+		'rules'=>array(
+			'index.html'=>'index/home',//如果不传参，把后缀名写到左边全部匹配，减轻匹配工作量，不用数组传了
+			'register.html'=>'index/register',
+			'login.html'=>'index/login',
+			'torrents'=>'torrent/list',
+			'upload.html'=>'torrent/upload',
+			'detail'=>'torrent/detail',
+			'checkregister'=>'index/checkRegister',
+			'torrent/list/<perpage>/<page:\d+>'=>'torrent/list',
+			'user/name/<name:.+>/age/<age:\d+>'=>'user/filter',
+			'user/sex/<sex:.+>'=>'user/filter',
+			'user/year/<year>'=>array('user/filter', 'urlSuffix'=>'.shtml'),
+			'thread/<tid>'=>array('thread/show', 'urlSuffix'=>'.html'),
+		),
+	),
+	
+	'defaultController'=>'index',
+	'defaultAction'=>'register',
+	'defaultModule'=>'',
+	
+	
+	//对组件的一些配置
+	'component'=>array(
+		'user'=>array(
+			'guestName'=>'游客',//未登陆时用户名
+			'sessionExpire'=>108000,//session有效时间
+		)
+	),
+
+	'cache'=>array(
+		'queryCache'=>FALSE,//不开启查询查询
+		'pageCache'=>FALSE,//开启页面缓存
+		
+		'pageCacheOptions'=>array(
+			'expire'=>600,//过期时间
+			'path'=>'application.runtime',//缓存保存路径，路径别名,application表示网站根目录
+			'rules'=>array(
+				array('url'=>'*', 'expire'=>60),//以url为标识缓存所有网页，可以覆盖上边的expire和path
+				array('controller'=>'index', 'action'=>'index'),//以module,controller,action,param为标识的，不能有url
+			)
+		
+		),
+		//以下是配置，如果添加时有传递，以传递的为准
+		'queryCacheOptions'=>array(
+			'expire'=>600,
+			'path'=>'application.runtime.query',//查询缓存就不用规则了，是否缓存写到代码里边	
+		)
+		
+	),
+	
+	'session'=>array(
+		'gc_maxlifetime'=>'',//gc发生时间，感觉这块没必要，默认即可
+	)
+	
+);

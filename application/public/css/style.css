@@ -1,0 +1,34 @@
+#login-form, #register-form {max-width: 600px;margin: 15% auto;}
+.go-login, .go-register {margin-left: 8px;}
+
+#main-nav {margin-top: 3%}
+#main-nav li{width: 33%;text-align: center}
+
+#torrent-list-table {margin-top: 50px;}
+#torrent-list-nav {text-align: center}
+
+#upload-form {margin-top: 20px;}
+.tracker-address {text-align: center;}
+.submit-btn {text-align: center;}
+
+.torrent-title {text-align: center;font-weight: bold;margin: 0 auto;}
+.torrent-detail {margin-top: 30px;text-align: center; padding: 0 10%;}
+#detail-table {margin: 20px auto;}
+#detail-table td span {margin-right: 15px}
+#detail-table td a {margin-right: 15px}
+#detail-table td button {margin-right: 15px}
+
+#detail-table td:nth-of-type(1) {width: 10%; text-align: right;padding-right: 10px}
+#detail-table td:nth-of-type(2) {text-align: left;padding-left: 10px;}
+.comment-head {text-align: left; margin: 10px 0;}
+.item {margin: 20px 0;border: 1px solid #999;}
+.item .avatar, .comment-content {text-align: left;}
+
+#submit {margin-top: 10px;}
+#expression {overflow: hidden}
+#expression img{cursor: pointer;}
+.comment-foot {height: 25px; line-height: 25px}
+.comment-foot .social{text-align: center;}
+.comment-foot .social span{margin-left: 15px;}
+.comment-foot .action{text-align: right;}
+.comment-foot .action span {margin-left: 15px}

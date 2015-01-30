@@ -1,0 +1,88 @@
+<?php
+class IndexController extends CommonController
+{
+	public $layout = 'main';
+	public function actionIndex()//action不接收参数运行，参数通过$_GET等获得
+	{	
+		echo 'this is IndexController, testAction<br/>';
+// 		var_dump($this);
+// 		$this->redirect('login');
+		$db = Db::getInstance();
+		echo 'serverVersion:'.$db->serverVersion.'<br/>';
+		echo 'clientVersion:'.$db->clientVersion.'<br/>';
+		echo 'serverInfo:'.$db->serverInfo.'<br/><br/><br/>';
+// 		echo '<pre>';
+		$testModel = TestModel::model();
+		
+		$info = $testModel->cache()->active()->findByPk(12);
+		var_dump($info);
+		$info1 = $testModel->cache()->findByPk(18);
+		var_dump($info1);
+		$data = array('a' => '这是a', 'b'=>'这是b');
+		$this->layout = 'main';
+		$html = $this->render('index', array('data'=>$data));
+		echo $html;
+		$isAjax = App::ins()->request->isAjax();
+		var_dump($isAjax);	
+	}
+	
+	public function actionRegister()
+	{
+		$this->setPageTitle('注册');
+		echo $this->render('register');
+	}
+	
+	public function actionLogin()
+	{
+		$this->setPageTitle('登陆');
+		echo $this->render('login');
+	}
+	
+	public function actionHome()
+	{
+		$this->setPageTitle('首页');
+		$this->layout = 'tinypt';
+		echo $this->render('home');		
+	}
+	
+	public function actionCheckRegister()
+	{
+		if(empty($_POST['username']) || empty($_POST['email']))
+		{
+			echo json_encode(array('code'=>0, 'msg'=>'没有用户名或者邮箱'));exit;
+		}
+		$userModel = UserModel::model();
+		$userInfo = $userModel->findByName($_POST['username']);
+		if(!empty($userInfo))
+		{
+			echo json_encode(array('code'=>-1, 'msg'=>'用户名已存在'));exit;
+		}
+		$userInfo = $userModel->findByEmail($_POST['email']);
+		if(!empty($userInfo))
+		{
+			echo json_encode(array('code'=>-2, 'msg'=>'邮箱已存在'));exit;
+		}
+		$userInfo = array(
+			'name'=>$_POST['username'], 
+			'password'=>$_POST['password'], 
+			'email'=>$_POST['email'],
+		);
+		$register = $userModel->addUser($userInfo);
+		if($register)
+		{
+			echo json_encode(array('code'=>1, 'msg'=>'注册成功，用户名是：'.$userInfo['name']));
+		}
+		else
+		{
+			echo json_encode(array('code'=>-3, 'msg'=>'注册失败，提交的数据是：'.json_encode($_POST)));
+		}
+	}
+	
+	public function init()
+	{
+// 		echo '控制器初始化方法，实例化控制器时执行！<br/>';
+// 		$this->setPageTitle('设置的标题');
+// 		echo $this->pageTitle;
+		
+	}
+}
