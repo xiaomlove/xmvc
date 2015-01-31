@@ -17,7 +17,16 @@ class User
 	}
 	public function isLogin()
 	{
-		
+		$loginInfo = App::ins()->session->get('loginInfo');
+		if(!empty($loginInfo))
+		{
+			if(isset($loginInfo['expire']))
+			{
+				return $loginInfo['expire'] > time();
+			}
+			return TRUE;
+		}
+		return FALSE;
 	}
 	
 	public function setLogin($id, $name, $password, $remember, $expire)

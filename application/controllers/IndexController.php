@@ -78,6 +78,34 @@ class IndexController extends CommonController
 		}
 	}
 	
+	public function actionCheckLogin()
+	{
+		if(empty($_POST['name']) || empty($_POST['password']))
+		{
+			echo json_encode(array('code'=>0, 'msg'=>'没有用户名或者密码'));exit;
+		}
+		$userModel = UserModel::model();
+		$userInfo = $userModel->findByName($_POST['name']);
+		if(empty($userInfo))
+		{
+			echo json_encode(array('code'=>-1, 'msg'=>'用户不存在'));exit;
+		}
+		if(!$userModel->checkPassword($_POST['password'], $userInfo['password']))
+		{
+			echo json_encode(array('code'=>-2, 'msg'=>'密码不正确'));exit;
+		}
+		$login = $userModel->login($userInfo['id'], $_POST['name'], $userInfo['password']);
+		
+		if($login)
+		{
+			echo json_encode(array('code'=>1, 'msg'=>'登陆成功'));
+		}
+		else
+		{
+			echo json_encode(array('code'=>-3, 'msg'=>'登陆失败，提交的数据是：'.json_encode($_POST)));
+		}
+	}
+	
 	public function init()
 	{
 // 		echo '控制器初始化方法，实例化控制器时执行！<br/>';

@@ -33,7 +33,7 @@
       <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
           <button type="button" class="btn btn-success" id="register-submit">Register</button>
-          <span class="text-success go-login">已有账号？<a href="<?php echo $this->createUrl('index/login')?>">去登陆</a></span>
+          <span class="text-success go-login"><span id="result-msg">已有账号？</span><a href="<?php echo $this->createUrl('index/login')?>">去登陆</a></span>
         </div>
       </div>
     </form>
@@ -46,25 +46,25 @@
   var $name = $("#inputName"), $password = $("#inputPassword"), $password2 = $("#inputPassword2"), $email = $("#inputEmail"), $submit = $("#register-submit");
 	var $form = $("#register-form");
   $name.on("input", function() {
-//    	if($(this).hasClass("invalid")){
+   	if($(this).hasClass("invalid")){
   			validateName($(this));
-//  		}  
+ 		}  
   })
 
   $email.on("input", function() {
-//  	if($(this).hasClass("invalid")){
+ 	if($(this).hasClass("invalid")){
   		validateEmail($(this));
-//  	}
+ 	}
   })
 
   $password.on("input", function() {
-//    if($(this).hasClass("invalid")){
+   if($(this).hasClass("invalid")){
     	validatePassword($(this));
-//    }
+   }
   })
 
   $password2.on("input", function() {
-//    if($(this).hasClass("invalid")){
+   if($(this).hasClass("invalid")){
     	if(validatePassword($(this))){
     		if($(this).val() !== $password.val()){
     			_showError($(this), "密码不一致");
@@ -72,7 +72,7 @@
         		_hideError($(this));
     		}
     	}
-//    }
+   }
   })
 
   $submit.on("click", function(e) {
@@ -86,8 +86,33 @@
 			type: "POST",
 			dataType: "json",
 			data: $form.serialize(),
+			beforeSend: function(){
+					$submit.attr("disabled", "disabled").text("注册中...");
+				},
 			success: function(data){
-				console.log(data);
+				switch(data.code){
+					case 0:
+						_showError($name, data.msg, true);
+						$submit.removeAttr("disabled").text("Register");
+						break;
+					case -1:
+						_showError($name, data.msg, true);
+						$submit.removeAttr("disabled").text("Register");
+						break;
+					case -2:
+						console.log('-2');
+						_showError($email, data.msg, true);
+						$submit.removeAttr("disabled").text("Register");
+						break;
+					case -3:
+						_showError($name, data.msg, true);
+						$submit.removeAttr("disabled").text("Register");
+						break;
+					case 1:
+						$("#result-msg").text(data.msg).addClass("text-danger");
+						$submit.text("注册成功");
+						break;
+				}
 			}
         });
     }

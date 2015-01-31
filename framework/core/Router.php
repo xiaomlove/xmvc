@@ -47,7 +47,7 @@ final class Router
 			if($lastPos !== FALSE)
 			{
 				$offsetPart = self::$_offsetUri = substr(self::$_scriptName, 0, $lastPos);
-//				echo $offsetPart.'<br/>';
+// 				var_dump($offsetPart).'<br/>';
 				$requestUri = str_replace($offsetPart, '', $requestUri);
 			}
 		}
@@ -496,7 +496,11 @@ final class Router
 		}
 // 		echo '生成的url暂时是:';
 // 		var_dump($requeryUri);
-		return '/'.self::$_offsetUri.rtrim($requeryUri, '&');//从网站根目录开始
+		if(!empty(self::$_offsetUri))
+		{
+			$requeryUri .= '/'.self::$_requestUri;
+		}
+		return rtrim($requeryUri, '&');//从网站根目录开始
 	}
 	
 	private static function _parseRuleValue($value)

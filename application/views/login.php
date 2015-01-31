@@ -1,9 +1,9 @@
 <div class="container">
-    <form class="form-horizontal" role="form" id="login-form" action="<?php echo $this->createUrl('index/home')?>" autocomplete="off" method="post">
+    <form class="form-horizontal" role="form" id="login-form" action="checklogin" autocomplete="off" method="post">
       <div class="form-group">
         <label for="inputName" class="col-sm-2 control-label">账号</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" id="inputName" name="username" placeholder="账号" autocomplete="off">
+          <input type="text" class="form-control" id="inputName" name="name" placeholder="账号" autocomplete="off">
           <span class="help-block hide">A block of help text that brea.</span>
         </div>
       </div>
@@ -16,7 +16,7 @@
       </div>
       <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-          <button type="submit" class="btn btn-success" id="login-submit">Sign in</button>
+          <button type=button class="btn btn-success" id="login-submit">Sign in</button>
           <span class="text-success go-register">没有账号？<a href="<?php echo $this->createUrl('index/register')?>">去注册</a></span>
         </div>
       </div>
@@ -27,6 +27,7 @@
   <script src="<?php echo App::ins()->request->getBaseUrl()?>application/public/js/login.js"></script>
   <script type="text/javascript">
   var $name = $("#inputName"), $password = $("#inputPassword"),$submit = $("#login-submit");
+	var $form = $("#login-form");
   $name.on("input", function() {
   if($(this).hasClass("invalid")){
         validateName($(this));
@@ -40,8 +41,38 @@
   })
 
   $submit.on("click", function(e) {
-    if(!validateName($name) || !validatePassword($password)) {
-    	e.preventDefault();
+    if(validateName($name) && validatePassword($password)) {
+    	$.ajax({
+			url: "checklogin",
+			type: "POST",
+			dataType: "json",
+			data: $form.serialize(),
+			beforeSend: function(){
+				$submit.attr("disabled", "disabled").text("登陆中...");
+			},
+			success: function(data){
+				switch(data.code){
+					case 0:
+						_showError($name, data.msg, true);
+						$submit.removeAttr("disabled").text("Sign in");
+						break;
+					case -1:
+						_showError($name, data.msg, true);
+						$submit.removeAttr("disabled").text("Sign in");
+						break;
+					case -2:
+						_showError($password, data.msg, true);
+						$submit.removeAttr("disabled").text("Sign in");
+					case -3:
+						_showError($name, data.msg, true);
+						$submit.removeAttr("disabled").text("Sign in");
+						break;
+					case 1:
+						window.location.href = "index.html"
+				}
+			}
+        })
     }
   })
+ 
   </script>

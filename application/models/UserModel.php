@@ -26,8 +26,8 @@ class UserModel extends Model
 		{
 			$fields = implode(',', $fields);
 		}
-		$result = $this->field($fields)->where('name = :name', array(':name'=>$name))->select();
-		return $result;
+		$result = $this->field($fields)->where('name = :name', array(':name'=>$name))->limit(1)->select();
+		return empty($result) ? NULL : $result[0];
 	}
 	
 	/**
@@ -46,8 +46,8 @@ class UserModel extends Model
 		{
 			$fields = implode(',', $fields);
 		}
-		$result = $this->field($fields)->where('email = :email', array(':email'=>$email))->select();
-		return $result;
+		$result = $this->field($fields)->where('email = :email', array(':email'=>$email))->limit(1)->select();
+		return empty($result) ? NULL : $result[0];
 	}
 	/**
 	 * 登陆操作，如果记住登陆信息，默认30天
@@ -67,14 +67,11 @@ class UserModel extends Model
 	{
 		if(!empty($userInfo['password']) && strlen($userInfo['password']) < 60)
 		{
-			App::addRequirePath(LIB_PATH.'phpass-0.3'.DS);
-			$hasher = new PasswordHash(8, false);
-			$hashPassword = $hasher->HashPassword($userInfo['password']);
-			$userInfo['password'] = $hashPassword;
+			$userInfo['password'] = $this->hashPassword($userInfo['password']);
 		}
 		if(empty($userInfo['passkey']))
 		{
-			$userInfo['passkey'] = $this->generatePasskey($userInfo['name']);
+			$userInfo['passkey'] = md5($userInfo['name'].time());
 		}
 		$user = new UserModel();//要写完整UserModel
 //		var_dump($user);exit;
@@ -88,13 +85,39 @@ class UserModel extends Model
 		
 	}
 	
-	public function generatePasskey($name)
+	public function hashPassword($password)
 	{
-		if(empty($name) || !is_string($name))
+		if(empty($password) || !is_string($password))
 		{
-			return NULL;
+			return FALSE;
 		}
-		return md5($name.time());
+		if(function_exists('password_hash'))
+		{
+			return password_hash($password, PASSWORD_DEFAULT);
+		}
+		else
+		{
+			App::addRequirePath(LIB_PATH.'phpass-0.3'.DS);
+			$hasher = new PasswordHash(8, false);
+			$hashPassword = $hasher->HashPassword($password);
+			return $hashPassword;
+		}
+		
+	}
+	
+	public function checkPassword($inputPassword, $password)
+	{
+		if(function_exists('password_verify'))
+		{
+			return password_verify($inputPassword, $password);
+		}
+		else
+		{
+			App::addRequirePath(LIB_PATH.'phpass-0.3'.DS);
+			$hasher = new PasswordHash(8, false);
+			return $hasher->CheckPassword($inputPassword, $password);
+			
+		}
 	}
 	
 	

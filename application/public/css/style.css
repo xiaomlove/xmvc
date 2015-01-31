@@ -1,5 +1,6 @@
 #login-form, #register-form {max-width: 600px;margin: 15% auto;}
 .go-login, .go-register {margin-left: 8px;}
+#result-msg {margin-right: 10px}
 
 #main-nav {margin-top: 3%}
 #main-nav li{width: 33%;text-align: center}
