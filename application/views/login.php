@@ -63,6 +63,7 @@
 					case -2:
 						_showError($password, data.msg, true);
 						$submit.removeAttr("disabled").text("Sign in");
+						break;
 					case -3:
 						_showError($name, data.msg, true);
 						$submit.removeAttr("disabled").text("Sign in");

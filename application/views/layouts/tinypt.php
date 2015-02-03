@@ -1,4 +1,6 @@
 <?php require 'head.php'?>
+<script src="http://cdn.bootcss.com/jquery/1.11.2/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 <div class="container">
     <div class="row">
       <ul class="nav nav-pills" id="main-nav">
@@ -11,5 +13,6 @@
 <?php echo $content?>
 
 </div>
+
 <?php require 'foot.php'?>
 

@@ -45,14 +45,21 @@ class User
 		return TRUE;
 	}
 	
+	public function setLogout()
+	{
+		return App::ins()->session->destroy();
+	}
+	
 	public function getName()
 	{
-		
+		$loginInfo = App::ins()->session->get('loginInfo');
+		return empty($loginInfo) ? NULL : $loginInfo['name'];
 	}
 	
 	public function getId()
 	{
-		
+		$loginInfo = App::ins()->session->get('loginInfo');
+		return empty($loginInfo) ? NULL : $loginInfo['id'];
 	}
 	
 	

@@ -33,3 +33,10 @@
 .comment-foot .social span{margin-left: 15px;}
 .comment-foot .action{text-align: right;}
 .comment-foot .action span {margin-left: 15px}
+
+
+#checkout-logout-modal .modal-body{padding:30px;text-align:center}
+#checkout-logout-modal .modal-footer{text-align:center}
+#checkout-logout-modal .modal-footer button{margin:0 30px}
+
+#profile td:nth-of-type(1){width: 20%}

@@ -22,6 +22,8 @@ return array(
 			'detail'=>'torrent/detail',
 			'checkregister'=>'index/checkRegister',
 			'checklogin'=>'index/checkLogin',
+			'logout'=>'index/logout',
+			'getipinfo'=>'index/getIpInfo',
 			'torrent/list/<perpage>/<page:\d+>'=>'torrent/list',
 			'user/name/<name:.+>/age/<age:\d+>'=>'user/filter',
 			'user/sex/<sex:.+>'=>'user/filter',

@@ -42,7 +42,9 @@ class IndexController extends CommonController
 	{
 		$this->setPageTitle('首页');
 		$this->layout = 'tinypt';
-		echo $this->render('home');		
+		$userInfo = UserModel::model()->findByPk(App::ins()->user->getId());
+		header("Access-Control-Allow-Origin: http://ip.taobao.com/service/");
+		echo $this->render('home', array('userInfo'=>$userInfo));		
 	}
 	
 	public function actionCheckRegister()
@@ -103,6 +105,34 @@ class IndexController extends CommonController
 		else
 		{
 			echo json_encode(array('code'=>-3, 'msg'=>'登陆失败，提交的数据是：'.json_encode($_POST)));
+		}
+	}
+	
+	public function actionLogout()
+	{
+		$logout = App::ins()->user->setLogout();
+	
+		if($logout)
+		{
+			echo json_encode(array('code'=>1, 'msg'=>'退出成功'));
+		}
+		else
+		{
+			echo json_encode(array('code'=>-1, 'msg'=>'退出失败'));
+		}
+	}
+	
+	public function actionGetIpInfo()
+	{
+		$ip = $_GET['ip'];
+		$result = file_get_contents('http://ip.taobao.com/service/getIpInfo.php?ip='.trim($ip));
+		if($result !== FALSE)
+		{
+			echo $result;
+		}
+		else 
+		{
+			echo json_encode(array('code'=>-1));
 		}
 	}
 	

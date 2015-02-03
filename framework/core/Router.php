@@ -498,7 +498,7 @@ final class Router
 // 		var_dump($requeryUri);
 		if(!empty(self::$_offsetUri))
 		{
-			$requeryUri .= '/'.self::$_requestUri;
+			$requeryUri = '/'.self::$_offsetUri.$requeryUri;
 		}
 		return rtrim($requeryUri, '&');//从网站根目录开始
 	}
