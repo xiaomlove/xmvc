@@ -70,6 +70,7 @@ final class App
 	 */
 	private static function appAutoload($className)
 	{
+		//核心文件夹
 		if(file_exists($file = CORE_PATH.$className.'.php'))
 		{
 			require $file;
@@ -78,6 +79,7 @@ final class App
 				Log::requireFile($file);
 			}
 		}
+		//控制器
 		elseif(substr($className, -10) === 'Controller')
 		{
 			$file = APP_PATH.'protected'.DS.'controllers'.DS.$className.'.php';
@@ -87,6 +89,7 @@ final class App
 				Log::requireFile($file);
 			}
 		}
+		//模型
 		elseif(substr($className, -5) === 'Model')
 		{
 			$file = APP_PATH.'protected'.DS.'models'.DS.$className.'.php';
@@ -96,6 +99,7 @@ final class App
 				Log::requireFile($file);
 			}
 		}
+		//帮助类
 		elseif(substr($className, -6) === 'Helper')
 		{
 			$file = HELPER_PATH.$className.'.php';
@@ -105,6 +109,7 @@ final class App
 				Log::requireFile($file);
 			}
 		}
+		//组件文件夹
 		elseif(file_exists($file = COM_PATH.$className.'.php'))
 		{
 			require $file;
@@ -113,6 +118,16 @@ final class App
 				Log::requireFile($file);
 			}
 		}
+		//LIB文件夹
+		elseif(file_exists($file = LIB_PATH.$className.'.php'))
+		{
+			require $file;
+			if(self::$_debug)
+			{
+				Log::requireFile($file);
+			}
+		}
+		//临时额外引入的文件
 		elseif(!empty(self::$_requirePath))
 		{
 			foreach(self::$_requirePath as $path)
@@ -182,6 +197,7 @@ final class App
 		$alias = trim($alias);//是不是太多余了？
 		$prefix = substr($alias, 0, strpos($alias, '.'));
 		$aliasList = array('application', 'framework');
+		$alias = trim(str_replace($prefix, '', $alias), '.');//去掉别名自身
 		if(in_array($prefix, $aliasList))
 		{
 			switch ($prefix)

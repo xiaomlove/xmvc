@@ -4,7 +4,7 @@ class BEncode
 	public static function decode($string)
 	{
 		static $pos = 0;
-		if ($pos >= strlen($string))
+		if ($pos >= strlen($string) || empty($string))
 		{
 			return NULL;
 		}
@@ -18,7 +18,9 @@ class BEncode
 					$val = self::decode($string);//字典编码格式d<编码串><编码元素>e，上边得到了编码串，再一次获得编码元素，也就是值
 					if ($key === NULL || $val === NULL)
 					{
-						break;//返回NULL，只会是当前位置大于整个字符串长度的时候
+						trigger_error('字典缺少key或value', E_USER_ERROR);
+						return FALSE;
+						break;//返回NULL，只会是当前位置大于整个字符串长度的时候。不会到这里了，上边已经停掉
 					}
 					$result[$key] = $val;//将字段与字段的值存入结果数组
 				}
@@ -33,6 +35,8 @@ class BEncode
 					$val = self::decode($string);
 					if ($val === NULL)
 					{
+						trigger_error('列表缺少编码值', E_USER_ERROR);
+						return FALSE;
 						break;//列表跟字典差不多，只是列表只有一个编码值，不像字典有编码串和值。其实二者就基本是枚举数组与索引数组的区别
 					}
 					$result[] = $val;
@@ -71,7 +75,7 @@ class BEncode
 			{
 				if(isset($isDict) && $isDict)//是字典
 				{
-					if($key === 'isDict')
+					if($key === 'isDict' || $key === 'size' || $key === 'filecount')
 					{
 						continue;//跳过我们自己添加的isDict字段
 					}
@@ -104,6 +108,31 @@ class BEncode
 		{
 			return NULL;
 		}
+	}
+	/**
+	 * decode顺便求出文件数量与总大小
+	 * @param unknown $string
+	 * @return number
+	 */
+	public static function decode_getinfo($string)
+	{
+		$decode = self::decode($string);
+		if(!empty($decode) && is_array($decode))
+		{
+			if(isset($decode['info']['files'])){ //multifile
+				$decode['size'] = 0;
+				$decode['filecount'] = 0;
+				foreach($decode['info']['files'] as $file)
+				{
+					$decode['filecount']++;
+					$decode['size']+=$file['length'];
+				}
+			}else{
+				$decode['size'] = $decode['info']['length'];
+				$decode["filecount"] = 1;
+			}
+		}
+		return $decode;
 	}
 
 }

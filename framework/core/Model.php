@@ -96,8 +96,8 @@ abstract class Model
 	{
 		//通过::model()获得的对象可以执行的链式方法
 		$chainedList = array('distinct', 'field', 'group', 'having', 'join', 'limit', 'order', 'table', 'where', 'active', 
-							'findByPk', 'findBySql', 'select', 'deleteByPk', 'delete', 'updateByPk', 'update', 'insert',
-							'beginTransaction', 'commit', 'rollBack', 'count', 'validate', 'getErrors', 'cache'	
+							'findByPk', 'findBySql', 'select', 'deleteByPk', 'delete', 'updateByPk', 'update', 'insert', 'execute',
+							'beginTransaction', 'commit', 'rollBack', 'count', 'validate', 'getError', 'setError', 'cache'	
 						);
 		//活跃对象可以执行的方法
 		$activeList = array('delete', 'save');
@@ -935,9 +935,36 @@ abstract class Model
 		}
 	}
 	
-	private function getErrors()
+	private function getError($field = '')
 	{
-		return $this->errors;
+		if(!empty($field))
+		{
+			if(is_string($field))
+			{
+				if(isset($this->errors[$field]))
+				{
+					return $this->errors[$field];
+				}
+			}
+			else
+			{
+				trigger_error('字段只会是字符串', E_USER_NOTICE);
+			}
+			return NULL;
+		}
+		else 
+		{
+			return $this->errors;
+		}
+		
+	}
+	
+	private function setError($key, $value)
+	{
+		if(!empty($key) && is_string($key))
+		{
+			$this->errors[$key] = $value;
+		}
 	}
 	/**
 	 * 自动验证，唯一验证
