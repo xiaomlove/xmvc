@@ -80,7 +80,7 @@ final class App
 		}
 		elseif(substr($className, -10) === 'Controller')
 		{
-			$file = APP_PATH.'controllers'.DS.$className.'.php';
+			$file = APP_PATH.'protected'.DS.'controllers'.DS.$className.'.php';
 			require $file;
 			if(self::$_debug)
 			{
@@ -89,7 +89,7 @@ final class App
 		}
 		elseif(substr($className, -5) === 'Model')
 		{
-			$file = APP_PATH.'models'.DS.$className.'.php';
+			$file = APP_PATH.'protected'.DS.'models'.DS.$className.'.php';
 			require $file;
 			if(self::$_debug)
 			{

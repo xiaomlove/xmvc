@@ -53,11 +53,11 @@ class Controller
 	{
 		if(MODULE === NULL)
 		{
-			return APP_PATH.'views'.DS;
+			return APP_PATH.'protected'.DS.'views'.DS;
 		}
 		else
 		{
-			return APP_PATH.'modules'.DS.strtolower(MODULE).DS.'views'.DS;
+			return APP_PATH.'protected'.DS.'modules'.DS.strtolower(MODULE).DS.'views'.DS;
 		}
 	}
 	
