@@ -18,6 +18,27 @@ class TorrentController extends CommonController
 	public function actionUpload()
 	{
 		$this->setPageTitle('发布种子');
+		if(App::ins()->request->isPost())
+		{
+			echo '<pre/>';
+			var_dump($_POST);
+			var_dump($_FILES);
+			echo '<hr/>';
+			$model = TorrentModel::model();
+			if($model->validate($_POST))
+			{
+				echo '验证成功！';
+			}
+			else 
+			{
+				var_dump($model->getErrors());
+			}
+			exit;
+		}
+		else
+		{
+			
+		}
 		echo $this->render('upload');
 	}
 }

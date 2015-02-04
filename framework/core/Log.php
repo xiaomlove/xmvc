@@ -64,7 +64,7 @@ final class Log
 	
 	public static function outPutLog()
 	{
-		if(App::ins()->request->isAjax() && defined('NO_LOG_AJAX') && NO_LOG_AJAX)
+		if((App::ins()->request->isAjax() && defined('NO_LOG_AJAX') && NO_LOG_AJAX) || App::getConfig('noLog'))
 		{
 			return;
 		}

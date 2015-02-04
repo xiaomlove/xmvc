@@ -163,6 +163,14 @@ final class App
 		return '';
 	}
 	
+	public static function setConfig($key, $value)
+	{
+		if(is_string($key))
+		{
+			self::$_config[$key] = $value;
+		}
+	}
+	
 	public static function getPathOfAlias($alias)
 	{
 		if(empty($alias) || !is_string($alias))

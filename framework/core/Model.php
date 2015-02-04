@@ -844,7 +844,7 @@ abstract class Model
 	 * @param boolean $batch 是否批量验证，true全部验证完，false遇到错误即停止
 	 * @param array $data 要验证的数据，不传递取$changeProperties的数据
 	 */
-	private function validate($batch = false, $data = array())
+	private function validate($data = array(), $batch = TRUE)
 	{
 		if(method_exists($this, 'rules'))
 		{

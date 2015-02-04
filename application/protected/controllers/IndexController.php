@@ -136,6 +136,13 @@ class IndexController extends CommonController
 		}
 	}
 	
+	public function actionUeditor()
+	{
+		App::setConfig('noLog', TRUE);
+        $path = APP_PATH.'public/lib/ueditor/php/';
+		require $path.'controller2.php';
+	}
+	
 	public function init()
 	{
 // 		echo '控制器初始化方法，实例化控制器时执行！<br/>';

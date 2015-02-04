@@ -25,7 +25,8 @@ class Validator
 	 */
 	public static function required($field)
 	{
-		return !empty(trim(self::$_data[$field]));
+		$result = trim(self::$_data[$field]);
+		return !empty($result);
 	}
 	
 	/**
