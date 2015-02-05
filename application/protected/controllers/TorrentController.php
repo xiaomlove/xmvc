@@ -6,6 +6,14 @@ class TorrentController extends CommonController
 	public function actionList()
 	{
 		$this->setPageTitle('种子列表');
+		$default = array(
+			'page'=>1,
+			'per'=>10,
+			'sort'=>'add_time',
+			'type'=>'asc',
+		);
+//		$model = TorrentModel::model();
+		
 		echo $this->render('torrent');
 	}
 	
@@ -25,6 +33,7 @@ class TorrentController extends CommonController
 //			var_dump($_POST);
 //			var_dump($_FILES);
 //			echo '<hr/>';
+//			exit;
 			
 			if($model->validate($_POST))
 			{
@@ -34,7 +43,7 @@ class TorrentController extends CommonController
 					$ext = pathinfo($uploadFile['name'], PATHINFO_EXTENSION);
 					if(strtolower($ext) === 'torrent')
 					{
-						$decode = BEncode::decode_getinfo(file_get_contents($uploadFile['tmp_name']));
+						$decode = BEncode::decode_getinfo(file_get_contents($uploadFile['tmp_name']));//取临时文件不会有中文出现
 						if(!empty($decode))
 						{
 							$userId = App::ins()->user->getId();
@@ -46,6 +55,7 @@ class TorrentController extends CommonController
 							if(!empty($encode))
 							{
 								$torrentPath = App::getPathOfAlias(App::getConfig('torrentSavePath'));
+								$torrentPath .= date('Ymd', time()).DS;//按天分目录存放
 								if(!is_dir($torrentPath))
 								{
 									$mkdir = mkdir($torrentPath, 0777, TRUE);
@@ -55,7 +65,14 @@ class TorrentController extends CommonController
 										goto A;
 									}
 								}
-								$torrent = file_put_contents($torrentPath.$uploadFile['name'], $encode);
+								$name = date('YmdHis', time())."_{$userId}_".$uploadFile['name'];//种子文件本身也加上时间日期和用户Id
+								$outPutName = $torrentPath.$name;
+								if(substr(PHP_OS, 0, 3) === 'WIN')
+								{
+									$outPutName = mb_convert_encoding($outPutName, 'GBK', 'UTF-8,GBK,GB2312,BIG5');//windows下得转码一下？
+								}
+								$torrent = file_put_contents($outPutName, $encode);
+								
 								if($torrent === FALSE)
 								{
 									$model->setError('torrentFile', '生成种子错误！');
@@ -67,7 +84,16 @@ class TorrentController extends CommonController
 									$model->setError('torrentFile', '获取种子info_hash出错');
 									goto A;
 								}
-								$sql = "INSERT INTO torrent (main_title, slave_title, info_hash, name, introduce, size, file_count, user_id, add_time) VALUES ('{$_POST['main_title']}', '{$_POST['slave_title']}', '$info_hash', '{$uploadFile['name']}', '{$_POST['introduce']}', {$decode['size']}, {$decode['filecount']}, $userId ,".time().")";
+								if(isset($decode['info']['files']))
+								{
+									//多文件
+									$fileList = serialize($decode['info']['files']);
+								}
+								else 
+								{
+									$fileList = serialize(array('length'=>$decode['info']['length'], 'name'=>$decode['info']['name']));
+								}
+								$sql = "INSERT INTO torrent (main_title, slave_title, info_hash, name, introduce, size, file_count, file_list, user_id, add_time) VALUES ('{$_POST['main_title']}', '{$_POST['slave_title']}', '$info_hash', '{$name}', '{$_POST['introduce']}', {$decode['size']}, {$decode['filecount']}, '$fileList', $userId ,".time().")";
 								$insert = $model->execute($sql);
 								if($insert === 0 || $insert === FALSE)
 								{

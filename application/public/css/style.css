@@ -6,6 +6,8 @@
 #main-nav li{width: 33%;text-align: center}
 
 #torrent-list-table {margin-top: 50px;}
+#torrent-list-table tr th:nth-of-type(1){width:55%}
+#torrent-list-table tr td:nth-of-type(1){width:55%}
 #torrent-list-nav {text-align: center}
 
 #upload-form {margin-top: 20px;}
