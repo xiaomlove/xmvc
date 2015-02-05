@@ -18,13 +18,14 @@ class TorrentController extends CommonController
 	public function actionUpload()
 	{
 		$this->setPageTitle('发布种子');
+		$model = TorrentModel::model();
 		if(App::ins()->request->isPost())
 		{
-			echo '<pre/>';
-			var_dump($_POST);
-			var_dump($_FILES);
-			echo '<hr/>';
-			$model = TorrentModel::model();
+//			echo '<pre/>';
+//			var_dump($_POST);
+//			var_dump($_FILES);
+//			echo '<hr/>';
+			
 			if($model->validate($_POST))
 			{
 				if(isset($_FILES['torrentFile']) && is_uploaded_file($_FILES['torrentFile']['tmp_name']))
@@ -39,7 +40,7 @@ class TorrentController extends CommonController
 							$userId = App::ins()->user->getId();
 							$userInfo = UserModel::model()->findByPk($userId, 'passkey');
 							$passkey = $userInfo['passkey'];
-							$decode['announce'] .= '?passkey='.$passkey;
+//							$decode['announce'] .= '?passkey='.$passkey;//这里不需要，下载时才需要
 							$decode['comment'] = 'come from xiaomlove.com';
 							$encode = BEncode::encode($decode);
 							if(!empty($encode))
@@ -98,18 +99,18 @@ class TorrentController extends CommonController
 			$errors = $model->getError();
 			if(empty($errors))
 			{
-				echo '发布成功！';
+				App::ins()->user->setFlash('upload_success', '发布成功！你需要重新下载种子并使用它来做种！');
+				$this->redirect('torrent/detail', array('id'=>$insert));
 			}
 			else 
 			{
-				var_dump($errors);
+				$model->setData($_POST);
+				echo $this->render('upload', array('model'=>$model));//将模型传递过去，获取错误信息、字段信息以及flash之类
 			}
-			
-			exit;
 		}
 		else
 		{
-			echo $this->render('upload');
+			echo $this->render('upload', array('model'=>$model));
 		}
 		
 	}

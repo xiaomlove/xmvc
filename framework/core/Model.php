@@ -97,7 +97,8 @@ abstract class Model
 		//通过::model()获得的对象可以执行的链式方法
 		$chainedList = array('distinct', 'field', 'group', 'having', 'join', 'limit', 'order', 'table', 'where', 'active', 
 							'findByPk', 'findBySql', 'select', 'deleteByPk', 'delete', 'updateByPk', 'update', 'insert', 'execute',
-							'beginTransaction', 'commit', 'rollBack', 'count', 'validate', 'getError', 'setError', 'cache'	
+							'beginTransaction', 'commit', 'rollBack', 'count', 'validate', 'getError', 'setError', 'cache',
+							'setData', 'getData',
 						);
 		//活跃对象可以执行的方法
 		$activeList = array('delete', 'save');
@@ -1027,6 +1028,27 @@ abstract class Model
 			}
 		}
 		return $cache;
+	}
+	/**
+	 * 手动为data赋值，在非查询情况下用于表单的数据通过getData获取
+	 * Enter description here ...
+	 * @param array $data
+	 */
+	private function setData(array $data)
+	{
+		$this->data = $data;
+	}
+	
+	private function getData($key)
+	{
+		if(!empty($key) && is_string($key) && isset($this->data[$key]))
+		{
+			return $this->data[$key];
+		}
+		else
+		{
+			return NULL;
+		}
 	}
 	
 }

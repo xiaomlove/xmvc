@@ -47,7 +47,7 @@ class User
 	
 	public function setLogout()
 	{
-		return App::ins()->session->destroy();
+		return App::ins()->session->delete('loginInfo');
 	}
 	
 	public function getName()
@@ -60,6 +60,55 @@ class User
 	{
 		$loginInfo = App::ins()->session->get('loginInfo');
 		return empty($loginInfo) ? NULL : $loginInfo['id'];
+	}
+	
+	public function setFlash($key, $value)
+	{
+		if(!empty($key) && is_string($key))
+		{
+			$key = self::getFlashPrefix().$key;//加上这个前缀
+			return App::ins()->session->set($key, $value);
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+	
+	public function hasFlash($key)
+	{
+		if(!empty($key) && is_string($key))
+		{
+			$key = self::getFlashPrefix().$key;
+			return App::ins()->session->_isset($key);
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+	
+	public function getFlash($key)
+	{
+		if(!empty($key) && is_string($key))
+		{
+			$key = self::getFlashPrefix().$key;
+			$value = App::ins()->session->get($key);
+			App::ins()->session->delete($key);//getFlash时自动删除
+			return $value;
+		}
+		else
+		{
+			return NULL;
+		}
+	}
+	/**
+	 * 添加flash的前缀，这样子看只对同模块同控制器同一个用户有效，需要跨控制器的flash比较少吧。
+	 * Enter description here ...
+	 */
+	private function getFlashPrefix()
+	{
+		return md5(strval(MODULE).strval(CONTROLLER).App::ins()->user->getId());
 	}
 	
 	

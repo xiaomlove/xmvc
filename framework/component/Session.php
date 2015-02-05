@@ -11,7 +11,12 @@ class Session
 	
 	public function set($key, $value)
 	{
-		$_SESSION[$key] = $value;
+		if(!empty($key) && is_string($key))
+		{
+			$_SESSION[$key] = $value;
+			return TRUE;
+		}
+		return FALSE;
 	}
 	
 	public function _isset($key)
@@ -27,6 +32,7 @@ class Session
 	public function delete($key)
 	{
 		unset($_SESSION[$key]);
+		return TRUE;
 	}
 	
 	public function destroy()

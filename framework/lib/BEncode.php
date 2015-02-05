@@ -52,6 +52,11 @@ class BEncode
 			default://不是d、l、i这些开头结束标记的都到这里来，那么肯定是字符串了，其编码格式<字符串长度>:<字符串值>
 				$offset = strpos($string, ':', $pos) - $pos;
 				//从当前位置(这里是1)开始找这一段字符串的分割符:在整个字符串中的位置，再减去当前位置，得出它们中间隔了多少位，它们中间就是字符串的长度值(8)
+				if($offset < 0)
+				{
+					trigger_error('字符串没有分割符', E_USER_ERROR);
+					return FALSE;;
+				}
 				$len = (int)substr($string, $pos, $offset);//截取长度值的字符串，转化为整数，得到字符串长度(8)
 				$pos += $offset + 1;//移动当前位置到该字符串长度值的右边(当前位置变成到8:的右边a的位置)
 				$str = substr($string, $pos, $len);//有了长度值，截取具体的字符串值(这里得到announce)

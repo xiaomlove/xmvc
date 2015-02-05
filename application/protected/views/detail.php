@@ -1,5 +1,8 @@
 <div class="row torrent-detail">
       <h1 class="torrent-title">西淳记之大对娶亲</h1>
+      <?php if(App::ins()->user->hasFlash('upload_success')):?>
+      <h1 class="torrent-title text-danger"><?php echo App::ins()->user->getFlash('upload_success')?></h1>
+      <?php endIf?>
       <table class="table table-bordered" id="detail-table">
 
         <tbody>
