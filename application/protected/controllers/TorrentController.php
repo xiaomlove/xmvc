@@ -6,15 +6,14 @@ class TorrentController extends CommonController
 	public function actionList()
 	{
 		$this->setPageTitle('种子列表');
-		$default = array(
-			'page'=>1,
-			'per'=>10,
-			'sort'=>'add_time',
-			'type'=>'asc',
-		);
-//		$model = TorrentModel::model();
+		$model = TorrentModel::model();
+		$result = $model->getList($_GET);
 		
-		echo $this->render('torrent');
+		$page = !empty($_GET['page']) ? $_GET['page'] : 1;
+		$per = !empty($_GET['per_page']) ? $_GET['per_page'] : 10;
+		$total = ceil($result['count']/$per);
+		$navHtml = $this->getNavHtml($page, $per, $total);//导航链接上的其他参数从$_GET取
+		echo $this->render('torrent', array('data' => $result['data'], 'navHtml' => $navHtml));
 	}
 	
 	public function actionDetail()

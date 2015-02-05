@@ -131,7 +131,7 @@ class Controller
 	
 	private function renderFile($file, $data, $close = FALSE)
 	{
-		extract($data, EXTR_PREFIX_SAME, 'data');
+		extract($data);//覆盖已存在的变量
 		ob_start();
 		ob_implicit_flush(0);//关闭绝对刷送
 		require $file;

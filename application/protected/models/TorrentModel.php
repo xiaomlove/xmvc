@@ -22,6 +22,7 @@ class TorrentModel extends Model
 	 * 一个公用的返回各种搜索条件结果的方法
 	 * Enter description here ...
 	 * @param array $condition
+	 * @return array 返回总记录条数以及当前页的数据
 	 */
 	public function getList(array $condition)
 	{
@@ -29,14 +30,26 @@ class TorrentModel extends Model
 			'page'=>1,
 			'per_page'=>10,
 			'sort_field'=>'add_time',
-			'sort_type'=>'asc'
+			'sort_type'=>'desc'
 		);
-		$diff = array_diff_assoc($default, $condition);//差集
-		$condition = array_merge($default, $condition);//合并
-		$condition = array_diff_assoc($condition, $diff);//去掉多余的
+		foreach ($default as $key => $value)
+		{
+			if (isset($condition[$key]))
+			{
+				$default[$key] = $condition[$key];
+			}
+		}
+		$per = $default['per_page'];
+		$offset = ((int)$default['page'] - 1) * $per;
+		$sortField = $default['sort_field'];
+		$sortType = strtoupper($default['sort_type']);	
+		$sql = "SELECT a.id, a.main_title, a.slave_title, a.add_time, a.size, a.seeder_count, a.leecher_count, a.finish_times, a.comment_count, a.view_times, a.user_id, b.name as user_name FROM torrent as a LEFT JOIN user as b ON a.user_id = b.id ";
+		$sql .= "ORDER BY $sortField $sortType ";
+		$sql .= "LIMIT $offset, $per";
 		
-		
-		
+		$result = $this->findBySql($sql);
+		$count = $this->count();
+		return array('data' => $result, 'count' => $count);
 		
 	}
 	
