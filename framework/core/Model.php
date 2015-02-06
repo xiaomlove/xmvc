@@ -341,7 +341,7 @@ abstract class Model
 			}
 			else
 			{
-				return stripos($param, ' or ') === FALSE? $param: '('.$param.')';//这里的or不怎么准，有的字段里面就有or，比如password
+				return stripos($param, ' or') === FALSE? $param: '('.$param.')';//这里的or不怎么准，有的字段里面就有or，比如password
 			}
 		}
 		elseif(is_array($param) && ArrayHelper::is_assoc($param))//数组必须是键和值连起是一个完整的条件，推荐使用逗号连接，也就是是索引数组

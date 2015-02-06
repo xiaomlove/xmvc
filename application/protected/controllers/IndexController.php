@@ -143,6 +143,21 @@ class IndexController extends CommonController
 		require $path.'controller2.php';
 	}
 	
+	public function actionError()
+	{
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_TIMEOUT, 3);
+		curl_setopt($curl, CURLOPT_URL, 'http://cn.bing.com/HPImageArchive.aspx?idx=0&n=1');
+		curl_setopt($curl, CURLOPT_HEADER, 1);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+		$str = curl_exec($curl);
+		$imgurl = '';
+		if(preg_match("/<url>(.+?)<\/url>/ies", $str, $matches)){
+			$imgurl = 'http://cn.bing.com'.$matches[1];
+		}
+		echo $this->renderPartial('error', array('bgImg' => $imgurl));
+	}
+	
 	public function init()
 	{
 // 		echo '控制器初始化方法，实例化控制器时执行！<br/>';

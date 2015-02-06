@@ -46,6 +46,10 @@ class TorrentModel extends Model
 		{
 			$sortField = 'b.name';
 		}
+		else 
+		{
+			$sortField = 'a.'.$sortField;
+		}
 		$sortType = strtoupper($default['sort_type']);	
 		$sql = "SELECT a.id, a.main_title, a.slave_title, a.add_time, a.size, a.seeder_count, a.leecher_count, a.finish_times, a.comment_count, a.view_times, a.user_id, b.name as user_name FROM torrent as a LEFT JOIN user as b ON a.user_id = b.id ";
 		$sql .= "ORDER BY $sortField $sortType ";
@@ -57,6 +61,23 @@ class TorrentModel extends Model
 		
 	}
 	
+	public function getTorrent($id)
+	{
+		$info = $this->findByPk($id, 'name');
+		$path = substr($info['name'], 0, 8);//前8位是文件夹名，时间不算了
+		$path = App::getPathOfAlias(App::getConfig('torrentSavePath')).$path.DS;//种子保存路径
+		$file = $path.$info['name'];//种子文件
+		$encodeFile = StringHelper::encodeFileName($file);
+//		var_dump($file);
+		if (file_exists($encodeFile))
+		{
+			return $file;//只是file_exists()判断时需要转换一下判断，返回还是得原始的
+		}
+		else
+		{
+			return NULL;
+		}
+	}
 	
 	
 	

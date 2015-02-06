@@ -26,6 +26,8 @@ return array(
 			'getipinfo'=>'index/getIpInfo',
 			'ueditor'=>'index/ueditor',
 			'torrent/list/<perpage>/<page:\d+>'=>'torrent/list',
+			'error'=>'index/error',
+			'download'=>'torrent/download',
 			'user/name/<name:.+>/age/<age:\d+>'=>'user/filter',
 			'user/sex/<sex:.+>'=>'user/filter',
 			'user/year/<year>'=>array('user/filter', 'urlSuffix'=>'.shtml'),

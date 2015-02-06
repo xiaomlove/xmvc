@@ -18,8 +18,15 @@ class TorrentController extends CommonController
 	
 	public function actionDetail()
 	{
+		if (empty($_GET['id']) || !ctype_digit($_GET['id']))
+		{
+			$this->goError();
+		}
 		$this->setPageTitle('种子详情');
-		echo $this->render('detail');
+		$model = TorrentModel::model();
+		$result = $model->findByPk($_GET['id'], 'id, name, main_title, slave_title, size, introduce, info_hash, view_times, download_times, finish_times, seeder_count, leecher_count');
+//		var_dump($result);exit;
+		echo $this->render('detail', array('torrent' => $result));
 	}
 	
 	public function actionUpload()
@@ -138,5 +145,46 @@ class TorrentController extends CommonController
 			echo $this->render('upload', array('model'=>$model));
 		}
 		
+	}
+	
+	public function actionDownload()
+	{
+		if (empty($_GET['id']) || !ctype_digit($_GET['id']))
+		{
+			$this->goError();
+		}
+		$model = TorrentModel::model();
+		$file = $model->getTorrent($_GET['id']);
+		if(!empty($file))
+		{
+			$encodeFile = StringHelper::encodeFileName($file);
+			$decode = BEncode::decode(file_get_contents($encodeFile));
+			if (!empty($decode))
+			{
+				$userId = App::ins()->user->getId();
+				$result = $model->table('user')->field('passkey')->where('id=:id', array(':id' => $userId))->limit(1)->select();
+				$passkey = $result[0]['passkey'];
+				$decode['announce'] .= '?passkey='.$passkey;
+				$content = BEncode::encode($decode);
+				if (!empty($content))
+				{
+					$model->updateByPk($_GET['id'], 'download_times=download_times+1');
+					$this->downloadFile($file, $content);
+				}
+				else 
+				{
+					die('encode出错');
+				}
+			}
+			else 
+			{
+				die('decode出错');
+			}
+			
+		}
+		else
+		{
+			die('种子不存在！');
+		}
 	}
 }

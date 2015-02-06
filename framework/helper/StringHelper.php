@@ -22,4 +22,16 @@ class StringHelper
 			return count($match[0]);	
 		}
 	}
+	
+	public static function encodeFileName($str)
+	{
+		if(substr(PHP_OS, 0, 3) === 'WIN')
+		{
+			return mb_convert_encoding($str, 'GBK', 'UTF-8,GBK,GB2312,BIG5');
+		}
+		else 
+		{
+			return Sstr;
+		}
+	}
 }

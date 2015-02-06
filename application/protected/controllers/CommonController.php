@@ -21,6 +21,11 @@ class CommonController extends Controller
 		}
 	}
 	
+	protected function goError()
+	{
+		$this->redirect('index/error');exit;
+	}
+	
 	protected function getTorrentTTL($time, $delimiter = '<br/>')
 	{
 		if(empty($time))
@@ -159,7 +164,7 @@ class CommonController extends Controller
 		}
 	}
 	
-	public function getSortHref($field, $text)
+	protected function getSortHref($field, $text)
 	{
 		if (empty($field) || !is_string($field))
 		{
@@ -175,19 +180,19 @@ class CommonController extends Controller
 				if (isset($urlQueryArr['sort_type']) && strtolower($urlQueryArr['sort_type']) === 'asc')
 				{
 					$urlQueryArr['sort_type'] = 'desc';
-					$direction = 'down';
+					$direction = 'up';
 				}
 				else 
 				{
 					$urlQueryArr['sort_type'] = 'asc';
-					$direction = 'up';
+					$direction = 'down';
 				}
 			}
 			else
 			{
 				$urlQueryArr['sort_field'] = $field;
 				$urlQueryArr['sort_type'] = 'desc';
-				$direction = 'down';
+				$direction = 'up';
 			}
 			unset($urlQueryArr['page']);
 			$queryStr = http_build_query($urlQueryArr);
@@ -195,7 +200,7 @@ class CommonController extends Controller
 		else
 		{
 			$queryStr = 'sort_field='.$field.'&sort_type=desc';
-			$direction = 'down';
+			$direction = 'up';
 		}
 		$baseUrl = $this->createUrl(CONTROLLER.'/'.ACTION);
 		$href = $baseUrl.'?'.$queryStr;
@@ -205,5 +210,54 @@ class CommonController extends Controller
 			$icon = "<span class='glyphicon glyphicon-arrow-$direction' aria-hidden='true'></span>";
 		}
 		return "<a href='$href'>{$text}{$icon}</a>";
+	}
+	
+	protected function getTorrentName($name)
+	{
+		if (empty($name) || !is_string($name))
+		{
+			return NULL;
+		}
+		$name = trim($name);
+		if(preg_match('/(\d){14}_(\d)+_/', $name, $match))
+		{
+			return str_replace($match[0], '', $name);
+		}
+		else
+		{
+			return $name;
+		}
+	}
+	
+	protected function downloadFile($file, $content = '')
+	{
+		$filename = basename($file);
+		$encodeName = rawurlencode($filename);
+		$ua = $_SERVER['HTTP_USER_AGENT'];
+		header('Content-Type: application/octet-stream');
+		if (preg_match('/MSIE/', $ua))
+		{
+			header('Content-Disposition: attachment; filename="'.$encodeName.'"');
+		}
+		elseif (preg_match('/Firefox/', $ua))
+		{
+			header('Content-Disposition: attachment; filename*="utf8\'\''.$filename.'"');//火狐这么奇怪，得加这么个*=还要这个空字符串
+		}
+		else 
+		{
+			header('Content-Disposition: attachment; filename="'.$filename.'"');
+		}
+		header('Content-Length: '.filesize($file));
+		ob_clean ();
+		flush();
+		if (!empty($content))
+		{
+			echo $content;
+		}
+		else 
+		{
+			readfile($file);
+		}
+		exit;
 	}
 }
