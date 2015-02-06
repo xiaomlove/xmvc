@@ -2,16 +2,16 @@
       <table class="table table-bordered table-hover table-striped" id="torrent-list-table">
         <thead>
           <tr>
-            <th style="text-align: center">标题<span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></th>
-            <th>添加于</th>
+            <th style="text-align: center"><?php echo $this->getSortHref('main_title', '标题')?></th>
+            <th><?php echo $this->getSortHref('add_time', '添加于')?></th>
             <th title="存活时间">TTL</th>
-            <th>大小</th>
-            <th>做种</th>
-            <th>下载</th>
-            <th>完成</th>
-            <th>评论</th>
-            <th>查看</th>
-            <th>发布者</th>
+            <th><?php echo $this->getSortHref('size', '大小')?></th>
+            <th><?php echo $this->getSortHref('seeder_count', '做种')?></th>
+            <th><?php echo $this->getSortHref('leecher_count', '下载')?></th>
+            <th><?php echo $this->getSortHref('finish_times', '完成')?></th>
+            <th><?php echo $this->getSortHref('comment_count', '评论')?></th>
+            <th><?php echo $this->getSortHref('view_times', '查看')?></th>
+            <th><?php echo $this->getSortHref('user_name', '发布者')?></th>
           </tr>
         </thead>
         <?php if(!empty($data)):?>

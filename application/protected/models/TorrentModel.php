@@ -28,7 +28,7 @@ class TorrentModel extends Model
 	{
 		$default = array(
 			'page'=>1,
-			'per_page'=>10,
+			'per_page'=>5,
 			'sort_field'=>'add_time',
 			'sort_type'=>'desc'
 		);
@@ -42,6 +42,10 @@ class TorrentModel extends Model
 		$per = $default['per_page'];
 		$offset = ((int)$default['page'] - 1) * $per;
 		$sortField = $default['sort_field'];
+		if(stripos($sortField, 'user_name') !== FALSE)
+		{
+			$sortField = 'b.name';
+		}
 		$sortType = strtoupper($default['sort_type']);	
 		$sql = "SELECT a.id, a.main_title, a.slave_title, a.add_time, a.size, a.seeder_count, a.leecher_count, a.finish_times, a.comment_count, a.view_times, a.user_id, b.name as user_name FROM torrent as a LEFT JOIN user as b ON a.user_id = b.id ";
 		$sql .= "ORDER BY $sortField $sortType ";

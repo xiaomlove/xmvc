@@ -10,7 +10,7 @@ class TorrentController extends CommonController
 		$result = $model->getList($_GET);
 		
 		$page = !empty($_GET['page']) ? $_GET['page'] : 1;
-		$per = !empty($_GET['per_page']) ? $_GET['per_page'] : 10;
+		$per = !empty($_GET['per_page']) ? $_GET['per_page'] : 5;
 		$total = ceil($result['count']/$per);
 		$navHtml = $this->getNavHtml($page, $per, $total);//导航链接上的其他参数从$_GET取
 		echo $this->render('torrent', array('data' => $result['data'], 'navHtml' => $navHtml));

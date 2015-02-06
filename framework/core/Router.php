@@ -12,6 +12,8 @@ final class Router
 	private static $_queryString = NULL;
 	private static $_offsetUri = '';//路径不在网站根目录时前边多余部分
 	
+	private static $_createdUrl = array();//已创建过的url先存起来，避免重复的再次创建
+	
 	public static function parseUrl()
 	{
 		self::_init();
@@ -312,12 +314,17 @@ final class Router
 			trigger_error('参数有误！', E_USER_ERROR);
 			return;
 		}
+		$createdKey = $mvc.http_build_query($options);
+		if (isset(self::$_createdUrl[$createdKey]))
+		{
+			return self::$_createdUrl[$createdKey];
+		}
 		if($mvc === '/')
 		{
 			return '/';
 		}
 		
-		$mvc = trim($mvc, '/');
+		$mvc = strtolower(trim($mvc, '/'));
 		
 		//分路由模式讨论
 		if(!isset(self::$_config['mode']) || self::$_config['mode'] === 'normal')
@@ -359,10 +366,11 @@ final class Router
 		}
 		elseif(isset(self::$_config['mode']) && self::$_config['mode'] === 'path')
 		{
-			$rules = self::$_config['rules'];
+			$rules = array_change_key_case(self::$_config['rules']);
 			foreach($rules as $ruleKey=>$ruleValue)
 			{
 				$ruleKey = trim($ruleKey, '/');
+				$ruleValue = strtolower($ruleValue);
 				if($ruleKey === $mvc)//跟rules左边相等，直接就它了
 				{
 					$requeryUri = $ruleKey;
@@ -500,7 +508,12 @@ final class Router
 		{
 			$requeryUri = '/'.self::$_offsetUri.$requeryUri;
 		}
-		return rtrim($requeryUri, '&');//从网站根目录开始
+		$result = rtrim($requeryUri, '&');
+		if(!isset(self::$_createdUrl[$createdKey]))
+		{
+			self::$_createdUrl[$createdKey] = $result;
+		}
+		return $result;//从网站根目录开始
 	}
 	
 	private static function _parseRuleValue($value)

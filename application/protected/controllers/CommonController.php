@@ -93,49 +93,117 @@ class CommonController extends Controller
 			return number_format($size/1024/1024/1024, 2).'GB';
 		}
 	}
-	
+	/**
+	 * 返回分页的HTML代码
+	 * Enter description here ...
+	 * @param unknown_type $page
+	 * @param unknown_type $per
+	 * @param unknown_type $total
+	 */
 	protected function getNavHtml($page = 1, $per = 10, $total)
 	{
-		if(isset($_SERVER['QUERY_STRING']) && !empty($_SERVER['QUERY_STRING']))
-		{
-			$queryStr = $_SERVER['QUERY_STRING'].'&';
-		}
-		else
-		{
-			$queryStr = '?';
-		}
-		$url = $this->createUrl(CONTROLLER.'/'.ACTION);
+		$url = self::getNavHref();
+
 		$HTML = '<ul class="pagination">';
 		if ($total <= 10)//总页数少于10页
 		{
-			if($page === 1)
+			//拼凑上一页
+			if($page == 1)
 			{
 				$HTML .= '<li class="disabled"><a><span aria-hidden="true">&laquo;</span></a></li>';
 			}
 			else 
 			{
-				$HTML .= '<li><a href="'.$url.$queryStr."page=".($page-1).'"><span aria-hidden="true">&laquo;</span></a></li>';
+				$HTML .= '<li><a href="'.$url."page=".($page-1).'"><span aria-hidden="true">&laquo;</span></a></li>';
 			}
 			for ($i = 1; $i <= $total; $i++)
 			{
-				$class = $i === $page ? ' class="active"' : '';
-				$HTML .= '<li'.$class.'><a href="'.$url.$queryStr.'page='.$i.'"><span aria-hidden="true">'.$i.'</span></a></li>';
+				$class = $i == $page ? ' class="active"' : '';
+				
+				$HTML .= '<li'.$class.'><a href="'.$url.'page='.$i.'"><span aria-hidden="true">'.$i.'</span></a></li>';
 			}
-			if($page === $total)
+			if($page == $total)
 			{
 				$HTML .= '<li class="disabled"><a><span aria-hidden="true">&raquo;</span></a></li>';
 			}
 			else 
 			{
-				$HTML .= '<li><a href="'.$url.$queryStr."page=".($page+1).'"><span aria-hidden="true">&raquo;</span></a></li>';
+				$HTML .= '<li><a href="'.$url."page=".($page+1).'"><span aria-hidden="true">&raquo;</span></a></li>';
 			}
 		}
 		else
 		{
-			
+			die('超过10页暂时不考虑');
 		}
 		$HTML .= '</ul>';
 		return $HTML;
-		
+	}
+	
+	private function getNavHref()
+	{
+		$urlQuery = $_SERVER['QUERY_STRING'];
+		if(!empty($urlQuery))
+		{
+			parse_str($urlQuery, $urlQueryArr);
+			unset($urlQueryArr['page']);
+			$queryStr = http_build_query($urlQueryArr);
+		}
+		$baseUrl = $this->createUrl(CONTROLLER.'/'.ACTION);
+		if(!empty($queryStr))
+		{
+			return $baseUrl.'?'.$queryStr.'&';
+		}
+		else
+		{
+			return $baseUrl.'?';
+		}
+	}
+	
+	public function getSortHref($field, $text)
+	{
+		if (empty($field) || !is_string($field))
+		{
+			return NULL;
+		}
+		$field = trim($field);
+		$urlQuery = $_SERVER['QUERY_STRING'];
+		if (!empty($urlQuery))
+		{
+			parse_str($urlQuery, $urlQueryArr);
+			if (isset($urlQueryArr['sort_field']) && $urlQueryArr['sort_field'] === $field)
+			{
+				if (isset($urlQueryArr['sort_type']) && strtolower($urlQueryArr['sort_type']) === 'asc')
+				{
+					$urlQueryArr['sort_type'] = 'desc';
+					$direction = 'down';
+				}
+				else 
+				{
+					$urlQueryArr['sort_type'] = 'asc';
+					$direction = 'up';
+				}
+			}
+			else
+			{
+				$urlQueryArr['sort_field'] = $field;
+				$urlQueryArr['sort_type'] = 'desc';
+				$direction = 'down';
+			}
+			unset($urlQueryArr['page']);
+			$queryStr = http_build_query($urlQueryArr);
+		}
+		else
+		{
+			$queryStr = 'sort_field='.$field.'&sort_type=desc';
+			$direction = 'down';
+		}
+		$baseUrl = $this->createUrl(CONTROLLER.'/'.ACTION);
+		$href = $baseUrl.'?'.$queryStr;
+		$icon = '';
+		if (isset($_GET['sort_field']) && $field === $_GET['sort_field'])
+		{
+			$icon = "<span class='glyphicon glyphicon-arrow-$direction' aria-hidden='true'></span>";
+		}
+		return "<a href='$href'>{$text}{$icon}</a>";
 	}
 }

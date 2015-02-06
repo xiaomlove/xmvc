@@ -131,8 +131,8 @@ final class Log
 			}	
 		}
 		
-		
-		echo '<h1>脚本总耗时：'.number_format((microtime(true)-self::$_startTime), 4).'秒</h1></div>';
+		$endTime = microtime(true);
+		echo '<h1>结束时间：'.$endTime.'，脚本总耗时：'.number_format(($endTime-self::$_startTime), 4).'秒</h1></div>';
 
 	}
 }
