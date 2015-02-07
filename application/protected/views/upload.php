@@ -2,7 +2,7 @@
       <form class="form-horizontal" role="form" id="upload-form" method="post" action="upload.html" enctype="multipart/form-data">
         <div class="form-group">
           <div class="col-sm-12">
-             <h3 class="text-danger tracker-address">服务器tracker地址是：xxxx</h3>
+             <h3 class="text-danger tracker-address">服务器tracker地址是：<?php echo App::ins()->request->getbaseUrl().'announce.php'?></h3>
           </div>
         </div>
         <div class="form-group <?php echo $model->getError('torrentFile') != NULL ? "has-error" : ""?>">

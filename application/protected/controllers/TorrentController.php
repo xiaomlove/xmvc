@@ -170,6 +170,7 @@ class TorrentController extends CommonController
 				{
 					App::setConfig('noLog', TRUE);
 					$model->updateByPk($_GET['id'], 'download_times=download_times+1');
+// 					exit('OK');
 					$this->downloadFile($file, $content);
 				}
 				else 
