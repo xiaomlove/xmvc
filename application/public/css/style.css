@@ -16,14 +16,14 @@
 .submit-btn {text-align: center;}
 
 .torrent-title {text-align: center;font-weight: bold;margin: 0 auto;}
-.torrent-detail {margin-top: 30px;text-align: center; padding: 0 10%;}
+.torrent-detail {margin-top: 30px;text-align: center;}
 #detail-table {margin: 20px auto;}
 #detail-table td span {margin-right: 15px}
 #detail-table td a {margin-right: 15px}
 #detail-table td button {margin-right: 15px}
 
-#detail-table td:nth-of-type(1) {width: 10%; text-align: right;padding-right: 10px}
-#detail-table td:nth-of-type(2) {text-align: left;padding-left: 10px;}
+#detail-table td:nth-of-type(1) {width: 10% !important; text-align: right;padding-right: 10px}
+#detail-table td:nth-of-type(2) {width: 90% !important; text-align: left;padding-left: 10px;}
 .comment-head {text-align: left; margin: 10px 0;}
 .item {margin: 20px 0;border: 1px solid #999;}
 .item .avatar, .comment-content {text-align: left;}

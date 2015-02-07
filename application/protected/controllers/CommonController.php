@@ -232,23 +232,30 @@ class CommonController extends Controller
 	protected function downloadFile($file, $content = '')
 	{
 		$filename = basename($file);
+		$filename  = self::getTorrentName($filename);//截取应该显示的部分
 		$encodeName = rawurlencode($filename);
 		$ua = $_SERVER['HTTP_USER_AGENT'];
+		header( 'Content-Description: File Transfer' );
 		header('Content-Type: application/octet-stream');
-		if (preg_match('/MSIE/', $ua))
+// 		header("Content-Type: application/x-bittorrent");
+		header("Accept-Ranges: bytes");
+		if (preg_match('/MSIE|Trident/', $ua))//IE11的userAgent没有MSIE
 		{
 			header('Content-Disposition: attachment; filename="'.$encodeName.'"');
 		}
 		elseif (preg_match('/Firefox/', $ua))
 		{
-			header('Content-Disposition: attachment; filename*="utf8\'\''.$filename.'"');//火狐这么奇怪，得加这么个*=还要这个空字符串
+			header('Content-Disposition: attachment; filename="'.$filename.'"; charset=utf-8');
 		}
 		else 
 		{
-			header('Content-Disposition: attachment; filename="'.$filename.'"');
+			header('Content-Disposition: attachment; filename="'.$filename.'"; charset=utf-8');
 		}
-		header('Content-Length: '.filesize($file));
-		ob_clean ();
+		header ( 'Content-Transfer-Encoding: binary' );
+		header ( 'Expires: 0' );
+		header ( 'Cache-Control: must-revalidate' );
+		header ( 'Pragma: public' );
+// 		header('Content-Length: '.filesize($file));//不能要这个，添加了passkey文件已经变大
 		flush();
 		if (!empty($content))
 		{
@@ -258,6 +265,5 @@ class CommonController extends Controller
 		{
 			readfile($file);
 		}
-		exit;
 	}
 }

@@ -31,7 +31,7 @@ class StringHelper
 		}
 		else 
 		{
-			return Sstr;
+			return $str;
 		}
 	}
 }

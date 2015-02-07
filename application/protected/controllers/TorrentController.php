@@ -168,6 +168,7 @@ class TorrentController extends CommonController
 				$content = BEncode::encode($decode);
 				if (!empty($content))
 				{
+					App::setConfig('noLog', TRUE);
 					$model->updateByPk($_GET['id'], 'download_times=download_times+1');
 					$this->downloadFile($file, $content);
 				}
