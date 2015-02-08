@@ -15,12 +15,19 @@ if (defined('DEBUG') && DEBUG)
 //0、引入必须的BEncode类，定义返回错误信息的函数
 define('TIMENOW', $_SERVER['REQUEST_TIME']);
 require 'framework/lib/BEncode.php';
-function error($msg)
+function error($msg, $notError = FALSE)
 {
-	$out = BEncode::encode(array(
-		'isDict' => TRUE,
-		'failure reason' => $msg,
-	));
+	if (!$notError)
+	{
+		$out = BEncode::encode(array(
+				'isDict' => TRUE,
+				'failure reason' => $msg,
+		));
+	}
+	else
+	{
+		$out = $msg;//用于最后输出正确的返回信息
+	}
 	header('Content-Type: text/plain; charset = utf-8');
 	header("Pragma: no-cache");
 	if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && $_SERVER['HTTP_ACCEPT_ENCODING'] === 'gzip' && function_exists('gzencode'))
@@ -79,7 +86,7 @@ if (isset($_GET['no_peer_id']))
 if (isset($_GET['event']))
 {
 	//如果有事件，必须是started,stoped,completed
-	$eventAllow = array('started', 'stoped', 'completed');
+	$eventAllow = array('started', 'stopped', 'completed');
 	if (!in_array($_GET['event'], $eventAllow))
 	{
 		error('error event');
@@ -346,7 +353,7 @@ else
 			$return['peer'][] = array(
 				'isDict' => TRUE,
 				'ip' => $peer['ip'],
-				'port' => $peer['port']
+				'port' => intval($peer['port'])//这个是整型
 			);
 		}
 		else 
@@ -355,7 +362,7 @@ else
 				'isDict' => TRUE,
 				'peer id' => $peer['peer_id'],
 				'ip' => $peer['ip'],
-				'port' => $peer['port']
+				'port' => intval($peer['port'])
 			);
 		}
 	}
