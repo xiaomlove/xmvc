@@ -2,7 +2,7 @@
 	<?php if (!empty($torrent)):?>
       <h1 class="torrent-title"><?php echo $torrent['main_title']?></h1>
       <?php if(App::ins()->user->hasFlash('upload_success')):?>
-      <h1 class="torrent-title text-danger"><?php echo App::ins()->user->getFlash('upload_success')?></h1>
+      <h1 id="upload-success-flash" class="torrent-title text-danger"><strong><?php echo App::ins()->user->getFlash('upload_success')?></strong></h1>
       <?php endIf?>
       <table class="table table-bordered" id="detail-table">
 

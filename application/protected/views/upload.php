@@ -56,7 +56,7 @@
   <script type="text/javascript">
   var ue = UE.getEditor('uecontainer');
   ue.ready(function() {
-      ue.setContent("<?php echo $model->getData('introduce')?>");
+      ue.setContent('<?php echo $model->getData('introduce')?>');
       //获取html内容，返回: <p>hello</p>
       var html = ue.getContent();
       //获取纯文本内容，返回: hello

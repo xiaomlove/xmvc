@@ -24,6 +24,7 @@
 
 #detail-table td:nth-of-type(1) {width: 10% !important; text-align: right;padding-right: 10px}
 #detail-table td:nth-of-type(2) {width: 90% !important; text-align: left;padding-left: 10px;}
+#upload-success-flash strong{box-shadow:0 0 10px red;}
 .comment-head {text-align: left; margin: 10px 0;}
 .item {margin: 20px 0;border: 1px solid #999;}
 .item .avatar, .comment-content {text-align: left;}

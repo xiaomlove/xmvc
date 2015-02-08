@@ -1,3 +1,6 @@
 <?php
 
-var_dump(implode(',', $arr));
+$a = '1';
+$b = '2';
+
+echo var_dump($a + $b);

@@ -53,10 +53,17 @@ class TorrentController extends CommonController
 						if(!empty($decode))
 						{
 							$userId = App::ins()->user->getId();
-							$userInfo = UserModel::model()->findByPk($userId, 'passkey');
-							$passkey = $userInfo['passkey'];
+// 							$userInfo = UserModel::model()->findByPk($userId, 'passkey');
+// 							$passkey = $userInfo['passkey'];
 //							$decode['announce'] .= '?passkey='.$passkey;//这里不需要，下载时才需要
-							$decode['comment'] = 'come from xiaomlove.com';
+							if (isset($decode['comment']))
+							{
+								$decode['comment'] = $decode['comment'].'-[come from xiaomlove]';
+							}
+							else
+							{
+								$decode['comment'] = '[come from xiaomlove]';
+							}
 							$encode = BEncode::encode($decode);
 							if(!empty($encode))
 							{
