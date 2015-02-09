@@ -396,9 +396,9 @@ if (!$isFirstRequest)
 	$uploadThis = max(0, $_GET['uploaded'] - $peerSelf['uploaded']);
 	$downloadThis = max(0, $_GET['downloaded'] - $peerSelf['downloaded']);
 	$duration = TIMENOW - $peerSelf['last_report_time'];
-	$uploadSpeed = ($uploadThis/$duration)/1024/1024;//上传速度，单位MB/秒
+	$uploadSpeed = $uploadThis/$duration;//上传速度，单位MB/秒
 	$downloadSpeed = $downloadThis/$duration;
-	if ($uploadSpeed > 100)
+	if ($uploadSpeed/1024/1024 > 100)
 	{
 		//速度超100MB/s，算作弊了，也只能从速度随便判断一下了
 		$sql = 'UPDATE user SET is_banned=1 WHERE user_id='.$userInfo['id'];
@@ -493,11 +493,7 @@ execute($updateUserSql);
 //只要不是stopped（会删除peer）,都要更新peer
 $isSeeder = (int)$isSeeder;
 $timenow = TIMENOW;
-//算速度，上边已经算了以MB/S的版本
-if ($uploadSpeed !== 0)
-{
-	$uploadSpeed = $_GET['uploaded']/$duration;//直接存原始的以字节为单位的，取时再格式化，这里不做过多判断
-}
+
 if (!isset($_GET['event']) || $_GET['event'] !== 'stopped')
 {
 	$peerField = '';//先存好，看更新还是插入
