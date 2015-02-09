@@ -287,8 +287,8 @@ else
 }
 
 $torrentPeerNum = intval($torrent['seeder_count']) + intval($torrent['leecher_count']);//种子中记录的peers数量
-$sql = 'SELECT is_seeder, peer_id, ip, port, downloaded, uploaded, left, start_time, last_report_time, connect_time FROM peer WHERE torrent_id='.$torrent['id'];
-$peerSelf = query($sql.' AND user_id=:user_id LIMIT 1', array(':user_id' => $userInfo['id']));
+$sql = 'SELECT is_seeder, peer_id, ip, port, downloaded, uploaded, left, start_time, last_report_time, connect_time FROM peer WHERE torrent_id=:torrent_id';
+$peerSelf = query($sql.' AND user_id=:user_id AND peer_id=:peer_id LIMIT 1', array(':torrent_id' => $torrent['id'], ':user_id' => $userInfo['id'], ':peer_id' => $_GET['peer_id']));
 if (empty($peerSelf))
 {
 	$isFirstRequest = TRUE;//是客户端第一次请求，peer表中没有记录
@@ -303,9 +303,24 @@ else
 	{
 		error('min interval 30s');
 	}
+	//再看是否重复下载：peer_id跟数据库不同又不是做种者
+	if ($peerSelf['peer_id'] !== $_GET['peer_id'] && !$isSeeder)
+	{
+		error('already downloading this torrent');
+	}
+	if ($isSeeder)
+	{
+		//即使做种，也不能同时多于3处做
+		$sql = 'SELECT count(*) as count FROM peer WHERE user_id=:user_id AND torrent_id=:torrent_id';
+		$seedPlaces = query($sql, array(':user_id' => $userInfo['id'], ':torrent_id' => $torrent['id']));
+		if (!empty($seedPlaces) && $seedPlaces[0]['count'] > 3)
+		{
+			error('do not seed one torrent more than 3 places');
+		}
+	}
 }
 
-$peerList = query($sql.' AND user_id<>'.$userInfo['id']);//所有该种子的peer列表，不包括自己
+$peerList = query($sql.' AND user_id<>'.$userInfo['id'], array(':torrent_id' => $torrent['id']));//所有该种子的peer列表，不包括自己
 if (intval($_GET['numwant']) < count($peerList))
 {
 	//渴望得到的数量要小于查询出来的，截取之
@@ -367,8 +382,65 @@ else
 		}
 	}
 }
+unset($peer);
+$returnDict = BEncode::encode($return);
+if (empty($returnDict))
+{
+	trigger_error('encode返回信息出错', E_USER_ERROR);
+	exit();
+}
 
-//10、应该算拼凑完毕，接下来是更新相关数据了吧
+//10、返回的数据拼凑完毕。检查是否作弊
+if (!$isFirstRequest)
+{
+	$uploadThis = max(0, $_GET['uploaded'] - $peerSelf['uploaded']);
+	$downloadThis = max(0, $_GET['downloaded'] - $peerSelf['downloaded']);
+	$duration = TIMENOW - $peerSelf['last_report_time'];
+	$uploadSpeed = ($uploadThis/$duration)/1024/1024;//上传速度，单位MB/秒
+	if ($uploadSpeed > 100)
+	{
+		//速度超100MB/s，算作弊了，也只能从速度随便判断一下了
+		$sql = 'UPDATE user SET is_banned=1 WHERE user_id='.$userInfo['id'];
+		execute($sql);
+		error('you are cheating,we will disabled your account');
+	}
+}
+else
+{
+	$uploadThis = $_GET['uploaded'];
+	$downloadThis = $_GET['downloaded'];
+}
+
+//11、计算优惠之类的，暂时无
+
+
+
+//12、处理event事件，更新user，torrent，peer，complete数据
+$updateUserSql = "UPDATE user SET ";
+$updateTorrentSql = "UPDATE torrent SET ";
+if (isset($_GET['event']))
+{
+	switch ($_GET['event'])
+	{
+		case 'stopped'://停止一个任务、删除一个任务或者退出客户端，会有stopped事件
+			$sql = 'DELETE FROM peer WHERE user_id='.$userInfo['id'].' AND torrent_id='.$torrent['id'].' AND peer_id='.$_GET['peer_id'];
+			execute($sql);
+			if ($isSeeder)
+			{
+				$updateTorrentSql .= "seeder_count=seeder_count-1,";
+			}
+			else
+			{
+				$updateTorrentSql .= "leecher_count=leecher_count-1,";
+			}
+			break;
+		case 'complete':
+			$updateTorrentSql .= "finish_times=finish_times+1,";
+	}
+}
+
+
+
 
 
 
