@@ -397,6 +397,7 @@ if (!$isFirstRequest)
 	$downloadThis = max(0, $_GET['downloaded'] - $peerSelf['downloaded']);
 	$duration = TIMENOW - $peerSelf['last_report_time'];
 	$uploadSpeed = ($uploadThis/$duration)/1024/1024;//上传速度，单位MB/秒
+	$downloadSpeed = $downloadThis/$duration;
 	if ($uploadSpeed > 100)
 	{
 		//速度超100MB/s，算作弊了，也只能从速度随便判断一下了
@@ -409,37 +410,108 @@ else
 {
 	$uploadThis = $_GET['uploaded'];
 	$downloadThis = $_GET['downloaded'];
+	$duration = 0;
+	$uploadSpeed = 0;
+	$downloadSpeed = 0;
 }
 
 //11、计算优惠之类的，暂时无
 
 
 
-//12、处理event事件，更新user，torrent，peer，complete数据
-$updateUserSql = "UPDATE user SET ";
-$updateTorrentSql = "UPDATE torrent SET ";
+//12、处理event事件，更新user，torrent，peer，snatch数据
+
 if (isset($_GET['event']))
 {
+	$updateTorrentSql = "UPDATE torrent SET ";//更新torrent数据
 	switch ($_GET['event'])
 	{
-		case 'stopped'://停止一个任务、删除一个任务或者退出客户端，会有stopped事件
+		case 'stopped'://停止一个任务、删除一个任务或者退出客户端，会有stopped事件，暂停不会触发
 			$sql = 'DELETE FROM peer WHERE user_id='.$userInfo['id'].' AND torrent_id='.$torrent['id'].' AND peer_id='.$_GET['peer_id'];
-			execute($sql);
+			execute($sql);//删除该peer
 			if ($isSeeder)
 			{
-				$updateTorrentSql .= "seeder_count=seeder_count-1,";
+				$updateTorrentSql .= "seeder_count=seeder_count-1";//种子的peer数量减1
 			}
 			else
 			{
-				$updateTorrentSql .= "leecher_count=leecher_count-1,";
+				$updateTorrentSql .= "leecher_count=leecher_count-1";
 			}
 			break;
-		case 'complete':
-			$updateTorrentSql .= "finish_times=finish_times+1,";
+		case 'complete'://下载完成会友触发
+			$sql = 'UPDATE snatch SET complete_time='.TIMENOW.',is_completed=1 WHERE user_id='.$userInfo['id'].' AND torrent_id='.$torrent['id'].' AND peer_id='.$peerSelf['peer_id'];
+			execute($sql);//更新完成记录的完成时间与完成标记
+			$updateTorrentSql .= "finish_times=finish_times+1";//种子完成数加1
+			break;
+		case 'started'://新建一个任务或者任务由停止到开始会触发，暂停开始不会
+			if ($isSeeder)
+			{
+				$updateTorrentSql .= "seeder_count=seeder_count+1";//种子的peer数量加1
+			}
+			else
+			{
+				$updateTorrentSql .= "leecher_count=leecher_count+1";
+			}			
+			break;
+	}
+	$updateTorrentSql .= " WHERE torrent_id=".$torrent['id'];
+	execute($updateTorrentSql);
+}
+//判断用户是否可连接
+$connectable = fsockopen($ip, $_GET['port'], $errno, $errstr, 5);
+if ($connectable === FALSE)
+{
+	$connectable = 0;
+}
+else 
+{
+	$connectable = 1;
+}
+if (isset($_GET['event']) && $_GET['event'] === 'stopped')
+{
+	$sql = 'SELECT count(*) as count FROM peer WHERE user_id=:user_id';
+	$userPeerCount = query($sql, array(':user_id' => $userInfo['id']));
+	if (!empty($userPeerCount) && $userPeerCount[0]['count'] == 0)
+	{
+		$connectable = 2;//已经没有下载着的任务，为默认的2，表示“未知”。
 	}
 }
 
+//更新user数据
+$updateUserSql = "UPDATE user SET downloaded=downloaded+$downloadThis, uploaded=uploaded+$uploadThis, ";
+if ($isSeeder)
+{
+	$updateUserSql .= "seed_time=seed_time+$duration";
+}
+else 
+{
+	$updateUserSql .= "leech_time=leech_time+$duration";
+}
+$updateUserSql .= ", connectable=$connectable WHERE user_id=".$userInfo['id'];
+execute($updateUserSql);
 
+//只要不是stopped（会删除peer）,都要更新peer
+$isSeeder = (int)$isSeeder;
+$timenow = TIMENOW;
+//算速度，上边已经算了以MB/S的版本
+if ($uploadSpeed !== 0)
+{
+	$uploadSpeed = $_GET['uploaded']/$duration;//直接存原始的以字节为单位的，取时再格式化，这里不做过多判断
+}
+if (!isset($_GET['event']) || $_GET['event'] !== 'stopped')
+{
+	$peerField = '';//先存好，看更新还是插入
+	$peerValue = '';
+	if ($isFirstRequest)
+	{
+		//第一请求，插入peer
+		$sql = 'INSERT INTO peer (torrent_id, peer_id, ip, port, uploaded, downloaded, left, is_seeder, start_time, last_report_time, user_id, connectable, agent, passkey, upload_speed, download_speed, connect_time) VALUES (';
+		$sql .= "{$torrent['id']}, {$_GET['peer_id']}, $ip, {$_GET['port']}, $uploadThis, $downloadThis, {$_GET['left']}, $isSeeder, $timenow, $timenow, {$userInfo['id']}, $connectable, $agent, {$_GET['passkey']}, $uploadSpeed, $downloadSpeed, $duration)";
+	}
+}		
+
+
+//更新snatch
 
 
 

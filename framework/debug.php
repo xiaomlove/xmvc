@@ -1,6 +1,6 @@
 <?php
 
-$a = '1';
-$b = '2';
+$a = array('a'=>1);
+$b = array('b'=>2);
 
-echo var_dump($a + $b);
+echo "{$a['a']}+{$b['b']}";
