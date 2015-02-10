@@ -278,7 +278,7 @@ unset($peer);
 $returnDict = BEncode::encode($return);
 if (empty($returnDict))
 {
-	trigger_error('encode返回信息出错', E_USER_ERROR);
+	trigger_error('announce encode error', E_USER_ERROR);
 	exit();
 }
 
@@ -331,8 +331,9 @@ if (isset($_GET['event']))
 			}
 			break;
 		case 'complete'://下载完成会友触发
-			$sql = 'UPDATE snatch SET complete_time='.TIMENOW.',is_completed=1 WHERE user_id='.$userInfo['id'].' AND torrent_id='.$torrent['id'].' AND peer_id='.$peerSelf['peer_id'];
-			execute($sql);//更新完成记录的完成时间与完成标记
+// 			$sql = 'UPDATE snatch SET complete_time='.TIMENOW.',is_completed=1 WHERE user_id='.$userInfo['id'].' AND torrent_id='.$torrent['id'].' AND peer_id='.$peerSelf['peer_id'];
+// 			execute($sql);//更新完成记录的完成时间与完成标记
+			$isCompleted = TRUE;//完成标记，后面连接到更新的字段中
 			$updateTorrentSql .= "finish_times=finish_times+1";//种子完成数加1
 			break;
 		case 'started'://新建一个任务或者任务由停止到开始会触发，暂停开始不会
@@ -363,7 +364,7 @@ if (isset($_GET['event']) && $_GET['event'] === 'stopped')
 {
 	$sql = 'SELECT count(*) as count FROM peer WHERE user_id=:user_id';
 	$userPeerCount = query($sql, array(':user_id' => $userInfo['id']));
-	if (!empty($userPeerCount) && $userPeerCount[0]['count'] == 0)
+	if ($userPeerCount[0]['count'] == 0)
 	{
 		$connectable = 2;//已经没有下载着的任务，为默认的2，表示“未知”。
 	}
@@ -382,7 +383,7 @@ else
 $updateUserSql .= ", connectable=$connectable WHERE user_id=".$userInfo['id'];
 execute($updateUserSql);
 
-//只要不是stopped（会删除peer）,都要更新peer。peer表和snatch表基本一致，peer多了passkey、is_seeder两个字段而已。UPDATE：保持一致吧，是否完成通过is_seeder判断
+//只要不是stopped（会删除peer）,都要更新peer。peer表和snatch表基本一致，peer多了passkey、is_seeder两个字段而已。UPDATE：保持一致吧，是否完成通过is_seeder判断，对了，多一个complete_time（完成时间）
 $isSeeder = (int)$isSeeder;
 $timenow = TIMENOW;
 
@@ -399,6 +400,10 @@ if (!isset($_GET['event']) || $_GET['event'] !== 'stopped')
 $sql = 'INSERT INTO snatch (torrent_id, torrent_size, peer_id, ip, port, uploaded, downloaded, left, is_seeder, start_time, last_report_time, this_report_time, user_id, connectable, agent, passkey, upload_speed, download_speed, connect_time) VALUES (';
 $sql .= "{$torrent['id']}, {$torrent['size']}, {$_GET['peer_id']}, $ip, {$_GET['port']}, $uploadThis, $downloadThis, {$_GET['left']}, $isSeeder, $timenow, $timenow, $timenow, {$userInfo['id']}, $connectable, $agent, {$_GET['passkey']}, $uploadSpeed, $downloadSpeed, $duration) ";
 $sql .= "ON DUMPLICATE KEY UPDATE ip=$ip,port={$_GET['port']},uploaded=uploaded+$uploadThis,downloaded=download+$downloadThis,left={$_GET['left']},is_seeder=$isSeeder,last_report_time=this_report_time,this_report_time=$timenow,connectable=$connectable,agent=$agent,upload_speed=$uploadSpeed,download_speed=$downloadSpeed,connect_time=connect_time+$duration";
+if (isset($isCompleted) && $isCompleted)
+{
+	$sql .= ",complete_time=$timenow";//完成时间
+}
 execute($sql);
 
 //the last step，返回peer信息！
