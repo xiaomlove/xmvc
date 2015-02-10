@@ -12,35 +12,9 @@ if (defined('DEBUG') && DEBUG)
 	ini_set('log_errors', 'On');
 	ini_set('error_log', 'announce_error_log');
 }
-//0、引入必须的BEncode类，定义返回错误信息的函数
+//0、引入必须的辅助函数文件，里边引入了必须的BEncode类
 define('TIMENOW', $_SERVER['REQUEST_TIME']);
-require 'framework/lib/BEncode.php';
-function error($msg, $notError = FALSE)
-{
-	if (!$notError)
-	{
-		$out = BEncode::encode(array(
-				'isDict' => TRUE,
-				'failure reason' => $msg,
-		));
-	}
-	else
-	{
-		$out = $msg;//用于最后输出正确的返回信息
-	}
-	header('Content-Type: text/plain; charset = utf-8');
-	header("Pragma: no-cache");
-	if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && $_SERVER['HTTP_ACCEPT_ENCODING'] === 'gzip' && function_exists('gzencode'))
-	{
-		header("Content-Encoding: gzip");
-		echo gzencode($out, 9, FORCE_GZIP);
-	}
-	else 
-	{
-		echo $out;
-	}
-	exit();
-}
+require 'framework/lib/announce_functions.php';
 
 //1、检查参数是否齐全以及合法，$_GET传递过来的都是字符串类型
 if (!isset($_GET['passkey']) || strlen($_GET['passkey']) !== 32)
@@ -107,24 +81,7 @@ else
 /*--------------------------典型参数检测完毕-----------------------*/
 
 //2、检测是否浏览器访问以及是否GET方式
-if(!isset($_SERVER['HTTP_USER_AGENT']))
-{
-	error('no agent');
-}
-if(!isset($_SERVER['REQUEST_METHOD']) || $_SERVER['REQUEST_METHOD'] !== 'GET')
-{
-	error('not get request');
-}
-$agent = $_SERVER['HTTP_USER_AGENT'];
-$browserKeyWords = array('MSIE', 'Trident', 'Chrome', 'Firefox', 'Chromium', 'Android', 'Safari', 'Opera', 'microsoft internet explorer');
-foreach ($browserKeyWords as $key)
-{
-	if (stripos($agent, $key) !== FALSE)
-	{
-		error('browser detect');
-	}
-}
-unset($key);
+$agent = denyBrowser();
 
 //3、检测ip地址，无法获取ip直接退出
 $ip = 'unknown';
@@ -150,73 +107,7 @@ if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === FALSE)
 }
 
 //4、常规检测完毕，引入配置文件，连接数据库，定义增删改、查函数
-$config = require 'application/protected/config/config.php';
-$dbConfig = $config['database'];
-try
-{
-	$pdo = new PDO($dbConfig['connectionString'], $dbConfig['username'], $dbConfig['password']);
-}
-catch (PDOException $e)
-{
-	trigger_error('数据库连接错误：'.$e->getMessage());
-}
-$pdo->exec('SET NAMES '.$dbConfig['charset']);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
-/**
- * 用于select操作，返回所有记录二维索引数组
- * @param unknown $sql
- * @param unknown $options
- * @return multitype:
- */
-function query($sql, $options = array())
-{
-	global $pdo;
-	$stat = $pdo->prepare($sql);
-	if ($stat === FALSE)
-	{
-		trigger_error('pdo prepare error:'.$sql, E_USER_ERROR);
-		exit();
-	}
-	$result = $stat->execute($options);
-	if ($result)
-	{
-		return $stat->fetchAll(PDO::FETCH_ASSOC);
-	}
-	else
-	{
-		trigger_error('pdo execute error:'.$sql, E_USER_ERROR);
-		exit();
-	}
-}
-/**
- * 执行insert操作，返回最后记录的id；执行update/delete操作，返回受影响的记录数
- * @param unknown $sql
- * @return string|number
- */
-function execute($sql)
-{
-	global $pdo;
-	$result = $pdo->exec($sql);
-	if ($result !== FALSE)
-	{
-		if (stripos($sql, 'INSERT') !== FALSE)
-		{
-			//插入操作
-			return $pdo->lastInsertId();
-		}
-		else
-		{
-			return $result;
-		}
-	}
-	else
-	{
-		trigger_error('pdo exec error:'.$sql, E_USER_ERROR);
-		exit();
-	}
-	
-}
+$pdo = connectDB();
 
 //5、验证passkey，获得个人信息
 $sql = 'SELECT id, downloaded, uploaded, seed_time, leech_time, is_banned, is_hang_up, use_banned_client FROM user WHERE passkey=:passkey LIMIT 1';
@@ -287,8 +178,8 @@ else
 }
 
 $torrentPeerNum = intval($torrent['seeder_count']) + intval($torrent['leecher_count']);//种子中记录的peers数量
-$sql = 'SELECT is_seeder, peer_id, ip, port, downloaded, uploaded, left, start_time, last_report_time, connect_time FROM peer WHERE torrent_id=:torrent_id';
-$peerSelf = query($sql.' AND user_id=:user_id AND peer_id=:peer_id LIMIT 1', array(':torrent_id' => $torrent['id'], ':user_id' => $userInfo['id'], ':peer_id' => $_GET['peer_id']));
+$sql = 'SELECT is_seeder, peer_id, ip, port, downloaded, uploaded, left, start_time, this_report_time, connect_time FROM peer WHERE torrent_id=:torrent_id';
+$peerSelf = query($sql.' AND user_id=:user_id LIMIT 1', array(':torrent_id' => $torrent['id'], ':user_id' => $userInfo['id']));
 if (empty($peerSelf))
 {
 	$isFirstRequest = TRUE;//是客户端第一次请求，peer表中没有记录
@@ -299,20 +190,21 @@ else
 	$isFirstRequest = FALSE;
 	$peerSelf = $peerSelf[0];
 	//不是第一次请求，看一下时间间隔是否太小
-	if (TIMENOW - $peerSelf['last_report_time'] < 30)
+	if (TIMENOW - $peerSelf['this_report_time'] < 30)
 	{
 		error('min interval 30s');
 	}
-	//再看是否重复下载：peer_id跟数据库不同又不是做种者
-	if ($peerSelf['peer_id'] !== $_GET['peer_id'] && !$isSeeder)
+	//再看是否重复下载：peer_id跟数据库不相同又不是做种者。感觉有时任务删除没能同步过来把peer删除，会有点问题。所以加上时间，如果已有
+	//peer 24小时不活动，就不算重复了。下边插入时直接更新原有peer。
+	if ($peerSelf['peer_id'] !== $_GET['peer_id'] && !$isSeeder && (TIMENOW-$peerSelf['this_report_time']<3600*24))
 	{
 		error('already downloading this torrent');
 	}
 	if ($isSeeder)
 	{
 		//即使做种，也不能同时多于3处做
-		$sql = 'SELECT count(*) as count FROM peer WHERE user_id=:user_id AND torrent_id=:torrent_id';
-		$seedPlaces = query($sql, array(':user_id' => $userInfo['id'], ':torrent_id' => $torrent['id']));
+		$checkPlacessql = 'SELECT count(*) as count FROM peer WHERE user_id=:user_id AND torrent_id=:torrent_id';
+		$seedPlaces = query($checkPlacessql, array(':user_id' => $userInfo['id'], ':torrent_id' => $torrent['id']));
 		if (!empty($seedPlaces) && $seedPlaces[0]['count'] > 3)
 		{
 			error('do not seed one torrent more than 3 places');
@@ -395,7 +287,7 @@ if (!$isFirstRequest)
 {
 	$uploadThis = max(0, $_GET['uploaded'] - $peerSelf['uploaded']);
 	$downloadThis = max(0, $_GET['downloaded'] - $peerSelf['downloaded']);
-	$duration = TIMENOW - $peerSelf['last_report_time'];
+	$duration = TIMENOW - $peerSelf['this_report_time'];
 	$uploadSpeed = $uploadThis/$duration;//上传速度，单位MB/秒
 	$downloadSpeed = $downloadThis/$duration;
 	if ($uploadSpeed/1024/1024 > 100)
@@ -458,7 +350,7 @@ if (isset($_GET['event']))
 	execute($updateTorrentSql);
 }
 //判断用户是否可连接
-$connectable = fsockopen($ip, $_GET['port'], $errno, $errstr, 5);
+$connectable = fsockopen($ip, $_GET['port'], $errno, $errstr, 3);
 if ($connectable === FALSE)
 {
 	$connectable = 0;
@@ -490,25 +382,27 @@ else
 $updateUserSql .= ", connectable=$connectable WHERE user_id=".$userInfo['id'];
 execute($updateUserSql);
 
-//只要不是stopped（会删除peer）,都要更新peer
+//只要不是stopped（会删除peer）,都要更新peer。peer表和snatch表基本一致，peer多了passkey、is_seeder两个字段而已。UPDATE：保持一致吧，是否完成通过is_seeder判断
 $isSeeder = (int)$isSeeder;
 $timenow = TIMENOW;
 
 if (!isset($_GET['event']) || $_GET['event'] !== 'stopped')
 {
-	$peerField = '';//先存好，看更新还是插入
-	$peerValue = '';
-	if ($isFirstRequest)
-	{
-		//第一请求，插入peer
-		$sql = 'INSERT INTO peer (torrent_id, peer_id, ip, port, uploaded, downloaded, left, is_seeder, start_time, last_report_time, user_id, connectable, agent, passkey, upload_speed, download_speed, connect_time) VALUES (';
-		$sql .= "{$torrent['id']}, {$_GET['peer_id']}, $ip, {$_GET['port']}, $uploadThis, $downloadThis, {$_GET['left']}, $isSeeder, $timenow, $timenow, {$userInfo['id']}, $connectable, $agent, {$_GET['passkey']}, $uploadSpeed, $downloadSpeed, $duration)";
-	}
+	//第一次请求，是插入peer，但有可能之前下载过，后面停止或者删除或者退出客户端时由于某种原因没有删除peer。那上边判断是看已存在peer最后活动时间，所以这里有就更新，没有就插入即可
+	$sql = 'INSERT INTO peer (torrent_id, torrent_size, peer_id, ip, port, uploaded, downloaded, left, is_seeder, start_time, last_report_time, this_report_time, user_id, connectable, agent, passkey, upload_speed, download_speed, connect_time) VALUES (';
+	$sql .= "{$torrent['id']}, {$torrent['size']}, {$_GET['peer_id']}, $ip, {$_GET['port']}, $uploadThis, $downloadThis, {$_GET['left']}, $isSeeder, $timenow, $timenow, $timenow, {$userInfo['id']}, $connectable, $agent, {$_GET['passkey']}, $uploadSpeed, $downloadSpeed, $duration) ";
+	$sql .= "ON DUMPLICATE KEY UPDATE ip=$ip,port={$_GET['port']},uploaded=uploaded+$uploadThis,downloaded=download+$downloadThis,left={$_GET['left']},is_seeder=$isSeeder,last_report_time=this_report_time,this_report_time=$timenow,connectable=$connectable,agent=$agent,upload_speed=$uploadSpeed,download_speed=$downloadSpeed,connect_time=connect_time+$duration";
+	execute($sql);
 }		
 
-
 //更新snatch
+$sql = 'INSERT INTO snatch (torrent_id, torrent_size, peer_id, ip, port, uploaded, downloaded, left, is_seeder, start_time, last_report_time, this_report_time, user_id, connectable, agent, passkey, upload_speed, download_speed, connect_time) VALUES (';
+$sql .= "{$torrent['id']}, {$torrent['size']}, {$_GET['peer_id']}, $ip, {$_GET['port']}, $uploadThis, $downloadThis, {$_GET['left']}, $isSeeder, $timenow, $timenow, $timenow, {$userInfo['id']}, $connectable, $agent, {$_GET['passkey']}, $uploadSpeed, $downloadSpeed, $duration) ";
+$sql .= "ON DUMPLICATE KEY UPDATE ip=$ip,port={$_GET['port']},uploaded=uploaded+$uploadThis,downloaded=download+$downloadThis,left={$_GET['left']},is_seeder=$isSeeder,last_report_time=this_report_time,this_report_time=$timenow,connectable=$connectable,agent=$agent,upload_speed=$uploadSpeed,download_speed=$downloadSpeed,connect_time=connect_time+$duration";
+execute($sql);
 
+//the last step，返回peer信息！
+error($returnDict, TRUE);
 
 
 
