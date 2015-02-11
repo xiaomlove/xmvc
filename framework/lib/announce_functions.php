@@ -90,6 +90,12 @@ function connectDB()
  */
 function query($sql, $options = array())
 {
+	$fopen = fopen('sql_log', 'a');
+	$time = date('Y-m-d H:i:s');
+	fwrite($fopen, $time.'--'.serialize($sql)."\r\n");
+	fwrite($fopen, '--options:'.serialize($options)."\r\n");
+	fwrite($fopen, '----------------------------------------------------'."\r\n");
+	fclose($fopen);
 	global $pdo;
 	$stat = $pdo->prepare($sql);
 	if ($stat === FALSE)
@@ -116,6 +122,12 @@ function query($sql, $options = array())
 function execute($sql)
 {
 	global $pdo;
+	$fopen = fopen('sql_log', 'a');
+	$time = date('Y-m-d H:i:s');
+	fwrite($fopen, $time.'--'.serialize($sql)."\r\n");
+//	fwrite($fopen, '--options:'.serialize($options)."\r\n");
+	fwrite($fopen, '----------------------------------------------------'."\r\n");
+	fclose($fopen);
 	$result = $pdo->exec($sql);
 	if ($result !== FALSE)
 	{

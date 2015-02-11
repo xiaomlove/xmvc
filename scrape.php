@@ -11,11 +11,11 @@ require 'framework/lib/announce_functions.php';
 $agent = denyBrowser();
 
 //请求scrape只会发送passkey和info_hash
-if (!isset($_GET['passkey']) || strlen($_GET['passkey'] !== 32))
+if (!isset($_GET['passkey']) || strlen($_GET['passkey']) !== 32)
 {
 	error('error passkey');
 }
-if (isset($_GET['info_hash']) && strlen(urldecode($_GET['info_hash']) !== 20))
+if (isset($_GET['info_hash']) && strlen($_GET['info_hash']) !== 20)
 {
 	error('error info_hash');//这个参数有可能没有传递？
 }
@@ -25,7 +25,7 @@ $fields = 'info_hash, finish_times, seeder_count, leecher_count';
 $sql = "SELECT $fields FROM torrent ";
 if (isset($_GET['info_hash']))
 {
-	$unpack = unpack('H*', urldecode($_GET['info_hash']));
+	$unpack = unpack('H*', $_GET['info_hash']);
 	$info_hash = $unpack[1];
 	$sql .= "WHERE info_hash=:info_hash";
 	$option = array(':info_hash' => $info_hash);
