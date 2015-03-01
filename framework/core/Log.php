@@ -33,7 +33,7 @@ final class Log
 	}
 	public static function errorCatch($level, $msg, $file, $line)
 	{
-		self::$_errors[] = array('level'=>self::$_error_constant[$level], 'msg'=>$msg, 'file'=>$file, 'line'=>$line, 'backTrace'=>debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
+		self::$_errors[] = array('level'=>self::$_error_constant[$level], 'msg'=>$msg, 'file'=>$file, 'line'=>$line, 'backTrace'=>debug_backtrace());
 // 		die();不应该手动停止，由程序错误到一定程度自动停止
 	}
 	

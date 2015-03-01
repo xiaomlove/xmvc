@@ -408,7 +408,7 @@ if (!isset($_GET['event']) || $_GET['event'] !== 'stopped')
 $sql = 'INSERT INTO snatch (torrent_id, torrent_size, peer_id, ip, port, uploaded, downloaded, `left`, is_seeder, start_time, last_report_time, this_report_time, user_id, connectable, agent, passkey, upload_speed, download_speed, connect_time) VALUES (';
 $sql .= "{$torrent['id']}, {$torrent['size']}, '{$_GET['peer_id']}', '$ip', {$_GET['port']}, $uploadThis, $downloadThis, {$_GET['left']}, $isSeeder, $timenow, $timenow, $timenow, {$userInfo['id']}, $connectable, '$agent', '{$_GET['passkey']}', $uploadSpeed, $downloadSpeed, $duration) ";
 $sql .= "ON DUPLICATE KEY UPDATE ip='$ip',port={$_GET['port']},uploaded=uploaded+$uploadThis,downloaded=downloaded+$downloadThis,`left`={$_GET['left']},is_seeder=$isSeeder,last_report_time=this_report_time,this_report_time=$timenow,connectable=$connectable,agent='$agent',upload_speed=$uploadSpeed,download_speed=$downloadSpeed,connect_time=connect_time+$duration";
-if (isset($isCompleted) && $isCompleted)
+if ((isset($isCompleted) && $isCompleted))
 {
 	$sql .= ",complete_time=$timenow";//完成时间
 }

@@ -28,6 +28,7 @@ return array(
 			'torrent/list/<perpage>/<page:\d+>'=>'torrent/list',
 			'error'=>'index/error',
 			'download'=>'torrent/download',
+			'comment/add'=>'comment/add',
 			'user/name/<name:.+>/age/<age:\d+>'=>'user/filter',
 			'user/sex/<sex:.+>'=>'user/filter',
 			'user/year/<year>'=>array('user/filter', 'urlSuffix'=>'.shtml'),

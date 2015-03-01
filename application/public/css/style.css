@@ -32,6 +32,7 @@
 #submit {margin-top: 10px;}
 #expression {overflow: hidden}
 #expression img{cursor: pointer;}
+#comment {text-align:left;height: 100px}
 .comment-foot {height: 25px; line-height: 25px}
 .comment-foot .social{text-align: center;}
 .comment-foot .social span{margin-left: 15px;}
