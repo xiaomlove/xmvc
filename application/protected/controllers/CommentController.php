@@ -1,5 +1,5 @@
 <?php
-class CommentController extends Controller
+class CommentController extends CommonController
 {
 	public function actionAdd()
 	{
@@ -57,12 +57,24 @@ class CommentController extends Controller
 			$per = 8;//每页显示8条评论
 			$offset = ($page-1)*$per;
 			$model = CommentModel::model();
-			$comments = $model->where('torrent_id=:torrentId', array(':torrentId' => $_GET['torrentId']))->limit("$offset, $per")->select();
-			if (empty($comments))
+// 			$comments = $model->where('torrent_id=:torrentId', array(':torrentId' => $_GET['torrentId']))->limit("$offset, $per")->select();
+			$navHtml = 0;
+			$total = 0;
+			if (!isset($_GET['notFirst']))
 			{
-				echo json_encode(array('code' => 0, 'msg' => '暂无评论'));exit;
+				$count = $model->where('torrent_id=:torrentId', array(':torrentId' => $_GET['torrentId']))->count();
+				if ($count === 0)
+				{
+					echo json_encode(array('code' => 0, 'msg' => '暂无评论'));exit;
+				}
+				$total = ceil($count/$per);
+				$navHtml = $this->getAjaxNavHtml($per, $total);
 			}
-			$html = $this->renderPartial('comment', array('comments' => $comments));
+			
+			$sql = "SELECT a.*, b.name FROM comment as a LEFT JOIN user as b ON a.user_id = b.id WHERE a.torrent_id = :torrentId ORDER BY a.floor ASC LIMIT $offset, $per";
+			$comments = $model->findBySql($sql, array(':torrentId' => $_GET['torrentId']));
+			
+			$html = $this->renderPartial('comment', array('comments' => $comments, 'navHtml' => $navHtml, 'total' => $total));
 			echo json_encode(array('code' => 1, 'msg' => $html));
 		}
 	}

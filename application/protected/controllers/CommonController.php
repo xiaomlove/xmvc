@@ -266,4 +266,33 @@ class CommonController extends Controller
 			readfile($file);
 		}
 	}
+	
+	protected function getAjaxNavHtml($per, $total)
+	{
+		$HTML = '<ul class="pagination">';
+		$HTML .= '<li class="disabled"><a class="prev"><span aria-hidden="true">&laquo;</span></a></li>';
+		for ($i = 1; $i <= $total; $i++)
+		{
+			if ($i === 1)
+			{
+				$class = ' class="active"';
+			}
+			else
+			{
+				$class = '';
+			}
+			$HTML .= '<li'.$class.'><a><span aria-hidden="true">'.$i.'</span></a></li>';
+		}
+		if ($total === 1)
+		{
+			$class = ' class="disabled"';
+		}
+		else 
+		{
+			$class = '';
+		}
+		$HTML.= '<li'.$class.'><a class="next"><span aria-hidden="true">&raquo;</span></a></li>';
+		$HTML .= '</ul>';
+		return $HTML;
+	}
 }

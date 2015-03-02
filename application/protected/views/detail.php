@@ -51,10 +51,7 @@
       <h3 class="torrent-title" id="comment-title">评论加载中...</h3>
       <div id="comment-list">
       
-      
       </div>
-      
-      
       <h3 class="torrent-title" id="quick-comment">快速评论</h3>
       <form class="form-horizontal" role="form" id="upload-form">    
         <div class="form-group">
@@ -157,7 +154,7 @@
 			success: function(data){
 				if (data.code === 1){
 					$commentTitle.text("用户评论");
-					$commentTitle.after(data.msg);
+					$("#comment-list").html(data.msg);
 				}else{
 					$commentTitle.text(data.msg);
 				}
@@ -165,22 +162,42 @@
 		})
 	});
 
-	function getComment(){
-		$.ajax({
-			url: "comment/list",
-			type: "GET",
-			dataType: "json",
-			data: "torrentId="+$("#torrentId").val(),
-			success: function(data){
-				if (data.code === 1){
-					$commentTitle.text("用户评论");
-					$commentTitle.after(data.msg);
-				}else{
-					$commentTitle.text(data.msg);
-				}
+		$("#comment-list").on("click", ".comment-list-nav a", function(e){
+			var $parent = $(this).parent();
+// 			var $pagination = $parent.parent();
+			var total = $("#comment-total").val();
+			if ($parent.hasClass("disabled")){
+				return;
 			}
-		})
-	}
-	
-
+			var page = $(this).parents(".pagination").children(".active").find("span").text();
+			var $newPage;
+			if ($(this).hasClass("prev")){
+				page = parseInt(page)-1;
+				$newPage = $parent.prev();
+			}else if($(this).hasClass("next")){
+				page = parseInt(page)+1;
+				$newPage = $parent.next();
+			}else{
+				page = $(this).children("span").text();
+				$newPage = $parent;
+			} 
+			 $.ajax({
+					url: "comment/list",
+					type: "GET",
+					dataType: "json",
+					data: "torrentId="+$("#torrentId").val()+"&page="+page+"&notFirst=1",
+					success: function(data){
+						if (data.code === 1){
+							$newPage.parent().children().removeClass("active");
+							$newPage.addClass("active");
+							if (page == total){
+								$newPage.next().attr("disabled", "disabled");
+							}else if(page == "1"){
+								$newPage.prev().attr("disabled", "disabled");
+							}
+							$("#comment-item").html(data.msg);
+						}
+					}
+			})
+	 })
  </script>
