@@ -26,7 +26,7 @@ class CommonController extends Controller
 		$this->redirect('index/error');exit;
 	}
 	
-	protected function getTorrentTTL($time, $delimiter = '<br/>')
+	protected function getTTL($time, $delimiter = '<br/>')
 	{
 		if(empty($time))
 		{
@@ -34,7 +34,7 @@ class CommonController extends Controller
 		}
 		if(!ctype_digit($time))
 		{
-			trigger_error('getTorrentTTL()只接收时间戳', E_USER_NOTICE);
+			trigger_error('getTTL()只接收时间戳', E_USER_NOTICE);
 		}
 		$d = time() - intval($time);//过去了这么多秒
 		$out = '';
@@ -71,7 +71,7 @@ class CommonController extends Controller
 		return $out;
 	}
 	
-	protected function getTorrentSize($size)
+	protected function getSize($size)
 	{
 		if(empty($size))
 		{
@@ -79,7 +79,7 @@ class CommonController extends Controller
 		}
 		if(!ctype_digit($size))
 		{
-			trigger_error('getTorrentSize()只接收正整数', E_USER_NOTICE);
+			trigger_error('getSize()只接收正整数', E_USER_NOTICE);
 		}
 		if($size <= 1024)//不足1KB
 		{

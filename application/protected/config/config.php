@@ -29,6 +29,7 @@ return array(
 			'error'=>'index/error',
 			'download'=>'torrent/download',
 			'comment/add'=>'comment/add',
+			'comment/list'=>'comment/list',
 			'user/name/<name:.+>/age/<age:\d+>'=>'user/filter',
 			'user/sex/<sex:.+>'=>'user/filter',
 			'user/year/<year>'=>array('user/filter', 'urlSuffix'=>'.shtml'),

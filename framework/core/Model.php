@@ -266,10 +266,13 @@ abstract class Model
 		}
 		return $this;
 	}
-	
+	/**
+	 * Enter description here ...
+	 * @param  $limit limit后面的数字,字符串("0,5")或者整数（1）都可以
+	 */
 	private function limit($limit)
 	{
-		if(ctype_digit(strval($limit)) && !empty($limit) && empty($this->limit))
+		if(!empty($limit) && empty($this->limit))
 		{
 			$this->limit = $limit;
 		}

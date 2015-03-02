@@ -54,14 +54,16 @@ class CommentController extends Controller
 				echo json_encode(array('code' => -1, 'msg' => '参数不全'));exit;
 			}
 			$page = empty($_GET['page']) ? 1 : $_GET['page'];
-			$offset = ($page-1)*10;//每页显示10条评论
+			$per = 8;//每页显示8条评论
+			$offset = ($page-1)*$per;
 			$model = CommentModel::model();
-			$comments = $model->where('torrent_id=:torrentId', array(':torrentId' => $_GET['torrentId']))->limit("LIMIT $offset, $page")->select();
+			$comments = $model->where('torrent_id=:torrentId', array(':torrentId' => $_GET['torrentId']))->limit("$offset, $per")->select();
 			if (empty($comments))
 			{
 				echo json_encode(array('code' => 0, 'msg' => '暂无评论'));exit;
 			}
 			$html = $this->renderPartial('comment', array('comments' => $comments));
+			echo json_encode(array('code' => 1, 'msg' => $html));
 		}
 	}
 }

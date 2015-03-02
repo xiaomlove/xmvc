@@ -20,8 +20,8 @@
           <tr>
             <td><a href="<?php echo $this->createUrl('torrent/detail', array('id' => $v['id']))?>"><?php echo $v['main_title']."<br/>".$v['slave_title']?></a></td>
             <td><?php echo date('Y-m-d', $v['add_time'])."<br/>".date('H:i:s', $v['add_time'])?></td>
-            <td><?php echo $this->getTorrentTTL($v['add_time'], '<br/>')?></td>
-            <td><?php echo $this->getTorrentSize($v['size'])?></td>
+            <td><?php echo $this->getTTL($v['add_time'], '<br/>')?></td>
+            <td><?php echo $this->getSize($v['size'])?></td>
             <td title="做种"><?php echo $v['seeder_count']?></td>
             <td title="下载"><?php echo $v['leecher_count']?></td>
             <td title="完成"><?php echo $v['finish_times']?></td>

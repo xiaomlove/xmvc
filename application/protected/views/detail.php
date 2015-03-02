@@ -17,7 +17,7 @@
           </tr>
           <tr>
             <td>基本信息</td>
-            <td>大小：<span class="text-success"><?php echo $this->getTorrentSize($torrent['size'])?></span>类型：<span class="text-success">Movie</span></td>
+            <td>大小：<span class="text-success"><?php echo $this->getSize($torrent['size'])?></span>类型：<span class="text-success">Movie</span></td>
           </tr>
           <tr>
             <td>行为</td>
@@ -48,14 +48,14 @@
         </tbody>
       </table>
       
+      <h3 class="torrent-title" id="comment-title">评论加载中...</h3>
+      <div id="comment-list">
       
       
-      <h3 class="torrent-title">用户评论</h3>
+      </div>
       
       
-      
-      
-      <h3 class="torrent-title">快速评论</h3>
+      <h3 class="torrent-title" id="quick-comment">快速评论</h3>
       <form class="form-horizontal" role="form" id="upload-form">    
         <div class="form-group">
           
@@ -144,7 +144,43 @@
 			}
 		})
 		
-	})
+	});
+
+
+	$(document).ready(function(){
+		var $commentTitle = $("#comment-title");
+		$.ajax({
+			url: "comment/list",
+			type: "GET",
+			dataType: "json",
+			data: "torrentId="+$("#torrentId").val(),
+			success: function(data){
+				if (data.code === 1){
+					$commentTitle.text("用户评论");
+					$commentTitle.after(data.msg);
+				}else{
+					$commentTitle.text(data.msg);
+				}
+			}
+		})
+	});
+
+	function getComment(){
+		$.ajax({
+			url: "comment/list",
+			type: "GET",
+			dataType: "json",
+			data: "torrentId="+$("#torrentId").val(),
+			success: function(data){
+				if (data.code === 1){
+					$commentTitle.text("用户评论");
+					$commentTitle.after(data.msg);
+				}else{
+					$commentTitle.text(data.msg);
+				}
+			}
+		})
+	}
 	
 
  </script>
