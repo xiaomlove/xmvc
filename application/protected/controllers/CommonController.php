@@ -283,7 +283,7 @@ class CommonController extends Controller
 			}
 			$HTML .= '<li'.$class.'><a><span aria-hidden="true">'.$i.'</span></a></li>';
 		}
-		if ($total === 1)
+		if ($total == 1)
 		{
 			$class = ' class="disabled"';
 		}

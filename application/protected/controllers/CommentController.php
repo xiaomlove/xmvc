@@ -5,7 +5,7 @@ class CommentController extends CommonController
 	{
 		if (App::ins()->request->isPost())
 		{
-			if (empty($_POST['torrentId']) || empty($_POST['comment']))
+			if (empty($_POST['torrentId']) || empty($_POST['comment']) || empty($_POST['floor']))
 			{
 				echo json_encode(array('code' => -1, 'msg' => '参数不全'));exit;
 			}
@@ -33,6 +33,7 @@ class CommentController extends CommonController
 			$comment->path = $path;
 			$comment->level = $level;
 			$comment->content = $_POST['comment'];
+			$comment->floor = $_POST['floor'];
 			$result = $comment->save();
 			if (!empty($result))
 			{
@@ -54,12 +55,12 @@ class CommentController extends CommonController
 				echo json_encode(array('code' => -1, 'msg' => '参数不全'));exit;
 			}
 			$page = empty($_GET['page']) ? 1 : $_GET['page'];
-			$per = 8;//每页显示8条评论
+			$per = 5;//每页显示8条评论
 			$offset = ($page-1)*$per;
 			$model = CommentModel::model();
-// 			$comments = $model->where('torrent_id=:torrentId', array(':torrentId' => $_GET['torrentId']))->limit("$offset, $per")->select();
 			$navHtml = 0;
 			$total = 0;
+			$count = 0;
 			if (!isset($_GET['notFirst']))
 			{
 				$count = $model->where('torrent_id=:torrentId', array(':torrentId' => $_GET['torrentId']))->count();
@@ -74,7 +75,7 @@ class CommentController extends CommonController
 			$sql = "SELECT a.*, b.name FROM comment as a LEFT JOIN user as b ON a.user_id = b.id WHERE a.torrent_id = :torrentId ORDER BY a.floor ASC LIMIT $offset, $per";
 			$comments = $model->findBySql($sql, array(':torrentId' => $_GET['torrentId']));
 			
-			$html = $this->renderPartial('comment', array('comments' => $comments, 'navHtml' => $navHtml, 'total' => $total));
+			$html = $this->renderPartial('comment', array('comments' => $comments, 'navHtml' => $navHtml, 'floor' => $count, 'page' => $total));
 			echo json_encode(array('code' => 1, 'msg' => $html));
 		}
 	}

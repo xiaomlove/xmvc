@@ -91,6 +91,28 @@
     <input type="hidden" id="torrentId" value="<?php echo $torrent['id']?>">
     <input type="hidden" id="baseUrl" value="<?php echo App::ins()->request->getBaseUrl()?>">
     <input type="hidden" id="username" value="<?php echo App::ins()->user->getName()?>">
+    <div id="tpl" style="display:none">
+   
+    <div class="item">
+        <h4 class="comment-head">#<span class="comment-floor">0</span><span class="text-primary comment-username">张三</span></h4>
+        <div class="clearfix">
+          <div class="col-xs-2 avatar">
+            <img src="application/public/images/avatar.jpg" class="img-responsive"/>
+          </div>
+          <div class="col-xs-10 comment-content">评论内容</div>
+        </div>
+        <div class="clearfix comment-foot">
+          <div class="col-xs-2 social">
+            <span class="text-danger">私信</span><span class="text-primary">加好友</span>
+          </div>
+          <div class="col-xs-10 action">
+            <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+            <span class="text-info">回复</span>
+            <span class="text-danger">举报</span>            
+          </div>
+        </div>
+      </div>
+    </div>
  <script src="<?php echo App::ins()->request->getBaseUrl()?>application/public/lib/ueditor/ueditor.parse.min.js"></script>
  <script>
  	uParse('#introduce', {
@@ -108,6 +130,7 @@
 		}
 	});
 	var $submit = $("#submit");
+	var maxFloor = 1;
 	$submit.click(function(e){
 		var comment = $("#comment").html();
 		var trim = $.trim(comment);
@@ -117,9 +140,13 @@
 			return;
 		}
 		var torrentId = $("#torrentId").val();
+		var $total = $("#comment-total");
+		if ($total.length){
+			maxFloor = parseInt($total.val())+1;
+		}
 		$.ajax({
 			url: "comment/add",
-			data: "torrentId="+torrentId+"&comment="+encodeURIComponent(comment),
+			data: "torrentId="+torrentId+"&comment="+encodeURIComponent(comment)+"&floor="+maxFloor,
 			type: "POST",
 			dataType: "json",
 			beforeSend: function(){$submit.text("添加中...").attr("disabled", "disabled")},
@@ -127,14 +154,21 @@
 				if (data.code === 1){
 					$submit.text("添加").removeAttr("disabled");
 					$("#comment").empty();
-					var $last = $(".item").last();
-					$new = $last.clone(true);
-					$new.find(".comment-floor").html(function(index, html){
-						return parseInt(html)+1;
-					});
+					var $new = $("#tpl").children().clone();
+					$new.find(".comment-floor").html(maxFloor);
+				
 					$new.find(".comment-username").text($("#username").val());
 					$new.find(".comment-content").html(comment);
-					$last.after($new);
+					if ($("#comment-item").length){
+						$("#comment-item").append($new);
+					}else{
+						$("#comment-list").append($new);
+					}
+					if ($total.length){
+						$total.val(maxFloor);
+					}else{
+						maxFloor++;
+					}
 				}else{
 					$submit.text(data.msg).removeAttr("disabled");
 				}
@@ -161,25 +195,21 @@
 			}
 		})
 	});
-
-		$("#comment-list").on("click", ".comment-list-nav a", function(e){
-			var $parent = $(this).parent();
-// 			var $pagination = $parent.parent();
-			var total = $("#comment-total").val();
-			if ($parent.hasClass("disabled")){
+	var $commentList = $("#comment-list");
+		$commentList.on("click", ".comment-list-nav a", function(e){
+			var $click = $(this).parent();
+			var total = $("#comment-page").val();
+			if ($click.hasClass("disabled")){
 				return;
 			}
-			var page = $(this).parents(".pagination").children(".active").find("span").text();
-			var $newPage;
+			var $page = $(this).parents(".pagination").children(".active:first");
+			var page = $page.find("span:first").text();
 			if ($(this).hasClass("prev")){
 				page = parseInt(page)-1;
-				$newPage = $parent.prev();
 			}else if($(this).hasClass("next")){
 				page = parseInt(page)+1;
-				$newPage = $parent.next();
 			}else{
-				page = $(this).children("span").text();
-				$newPage = $parent;
+				page = parseInt($(this).children("span").text());
 			} 
 			 $.ajax({
 					url: "comment/list",
@@ -188,13 +218,16 @@
 					data: "torrentId="+$("#torrentId").val()+"&page="+page+"&notFirst=1",
 					success: function(data){
 						if (data.code === 1){
-							$newPage.parent().children().removeClass("active");
-							$newPage.addClass("active");
-							if (page == total){
-								$newPage.next().attr("disabled", "disabled");
-							}else if(page == "1"){
-								$newPage.prev().attr("disabled", "disabled");
-							}
+							var $nav = $commentList.find(".comment-list-nav");
+							$nav.each(function(index, elem){
+								$(this).find("li").removeClass("active disabled");
+								$(this).find("li").eq(page).addClass("active");
+								if (page == total){
+									$(this).find("li").eq(page+1).attr("class", "disabled");
+								}else if(page == "1"){
+									$(this).find("li").eq(page-1).attr("class", "disabled");
+								}
+							});
 							$("#comment-item").html(data.msg);
 						}
 					}
