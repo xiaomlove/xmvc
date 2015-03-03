@@ -32,8 +32,8 @@
 .comment-content {border: 1px solid gray;padding: 5px}
 .comment-box {border:none}
 #submit {margin-top: 10px;}
-#expression {overflow: hidden}
-#expression img{cursor: pointer;}
+.expression {overflow: hidden}
+.expression img{cursor: pointer;}
 .comment {text-align:left;height: 100px}
 .comment-foot {height: 25px; line-height: 25px}
 .comment-foot .social{text-align: center;}

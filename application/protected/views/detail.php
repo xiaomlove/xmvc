@@ -50,23 +50,20 @@
       
       <h3 class="torrent-title" id="comment-title">评论加载中...</h3>
       <div id="comment-list">
-     <!--  
+     <!-- 
       	<div class="item">
         <h4 class="comment-head">#<span class="comment-floor">0</span><span class="text-primary comment-username">张三</span><span class="pull-right comment-add-time">2015-03-02</span></h4>
         <div class="clearfix">
           <div class="col-xs-2 avatar">
             <img src="application/public/images/avatar.jpg" class="img-responsive"/>
           </div>
+        
           <div class="col-xs-10 comment-box">
           	<div class="comment-content">
-          		<div class="comment-content">
-          		<h6>xxx&nbsp;&nbsp;的原贴</h6>
-          		评论内容
-          		</div>
-          		<h6>xxx&nbsp;&nbsp;的原贴</h6>
-          		评论内容
-          	</div>
-          	评论内容
+	          	<h6>来自1楼网友</h6>
+	         	1楼的内容
+         	</div>
+         	2楼在此
           </div>
         </div>
         <div class="clearfix comment-foot">
@@ -80,7 +77,8 @@
           </div>
         </div>
       </div>
-      -->
+     
+       -->
       </div>
    
    	<div id="submit-form">
@@ -95,7 +93,7 @@
         </div>
         <div class="form-group">
           <div class="col-sm-offset-3 col-sm-6 submit-btn">
-            <div id="expression">
+            <div class="expression">
               <img src="application/public/images/QQexpression/1.gif">
               <img src="application/public/images/QQexpression/2.gif">
               <img src="application/public/images/QQexpression/3.gif">
@@ -152,8 +150,8 @@
 	    rootPath: './'
 	});
 	
-	$("#expression").on("click", "img", function(e){
-		var $comment = $("#submit-form").find(".comment"), sel = window.getSelection(), range = document.createRange();
+	$("body").on("click", ".expression img", function(e){
+		var $comment = $(this).parents("form").find(".comment"), sel = window.getSelection(), range = document.createRange();
 		var focusNode = sel.focusNode, baseUrl = $("#baseUrl").val();
 		if ($(focusNode).hasClass("comment") || $(focusNode).parents(".comment").length){
 			range.setStart(focusNode, sel.focusOffset);
@@ -176,8 +174,15 @@
 		if($form.attr("data-parent")){
 			var $oldComment = $form.parent().find(".comment-box");
 			var addText = '<h6>'+$form.parents(".item").find(".comment-username").text()+'&nbsp;&nbsp的原贴</h6>';
-			$oldComment.removeClass().addClass("comment-content").prepend(addText);
-			comment = $oldComment.prop("outerHTML")+comment;
+			if ($oldComment.children(":first").hasClass("comment-content")){
+				$oldComment.children().after(addText);
+			}else{
+				$oldComment.prepend(addText);
+			}
+			
+			$oldComment.wrapInner("<div class=\"comment-content\"></div>");
+			
+			comment = $oldComment.html()+comment;
 		}
 		var torrentId = $("#torrentId").val();
 		var $total = $("#comment-total");
@@ -210,6 +215,7 @@
 					}else{
 						maxFloor++;
 					}
+					$form.remove();
 				}else{
 					$submit.text(data.msg).removeAttr("disabled");
 				}
