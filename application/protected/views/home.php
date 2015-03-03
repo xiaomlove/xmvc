@@ -1,5 +1,5 @@
 
- <h1 class="page-header">欢迎光临TinyPT</h1>
+ <h1 class="page-header">欢迎光临TinyHD</h1>
 <div class="row">
 	<div class="col-md-offset-3 col-md-6">
 		<table class="table table-bordered table-hover" id="profile">

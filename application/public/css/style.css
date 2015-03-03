@@ -11,7 +11,7 @@
 #torrent-list-table tr td:nth-of-type(1){width:50%;text-align:left}
 #torrent-list-nav, .comment-list-nav {text-align: center}
 
-#upload-form {margin-top: 20px;}
+.upload-form {margin-top: 20px;}
 .tracker-address {text-align: center;}
 .submit-btn {text-align: center;}
 
@@ -26,13 +26,15 @@
 #detail-table td:nth-of-type(2) {width: 90% !important; text-align: left;padding-left: 10px;}
 #upload-success-flash strong{box-shadow:0 0 10px red;}
 .comment-head {text-align: left; margin: 10px 0;}
-.item {margin: 20px 0;border: 1px solid #999;}
-.item .avatar, .comment-content {text-align: left;}
-
+#comment-item .item {margin: 20px 0;border-bottom: 1px dotted #999;}
+#comment-item .item .avatar, .comment-content, .comment-box {text-align: left;}
+#comment-item .item .action span {cursor: pointer}
+.comment-content {border: 1px solid gray;padding: 5px}
+.comment-box {border:none}
 #submit {margin-top: 10px;}
 #expression {overflow: hidden}
 #expression img{cursor: pointer;}
-#comment {text-align:left;height: 100px}
+.comment {text-align:left;height: 100px}
 .comment-foot {height: 25px; line-height: 25px}
 .comment-foot .social{text-align: center;}
 .comment-foot .social span{margin-left: 15px;}
@@ -40,7 +42,8 @@
 .comment-foot .action span {margin-left: 15px}
 .comment-list-nav a {cursor: pointer}
 
-#quick-comment{margin-top:50px}
+#comment-list .comment-list-nav:first-of-type {border-bottom: 1px dotted #999;}
+#quick-comment{margin-bottom:50px}
 
 #checkout-logout-modal .modal-body{padding:30px;text-align:center}
 #checkout-logout-modal .modal-footer{text-align:center}

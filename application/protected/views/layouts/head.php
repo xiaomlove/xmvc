@@ -5,7 +5,7 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>TinyPT | <?php echo $this->getPageTitle()?></title>
+  <title>TinyHD | <?php echo $this->getPageTitle()?></title>
 
   <link rel="stylesheet" href="<?php echo App::ins()->request->getBaseUrl()?>application/public/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="<?php echo App::ins()->request->getBaseUrl()?>application/public/css/style.css">

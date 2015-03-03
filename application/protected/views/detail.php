@@ -50,14 +50,46 @@
       
       <h3 class="torrent-title" id="comment-title">评论加载中...</h3>
       <div id="comment-list">
-      
+     <!--  
+      	<div class="item">
+        <h4 class="comment-head">#<span class="comment-floor">0</span><span class="text-primary comment-username">张三</span><span class="pull-right comment-add-time">2015-03-02</span></h4>
+        <div class="clearfix">
+          <div class="col-xs-2 avatar">
+            <img src="application/public/images/avatar.jpg" class="img-responsive"/>
+          </div>
+          <div class="col-xs-10 comment-box">
+          	<div class="comment-content">
+          		<div class="comment-content">
+          		<h6>xxx&nbsp;&nbsp;的原贴</h6>
+          		评论内容
+          		</div>
+          		<h6>xxx&nbsp;&nbsp;的原贴</h6>
+          		评论内容
+          	</div>
+          	评论内容
+          </div>
+        </div>
+        <div class="clearfix comment-foot">
+          <div class="col-xs-2 social">
+            <span class="text-danger">私信</span><span class="text-primary">加好友</span>
+          </div>
+          <div class="col-xs-10 action">
+            <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+            <span class="text-info">回复</span>
+            <span class="text-danger">举报</span>            
+          </div>
+        </div>
       </div>
+      -->
+      </div>
+   
+   	<div id="submit-form">
       <h3 class="torrent-title" id="quick-comment">快速评论</h3>
-      <form class="form-horizontal" role="form" id="upload-form">    
+      <form class="form-horizontal upload-form" role="form">    
         <div class="form-group">
           
           <div class="col-sm-offset-3 col-sm-6">
-            <div class="form-control" id="comment" contenteditable="true"></div>
+            <div class="form-control comment" contenteditable="true"></div>
             <textarea class="form-control" rows="4" name="comment" style="display: none"></textarea>
           </div>
         </div>
@@ -81,11 +113,12 @@
               <img src="application/public/images/QQexpression/15.gif">
               <img src="application/public/images/QQexpression/16.gif">
             </div>
-            <button type="button" class="btn btn-primary" id="submit">添加</button>
+            <button type="button" class="btn btn-primary submit">添加</button>
             
           </div>
         </div>
       </form>
+     </div>
       <?php endIf?>
     </div>
     <input type="hidden" id="torrentId" value="<?php echo $torrent['id']?>">
@@ -93,13 +126,13 @@
     <input type="hidden" id="username" value="<?php echo App::ins()->user->getName()?>">
     <div id="tpl" style="display:none">
    
-    <div class="item">
-        <h4 class="comment-head">#<span class="comment-floor">0</span><span class="text-primary comment-username">张三</span></h4>
+    <div class="item" data-id="0">
+        <h4 class="comment-head">#<span class="comment-floor">0</span><span class="text-primary comment-username">张三</span><small class="pull-right comment-add-time">2015-03-02</small></h4>
         <div class="clearfix">
           <div class="col-xs-2 avatar">
             <img src="application/public/images/avatar.jpg" class="img-responsive"/>
           </div>
-          <div class="col-xs-10 comment-content">评论内容</div>
+          <div class="col-xs-10 comment-box">评论内容</div>
         </div>
         <div class="clearfix comment-foot">
           <div class="col-xs-2 social">
@@ -107,7 +140,7 @@
           </div>
           <div class="col-xs-10 action">
             <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
-            <span class="text-info">回复</span>
+            <span class="text-info reply">回复</span>
             <span class="text-danger">举报</span>            
           </div>
         </div>
@@ -120,24 +153,31 @@
 	});
 	
 	$("#expression").on("click", "img", function(e){
-		var $comment = $("#comment"), sel = window.getSelection(), range = document.createRange();
+		var $comment = $("#submit-form").find(".comment"), sel = window.getSelection(), range = document.createRange();
 		var focusNode = sel.focusNode, baseUrl = $("#baseUrl").val();
-		if (focusNode.id === "comment" || $(focusNode).parents("#comment").length){
+		if ($(focusNode).hasClass("comment") || $(focusNode).parents(".comment").length){
 			range.setStart(focusNode, sel.focusOffset);
 			var node = document.createElement("img");
 			node.src = this.src.replace(baseUrl, "");
 			range.insertNode(node);
 		}
 	});
-	var $submit = $("#submit");
 	var maxFloor = 1;
-	$submit.click(function(e){
-		var comment = $("#comment").html();
+	$("body").on("click", ".submit", function(e){
+		var comment = $(this).parents("form").find(".comment").html();
+		var $submit = $(this);
 		var trim = $.trim(comment);
 		var replace = $.trim(trim.replace(/<br>|&nbsp;|<div>|<\/div>/gi, ""));
 		if (replace === ""){
 			alert("请输入内容！");
 			return;
+		}
+		var $form = $(this).parents("form");
+		if($form.attr("data-parent")){
+			var $oldComment = $form.parent().find(".comment-box");
+			var addText = '<h6>'+$form.parents(".item").find(".comment-username").text()+'&nbsp;&nbsp的原贴</h6>';
+			$oldComment.removeClass().addClass("comment-content").prepend(addText);
+			comment = $oldComment.prop("outerHTML")+comment;
 		}
 		var torrentId = $("#torrentId").val();
 		var $total = $("#comment-total");
@@ -153,12 +193,13 @@
 			success: function(data){
 				if (data.code === 1){
 					$submit.text("添加").removeAttr("disabled");
-					$("#comment").empty();
+					$("#submit-form").find(".comment").empty();
 					var $new = $("#tpl").children().clone();
 					$new.find(".comment-floor").html(maxFloor);
 				
 					$new.find(".comment-username").text($("#username").val());
-					$new.find(".comment-content").html(comment);
+					$new.find(".comment-add-time").text(new Date().getTime());
+					$new.find(".comment-box").html(comment);
 					if ($("#comment-item").length){
 						$("#comment-item").append($new);
 					}else{
@@ -232,5 +273,17 @@
 						}
 					}
 			})
-	 })
+	 });
+	$commentList.on("click", ".item .reply", function(e){
+		var $form = $("#submit-form").find("form:first").clone();
+		$form.attr("data-parent", "true").find(".comment").empty();
+		var $submit = $form.find(".submit");
+		var $cancle = $submit.clone();
+		$cancle.text("取消").on("click", function(e){
+			$form.remove();
+		});
+		$submit.after($cancle);
+		
+		$(this).parents(".comment-foot").after($form);
+	})
  </script>

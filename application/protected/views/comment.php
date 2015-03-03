@@ -6,13 +6,13 @@
       <div id="comment-item">
       <?php foreach($comments as $comment):?>
       
-      <div class="item">
-        <h4 class="comment-head">#<span class="comment-floor"><?php echo $comment['floor']?></span><span class="text-primary comment-username"><?php echo $comment['name']?></span></h4>
+      <div class="item" data-id="<?php echo $comment['id']?>">
+        <h4 class="comment-head">#<span class="comment-floor"><?php echo $comment['floor']?></span><span class="text-primary comment-username"><?php echo $comment['name']?></span><small class="pull-right comment-add-time"><?php echo date('Y-m-d H:i:s', $comment['add_time'])?></small></h4>
         <div class="clearfix">
           <div class="col-xs-2 avatar">
             <img src="application/public/images/avatar.jpg" class="img-responsive"/>
           </div>
-          <div class="col-xs-10 comment-content">
+          <div class="col-xs-10 comment-box">
           	
           <?php echo $comment['content']?>
           
@@ -24,7 +24,7 @@
           </div>
           <div class="col-xs-10 action">
             <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
-            <span class="text-info">回复</span>
+            <span class="text-info reply">回复</span>
             <span class="text-danger">举报</span>       
           </div>
         </div>

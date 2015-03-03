@@ -34,10 +34,19 @@ class CommentController extends CommonController
 			$comment->level = $level;
 			$comment->content = $_POST['comment'];
 			$comment->floor = $_POST['floor'];
+			$comment->add_time = $_SERVER['REQUEST_TIME'];
 			$result = $comment->save();
 			if (!empty($result))
 			{
-				echo json_encode(array('code' => 1, 'msg' => '添加成功'));
+				$result = TorrentModel::model()->updateByPk($_POST['torrentId'], 'comment_count=comment_count+1');
+				if(!empty($result))
+				{
+					echo json_encode(array('code' => 1, 'msg' => '添加成功'));
+				}
+				else
+				{
+					echo json_encode(array('code' => 0, 'msg' => '添加成功，更新评论数量失败'));
+				}
 			}
 			else
 			{
@@ -64,7 +73,7 @@ class CommentController extends CommonController
 			if (!isset($_GET['notFirst']))
 			{
 				$count = $model->where('torrent_id=:torrentId', array(':torrentId' => $_GET['torrentId']))->count();
-				if ($count === 0)
+				if ($count == 0)//没有时是string类型的0，使用===时候要注意！
 				{
 					echo json_encode(array('code' => 0, 'msg' => '暂无评论'));exit;
 				}
