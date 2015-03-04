@@ -70,16 +70,15 @@ class CommentController extends CommonController
 			$navHtml = 0;
 			$total = 0;
 			$count = 0;
-			if (!isset($_GET['notFirst']))
+			
+			$count = $model->where('torrent_id=:torrentId', array(':torrentId' => $_GET['torrentId']))->count();
+			if ($count == 0)//没有时是string类型的0，使用===时候要注意！
 			{
-				$count = $model->where('torrent_id=:torrentId', array(':torrentId' => $_GET['torrentId']))->count();
-				if ($count == 0)//没有时是string类型的0，使用===时候要注意！
-				{
-					echo json_encode(array('code' => 0, 'msg' => '暂无评论'));exit;
-				}
-				$total = ceil($count/$per);
-				$navHtml = $this->getAjaxNavHtml($per, $total);
+				echo json_encode(array('code' => 0, 'msg' => '暂无评论'));exit;
 			}
+			$total = ceil($count/$per);
+			$navHtml = $this->getAjaxNavHtml($per, $total);
+			
 			
 			$sql = "SELECT a.*, b.name FROM comment as a LEFT JOIN user as b ON a.user_id = b.id WHERE a.torrent_id = :torrentId ORDER BY a.floor ASC LIMIT $offset, $per";
 			$comments = $model->findBySql($sql, array(':torrentId' => $_GET['torrentId']));

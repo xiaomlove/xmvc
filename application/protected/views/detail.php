@@ -173,16 +173,17 @@
 		var $form = $(this).parents("form");
 		if($form.attr("data-parent")){
 			var $oldComment = $form.parent().find(".comment-box");
+			$clone = $oldComment.clone();//克隆一新的，不能在原基础上添加
 			var addText = '<h6>'+$form.parents(".item").find(".comment-username").text()+'&nbsp;&nbsp的原贴</h6>';
-			if ($oldComment.children(":first").hasClass("comment-content")){
-				$oldComment.children().after(addText);
+			if ($clone.children(":first").hasClass("comment-content")){
+				$clone.children(":first").after(addText);
 			}else{
-				$oldComment.prepend(addText);
+				$clone.prepend(addText);
 			}
 			
-			$oldComment.wrapInner("<div class=\"comment-content\"></div>");
+			$clone.wrapInner("<div class=\"comment-content\"></div>");
 			
-			comment = $oldComment.html()+comment;
+			comment = $clone.html()+comment;
 		}
 		var torrentId = $("#torrentId").val();
 		var $total = $("#comment-total");
@@ -262,9 +263,10 @@
 					url: "comment/list",
 					type: "GET",
 					dataType: "json",
-					data: "torrentId="+$("#torrentId").val()+"&page="+page+"&notFirst=1",
+					data: "torrentId="+$("#torrentId").val()+"&page="+page,
 					success: function(data){
 						if (data.code === 1){
+							$commentList.html(data.msg);
 							var $nav = $commentList.find(".comment-list-nav");
 							$nav.each(function(index, elem){
 								$(this).find("li").removeClass("active disabled");
@@ -275,7 +277,7 @@
 									$(this).find("li").eq(page-1).attr("class", "disabled");
 								}
 							});
-							$("#comment-item").html(data.msg);
+							
 						}
 					}
 			})
