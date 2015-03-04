@@ -156,6 +156,7 @@
 		var $comment = $(this).parents("form").find(".comment"), sel = window.getSelection(), range = document.createRange();
 		var focusNode = sel.focusNode, baseUrl = $("#baseUrl").val();
 		if ($(focusNode).hasClass("comment") || $(focusNode).parents(".comment").length){
+			
 			range.setStart(focusNode, sel.focusOffset);
 			var node = document.createElement("img");
 			node.src = this.src.replace(baseUrl, "");
