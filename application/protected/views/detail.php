@@ -50,7 +50,7 @@
       
       <h3 class="torrent-title" id="comment-title">评论加载中...</h3>
       <div id="comment-list">
-     <!-- 
+     <!--  
       	<div class="item">
         <h4 class="comment-head">#<span class="comment-floor">0</span><span class="text-primary comment-username">张三</span><span class="pull-right comment-add-time">2015-03-02</span></h4>
         <div class="clearfix">
@@ -60,10 +60,12 @@
         
           <div class="col-xs-10 comment-box">
           	<div class="comment-content">
-	          	<h6>来自1楼网友</h6>
+	          	<h6>来自1楼网友<span class="pull-right">1</span></h6>
 	         	1楼的内容
+	         	<h6 class="floor-reply">回复</h6>
          	</div>
          	2楼在此
+         	
           </div>
         </div>
         <div class="clearfix comment-foot">
@@ -149,7 +151,7 @@
  	uParse('#introduce', {
 	    rootPath: './'
 	});
-	
+	//添加图片表情
 	$("body").on("click", ".expression img", function(e){
 		var $comment = $(this).parents("form").find(".comment"), sel = window.getSelection(), range = document.createRange();
 		var focusNode = sel.focusNode, baseUrl = $("#baseUrl").val();
@@ -160,6 +162,7 @@
 			range.insertNode(node);
 		}
 	});
+	//添加回复和评论
 	var maxFloor = 1;
 	$("body").on("click", ".submit", function(e){
 		var comment = $(this).parents("form").find(".comment").html();
@@ -171,16 +174,23 @@
 			return;
 		}
 		var $form = $(this).parents("form");
+		var floorReply = false;
 		if($form.attr("data-parent")){
+			floorReply = true;
 			var $oldComment = $form.parent().find(".comment-box");
 			$clone = $oldComment.clone();//克隆一新的，不能在原基础上添加
-			var addText = '<h6>'+$form.parents(".item").find(".comment-username").text()+'&nbsp;&nbsp的原贴</h6>';
+			var addText = '<h6 class="floor-title">'+$form.parents(".item").find(".comment-username").text()+'&nbsp;&nbsp的评论<span class="pull-right floor-count">';
 			if ($clone.children(":first").hasClass("comment-content")){
+				$floorCount = $form.parent().find(".comment-box").children().children(".floor-title").children(".floor-count");
+				
+				addText += parseInt($floorCount.text())+1+"</span></h6>";
 				$clone.children(":first").after(addText);
+				
 			}else{
+				addText += "1</span></h6>";
 				$clone.prepend(addText);
 			}
-			
+			$clone.append("<h6 class=\"floor-reply\"><span class=\"reply\">回复</span></h6>");
 			$clone.wrapInner("<div class=\"comment-content\"></div>");
 			
 			comment = $clone.html()+comment;
@@ -216,7 +226,9 @@
 					}else{
 						maxFloor++;
 					}
-					$form.remove();
+					if (floorReply){
+						$form.remove();
+					}
 				}else{
 					$submit.text(data.msg).removeAttr("disabled");
 				}
@@ -225,7 +237,7 @@
 		
 	});
 
-
+	//页面加载完成请求首页评论
 	$(document).ready(function(){
 		var $commentTitle = $("#comment-title");
 		$.ajax({
@@ -243,6 +255,7 @@
 			}
 		})
 	});
+	//分页获取评论
 	var $commentList = $("#comment-list");
 		$commentList.on("click", ".comment-list-nav a", function(e){
 			var $click = $(this).parent();
@@ -282,16 +295,35 @@
 					}
 			})
 	 });
+	//展示楼中楼回复框
 	$commentList.on("click", ".item .reply", function(e){
+		var $this = $(this);
+		if ($this.hasClass("submit-show")){
+			return;
+		}
 		var $form = $("#submit-form").find("form:first").clone();
 		$form.attr("data-parent", "true").find(".comment").empty();
 		var $submit = $form.find(".submit");
 		var $cancle = $submit.clone();
 		$cancle.text("取消").on("click", function(e){
+			$this.removeClass("submit-show");
 			$form.remove();
 		});
 		$submit.after($cancle);
+		$commentList.find("form").remove();
+		$this.parents(".comment-foot").after($form);
+		$this.addClass("submit-show");
+	});
+	//鼠标移上去显示楼中楼回复按钮
+	$commentList.on("mouseenter mouseleave", ".comment-content", function(e){
 		
-		$(this).parents(".comment-foot").after($form);
+		e.stopPropagation();
+		var $reply = $(this).children(".floor-reply").find(".reply");
+		if(e.type === "mouseenter"){
+			$reply.css("visibility", "visible");
+		}else{
+			$reply.css("visibility", "hidden");
+		}
+		
 	})
  </script>

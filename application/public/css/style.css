@@ -30,6 +30,7 @@
 #comment-item .item .avatar, .comment-content, .comment-box {text-align: left;}
 #comment-item .item .action span {cursor: pointer}
 .comment-content {border: 1px solid gray;padding: 5px}
+.comment-content .floor-reply .reply{visibility:hidden}
 .comment-box {border:none}
 #submit {margin-top: 10px;}
 .expression {overflow: hidden}
@@ -41,7 +42,8 @@
 .comment-foot .action{text-align: right;}
 .comment-foot .action span {margin-left: 15px}
 .comment-list-nav a {cursor: pointer}
-
+.floor-reply{text-align:right;margin:0;}
+.reply{cursor:pointer}
 #comment-list .comment-list-nav:first-of-type {border-bottom: 1px dotted #999;}
 #quick-comment{margin-bottom:50px}
 
