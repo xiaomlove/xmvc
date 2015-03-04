@@ -26,9 +26,9 @@
 #detail-table td:nth-of-type(2) {width: 90% !important; text-align: left;padding-left: 10px;}
 #upload-success-flash strong{box-shadow:0 0 10px red;}
 .comment-head {text-align: left; margin: 10px 0;}
-#comment-item .item {margin: 20px 0;border-bottom: 1px dotted #999;}
-#comment-item .item .avatar, .comment-content, .comment-box {text-align: left;}
-#comment-item .item .action span {cursor: pointer}
+#comment-list .item {margin: 20px 0;border-bottom: 1px dotted #999;}
+#comment-list .item .avatar, .comment-content, .comment-box {text-align: left;}
+#comment-list .item .action span {cursor: pointer}
 .comment-content {border: 1px solid gray;padding: 5px}
 .comment-content .floor-reply .reply{visibility:hidden}
 .comment-box {border:none}

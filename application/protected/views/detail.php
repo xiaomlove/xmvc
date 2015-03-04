@@ -48,7 +48,7 @@
         </tbody>
       </table>
       
-      <h3 class="torrent-title" id="comment-title">评论加载中...</h3>
+      <h3 class="torrent-title no-comment" id="comment-title">评论加载中...</h3>
       <div id="comment-list">
      <!--  
       	<div class="item">
@@ -175,25 +175,36 @@
 		}
 		var $form = $(this).parents("form");
 		var floorReply = false;
-		if($form.attr("data-parent")){
+		if($form.attr("data-parent")){//不是最下边直接回复框
 			floorReply = true;
-			var $oldComment = $form.parent().find(".comment-box");
-			$clone = $oldComment.clone();//克隆一新的，不能在原基础上添加
-			var addText = '<h6 class="floor-title">'+$form.parents(".item").find(".comment-username").text()+'&nbsp;&nbsp的评论<span class="pull-right floor-count">';
-			if ($clone.children(":first").hasClass("comment-content")){
-				$floorCount = $form.parent().find(".comment-box").children().children(".floor-title").children(".floor-count");
+			if ($form.parent().hasClass("item")){
+				//回复末楼
+				var $oldComment = $form.parent().find(".comment-box");
+				$clone = $oldComment.clone();//克隆一新的，不能在原基础上添加
+				var addText = '<h6 class="floor-title">'+$form.parents(".item").find(".comment-username").text()+'&nbsp;&nbsp的评论<span class="pull-right floor-count">';
+				if ($clone.children(":first").hasClass("comment-content")){
+					$floorCount = $form.parent().find(".comment-box").children().children(".floor-title").children(".floor-count");
+					
+					addText += parseInt($floorCount.text())+1+"</span></h6>";
+					$clone.children(":first").after(addText);
+					
+				}else{
+					addText += "1</span></h6>";
+					$clone.prepend(addText);
+				}
+				$clone.append("<h6 class=\"floor-reply\"><span class=\"reply\">回复</span></h6>");
+				$clone.wrapInner("<div class=\"comment-content\"></div>");
 				
-				addText += parseInt($floorCount.text())+1+"</span></h6>";
-				$clone.children(":first").after(addText);
+				comment = $clone.html()+comment;
 				
-			}else{
-				addText += "1</span></h6>";
-				$clone.prepend(addText);
+			}else if($form.parent().hasClass("comment-content")){
+				//楼中楼回复
+				$comment = $form.parent().clone();
+				$comment.find("form").remove().end().children(".floor-reply").children(".reply").removeClass("submit-show");
+				comment = $comment.prop("outerHTML") + comment;
+				
 			}
-			$clone.append("<h6 class=\"floor-reply\"><span class=\"reply\">回复</span></h6>");
-			$clone.wrapInner("<div class=\"comment-content\"></div>");
 			
-			comment = $clone.html()+comment;
 		}
 		var torrentId = $("#torrentId").val();
 		var $total = $("#comment-total");
@@ -229,6 +240,10 @@
 					if (floorReply){
 						$form.remove();
 					}
+					var $commentTitle = $("#comment-title");
+					if ($commentTitle.hasClass("no-comment")) {
+						$commentTitle.text("用户评论").removeClass("no-comment");
+					}
 				}else{
 					$submit.text(data.msg).removeAttr("disabled");
 				}
@@ -247,7 +262,7 @@
 			data: "torrentId="+$("#torrentId").val(),
 			success: function(data){
 				if (data.code === 1){
-					$commentTitle.text("用户评论");
+					$commentTitle.text("用户评论").removeClass("no-comment");
 					$("#comment-list").html(data.msg);
 				}else{
 					$commentTitle.text(data.msg);
@@ -297,10 +312,12 @@
 	 });
 	//展示楼中楼回复框
 	$commentList.on("click", ".item .reply", function(e){
+		
 		var $this = $(this);
 		if ($this.hasClass("submit-show")){
 			return;
 		}
+		
 		var $form = $("#submit-form").find("form:first").clone();
 		$form.attr("data-parent", "true").find(".comment").empty();
 		var $submit = $form.find(".submit");
@@ -311,15 +328,23 @@
 		});
 		$submit.after($cancle);
 		$commentList.find("form").remove();
-		$this.parents(".comment-foot").after($form);
+		$commentList.find(".reply").removeClass("submit-show");
+		var $commentFoot = $this.parents(".comment-foot"), $footReply = $this.parents(".floor-reply");
+		if ($commentFoot.length){
+			$commentFoot.after($form);
+		}else if($footReply.length){
+			$footReply.after($form);
+		}else{
+			return;
+		}
 		$this.addClass("submit-show");
 	});
 	//鼠标移上去显示楼中楼回复按钮
 	$commentList.on("mouseenter mouseleave", ".comment-content", function(e){
-		
 		e.stopPropagation();
 		var $reply = $(this).children(".floor-reply").find(".reply");
 		if(e.type === "mouseenter"){
+// 			$commentList.find(".reply").css("visibility", "hidden");
 			$reply.css("visibility", "visible");
 		}else{
 			$reply.css("visibility", "hidden");
