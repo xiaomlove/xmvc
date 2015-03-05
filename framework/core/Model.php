@@ -963,6 +963,20 @@ abstract class Model
 		
 	}
 	
+	private function hasError($field = '')
+	{
+		if(!empty($field) && is_string($field))
+		{
+			return self::getError($field) != NULL;
+		}
+		elseif (empty($field))
+		{
+			$errors = self::getError();
+			return !empty($errors);
+		}
+		return TRUE;//有错误
+	}
+	
 	private function setError($key, $value)
 	{
 		if(!empty($key) && is_string($key))

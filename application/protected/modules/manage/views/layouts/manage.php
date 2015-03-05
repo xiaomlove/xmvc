@@ -16,9 +16,9 @@
 	<div class="row">
 		<div class="col-md-1 manage-left">
 			<ul class="list-unstyled">
-				<li <?php if(CONTROLLER === 'Forum') echo "class=\"active\""?>><a href="<?php echo $this->createUrl('manage/forum/sectionlist')?>">论坛</a></li>
-				<li <?php if(CONTROLLER === 'User') echo "class=\"active\""?>><a href="<?php echo $this->createUrl('manage/user/userlist')?>">用户</a></li>
-				<li><a href="#">其他</a></li>
+				<li <?php if(CONTROLLER === 'Forum' && ACTION === 'Sectionlist') echo "class=\"active\""?>><a href="<?php echo $this->createUrl('manage/forum/sectionlist')?>">论坛版块</a></li>
+				<li <?php if(CONTROLLER === 'User' && ACTION === 'Userlist') echo "class=\"active\""?>><a href="<?php echo $this->createUrl('manage/user/userlist')?>">用户列表</a></li>
+				<li <?php if(CONTROLLER === 'Role' && ACTION === 'Rolelist') echo "class=\"active\""?>><a href="<?php echo $this->createUrl('manage/role/rolelist')?>">用户角色</a></li>
 				<li><a href="#">论坛</a></li>
 			</ul>
 		</div>

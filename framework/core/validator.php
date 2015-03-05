@@ -30,7 +30,7 @@ class Validator
 	}
 	
 	/**
-	 * 验证数字
+	 * 验证非负整数
 	 * @param unknown $field
 	 * @return boolean
 	 */
@@ -40,9 +40,31 @@ class Validator
 		if($required)
 		{
 			$value = self::$_data[$field];
-			return ctype_digit(strval(trim($value)));
+			return ctype_digit(strval($value));
 		}
 		else 
+		{
+			return FALSE;
+		}
+	}
+	/**
+	 * 验证浮点数
+	 * @param unknown $field
+	 * @return boolean
+	 */
+	public static function float($field)
+	{
+		$required = self::required($field);
+		if($required)
+		{
+			$value = self::$_data[$field];
+			if (preg_match('/^(\s)/', $value))
+			{
+				return FALSE;
+			}
+			return is_numeric($value);
+		}
+		else
 		{
 			return FALSE;
 		}

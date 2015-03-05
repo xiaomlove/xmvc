@@ -45,6 +45,8 @@ return array(
 			'admin/forum/section/add'=>'manage/forum/sectionadd',
 			'admin/user'=>'manage/user/userlist',
 			'admin/user/add'=>'manage/user/useradd',
+			'admin/role'=>'manage/role/rolelist',
+			'admin/role/add'=>'manage/role/roleadd',
 		),
 	),
 	

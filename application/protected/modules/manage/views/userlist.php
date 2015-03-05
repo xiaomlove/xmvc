@@ -8,7 +8,7 @@
 	<tr>
 		<th>用户名</th>
 		<th>邮箱</th>
-		<th>等级</th>
+		<th>角色</th>
 		<th>上传量</th>
 		<th>下载量</th>
 		<th>上次登陆</th>
@@ -20,7 +20,7 @@
 	<tr>
 		<td>xiaomiao</td>
 		<td>123@qq.com</td>
-		<td>平民</td>
+		<td>初中</td>
 		<td>1024</td>
 		<td>1024</td>
 		<td>2013-3-3</td>
@@ -35,7 +35,7 @@
 	<tr>
 		<td>xiaomiao</td>
 		<td>123@qq.com</td>
-		<td>平民</td>
+		<td>初中</td>
 		<td>1024</td>
 		<td>1024</td>
 		<td>2013-3-3</td>
@@ -50,7 +50,7 @@
 	<tr>
 		<td>xiaomiao</td>
 		<td>123@qq.com</td>
-		<td>平民</td>
+		<td>初中</td>
 		<td>1024</td>
 		<td>1024</td>
 		<td>2013-3-3</td>

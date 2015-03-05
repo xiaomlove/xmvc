@@ -41,7 +41,7 @@ class Controller
 	protected function redirect($mvc, $options = array())
 	{
 		$url = $this->createUrl($mvc, $options);
-		header("Location:".$url);
+		header("Location:".$url);exit;
 	}
 	
 	protected function createUrl($mvc, $options = array())
