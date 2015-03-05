@@ -62,3 +62,10 @@
 .manage .manage-left a{color: #6E6E6E;display: block;width: 100%;text-align: center}
 .manage .manage-left li{height: 50px;line-height: 50px; border-bottom: 1px solid #202020}
 .manage .manage-left li:hover{background-color: #eee}
+.manage .manage-left li.active{background-color: #ccc}
+
+
+.manage .manage-main .section-list-table tr td:last-of-type a{margin-right: 10px}
+.manage .manage-main .main-title{margin-bottom: 20px}
+.manage .manage-main .user-search{margin: 0 10px}
+.manage .manage-main .glyphicon-search{cursor: pointer}

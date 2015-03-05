@@ -41,6 +41,10 @@ return array(
 	
 			//管理模块
 			'admin'=>'manage/index/index',
+			'admin/forum'=>'manage/forum/sectionlist',
+			'admin/forum/section/add'=>'manage/forum/sectionadd',
+			'admin/user'=>'manage/user/userlist',
+			'admin/user/add'=>'manage/user/useradd',
 		),
 	),
 	
