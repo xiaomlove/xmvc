@@ -108,6 +108,10 @@ class Controller
 			ob_start();
 			ob_implicit_flush(0);//关闭绝对刷送
 			require $layout;
+			if(App::isDebug())
+			{
+				Log::requireFile($layout);
+			}
 			$content = ob_get_clean();
 		}
 		if(Cache::$_doPageCache)
@@ -135,6 +139,10 @@ class Controller
 		ob_start();
 		ob_implicit_flush(0);//关闭绝对刷送
 		require $file;
+		if(App::isDebug())
+		{
+			Log::requireFile($file);
+		}
  		if($close)
 		{
  			return ob_get_clean();//得到内容，清空并关闭缓冲区

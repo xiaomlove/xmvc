@@ -11,10 +11,23 @@
         <li role="presentation" <?php if(MODULE === 'Manage') echo "class=\"active\""?>><a href="<?php echo $this->createUrl('manage/index/index')?>">管理</a></li>
       </ul>
     </div>
-
-<?php echo $content?>
-
 </div>
+<div class="container-fluid manage">
+	<div class="row">
+		<div class="col-md-1 manage-left">
+			<ul class="list-unstyled">
+				<li><a href="#">论坛</a></li>
+				<li><a href="#">用户</a></li>
+				<li><a href="#">其他</a></li>
+				<li><a href="#">论坛</a></li>
+			</ul>
+		</div>
+		<div class="col-md-offset-1 col-md-10">
+			<?php echo $content?>
+		</div>
+	</div>
+</div>
+
 
 <?php require 'foot.php'?>
 

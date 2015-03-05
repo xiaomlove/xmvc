@@ -82,7 +82,14 @@ final class App
 		//控制器
 		elseif(substr($className, -10) === 'Controller')
 		{
-			$file = APP_PATH.'protected'.DS.'controllers'.DS.$className.'.php';
+			if(MODULE === NULL)
+			{
+				$file = APP_PATH.'protected'.DS.'controllers'.DS.$className.'.php';
+			}
+			else
+			{
+				$file = APP_PATH.'protected'.DS.'modules'.DS.strtolower(MODULE).DS.'controllers'.DS.$className.'.php';
+			}
 			require $file;
 			if(self::$_debug)
 			{
@@ -242,5 +249,10 @@ final class App
 		{
 			trigger_error('没有找到方法：'.ACTION, E_USER_ERROR);
 		}
+	}
+	
+	public static function isDebug()
+	{
+		return self::$_debug;
 	}
 }

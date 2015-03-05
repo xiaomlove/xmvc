@@ -366,11 +366,11 @@ final class Router
 		}
 		elseif(isset(self::$_config['mode']) && self::$_config['mode'] === 'path')
 		{
-			$rules = array_change_key_case(self::$_config['rules']);
+			$rules = array_change_key_case(self::$_config['rules']);//key已转化为小写
 			foreach($rules as $ruleKey=>$ruleValue)
 			{
 				$ruleKey = trim($ruleKey, '/');
-				$ruleValue = strtolower($ruleValue);
+				
 				if($ruleKey === $mvc)//跟rules左边相等，直接就它了
 				{
 					$requeryUri = $ruleKey;
@@ -406,7 +406,7 @@ final class Router
 						continue;
 					}
 					
-					
+					$ruleValueMVC = strtolower($ruleValueMVC);
 					if($mvc === trim($ruleValueMVC))
 					{
 						if(strpos($ruleKey, '<') === FALSE)//规则中没有参数传递
@@ -485,7 +485,7 @@ final class Router
 				}
 				
 			}
-			if(strpos($requeryUri, '<') !== FALSE)
+			if(!isset($requeryUri) || strpos($requeryUri, '<') !== FALSE)
 			{
 				trigger_error('无法创建url,匹配不了规则', E_USER_ERROR);
 				return;

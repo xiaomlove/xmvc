@@ -1,9 +1,9 @@
 <?php
-class ForumController extends Controller
+class SectionController extends Controller
 {
 	public $layout = 'tinypt';
 	
-	public function actionSection()
+	public function actionList()
 	{
 		$html = $this->render('forum');
 		echo $html;

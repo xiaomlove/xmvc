@@ -3,7 +3,7 @@
 #result-msg {margin-right: 10px}
 
 #main-nav {margin-top: 3%}
-#main-nav li{width: 24%;text-align: center}
+#main-nav li{width: 19%;text-align: center}
 
 #torrent-list-table {margin-top: 50px;}
 
@@ -52,3 +52,13 @@
 #checkout-logout-modal .modal-footer button{margin:0 30px}
 
 #profile td:nth-of-type(1){width: 20%}
+
+
+
+
+/*管理界面*/
+.manage{margin-top: 20px}
+.manage .manage-left{background-color: #282828;padding-left: 0;padding-right: 0}
+.manage .manage-left a{color: #6E6E6E;display: block;width: 100%;text-align: center}
+.manage .manage-left li{height: 50px;line-height: 50px; border-bottom: 1px solid #202020}
+.manage .manage-left li:hover{background-color: #eee}
