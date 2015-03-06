@@ -70,6 +70,7 @@ class Validator
 		}
 	}
 	
+	
 	/**
 	 * 验证在某个数组内
 	 * @param unknown $field
