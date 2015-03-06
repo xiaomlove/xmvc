@@ -7,9 +7,10 @@
 	<thead>
 	<tr>
 		<th>角色名</th>
+		<th>等级</th>
 		<th>魔力</th>
-		<th>下载量</th>
-		<th>上传量</th>
+		<th>下载量(GB)</th>
+		<th>上传量(GB)</th>
 		<th>分享率</th>
 		<th>注册时间</th>
 		<th>操作</th>
@@ -17,45 +18,26 @@
 	</thead>
 	
 	<tbody>
-	<tr>
-		<td>幼儿园</td>
-		<td>0</td>
-		<td>0</td>
-		<td>0</td>
-		<td>0</td>
-		<td>0</td>
+	<?php if (!empty($roleList)):?>
+	<?php foreach ($roleList as $role):?>
+	<tr data-id="<?php echo $role['id']?>">
+		<td><?php echo $role['name']?></td>
+		<td><?php echo $role['level']?></td>
+		<td><?php echo $role['bonus_limit']?></td>
+		<td><?php echo $role['downloaded_limit']?></td>
+		<td><?php echo $role['uploaded_limit']?></td>
+		<td><?php echo number_format($role['ratio_limit'], 2, '.', '')?></td>
+		<td><?php echo $role['register_time_limit_string']?></td>
 		<td>
 			<a href="#">编辑</a>
 			<a href="#">权限</a>
 			<a href="#">删除</a>
 		</td>
 	</tr>
-	<tr>
-		<td>小学</td>
-		<td>1000</td>
-		<td>1000</td>
-		<td>1000</td>
-		<td>0.2</td>
-		<td>100000</td>
-		<td>
-			<a href="#">编辑</a>
-			<a href="#">权限</a>
-			<a href="#">删除</a>
-		</td>
-	</tr>
-	<tr>
-		<td>初中</td>
-		<td>10000</td>
-		<td>10000</td>
-		<td>10000</td>
-		<td>0.4</td>
-		<td>1000000</td>
-		<td>
-			<a href="#">编辑</a>
-			<a href="#">权限</a>
-			<a href="#">删除</a>
-		</td>
-	</tr>
+	<?php endforeach?>
+	<?php else:?>	
+	<tr><td colspan="8">没有角色，请先添加</td></tr>
+	<?php endIf?>
 
 	</tbody>
 </table>

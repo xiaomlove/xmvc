@@ -97,7 +97,7 @@ abstract class Model
 		//通过::model()获得的对象可以执行的链式方法
 		$chainedList = array('distinct', 'field', 'group', 'having', 'join', 'limit', 'order', 'table', 'where', 'active', 
 							'findByPk', 'findBySql', 'select', 'deleteByPk', 'delete', 'updateByPk', 'update', 'insert', 'execute',
-							'beginTransaction', 'commit', 'rollBack', 'count', 'validate', 'getError', 'setError', 'cache',
+							'beginTransaction', 'commit', 'rollBack', 'count', 'validate', 'getError', 'setError', 'hasError', 'cache',
 							'setData', 'getData',
 						);
 		//活跃对象可以执行的方法
@@ -962,12 +962,17 @@ abstract class Model
 		}
 		
 	}
-	
+	/**
+	 * 判断验证是否有错误，用于在表单输出错误
+	 * Enter description here ...
+	 * @param unknown_type $field
+	 */
 	private function hasError($field = '')
 	{
 		if(!empty($field) && is_string($field))
 		{
-			return self::getError($field) != NULL;
+			return self::getError($field) !== NULL;
+//			var_dump(self::getError($field));
 		}
 		elseif (empty($field))
 		{

@@ -26,7 +26,14 @@ class Validator
 	public static function required($field)
 	{
 		$result = trim(self::$_data[$field]);
-		return !empty($result);
+		if ($result === '0')
+		{
+			return TRUE;
+		}
+		else 
+		{
+			return !empty($result);
+		}
 	}
 	
 	/**
@@ -69,7 +76,6 @@ class Validator
 			return FALSE;
 		}
 	}
-	
 	
 	/**
 	 * 验证在某个数组内
