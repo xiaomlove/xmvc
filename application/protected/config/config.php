@@ -47,6 +47,7 @@ return array(
 			'admin/user/add'=>'manage/user/useradd',
 			'admin/role'=>'manage/role/rolelist',
 			'admin/role/add'=>'manage/role/roleadd',
+			'admin/role/edit'=>'manage/role/roleedit',
 		),
 	),
 	

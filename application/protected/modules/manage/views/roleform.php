@@ -46,26 +46,26 @@
   <div class="form-group <?php echo $model->getError('ratio_limit') != NULL ? "has-error" : ""?>">
     <label for="ratio_limit" class="col-sm-2 control-label">分享率下限</label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" id="ratio_limit" name="ratio_limit" value="<?php echo $model->getData('ratio_limit')?>" placeholder="">
+      <input type="text" class="form-control" id="ratio_limit" name="ratio_limit" value="<?php echo number_format($model->getData('ratio_limit'), 2, '.', '')?>" placeholder="">
       <?php if($model->getError('ratio_limit') != NULL):?>
       	<span class="help-block"><?php echo $model->getError('ratio_limit')?></span>
       <?php endIf?>
     </div>
   </div>
  
-  <div class="form-group <?php echo $model->getError('register_time_limit') != NULL ? "has-error" : ""?>">
-    <label for="register_time_limit" class="col-sm-2 control-label">注册时间下限</label>
+  <div class="form-group <?php echo $model->getError('register_time_limit_value') != NULL ? "has-error" : ""?>">
+    <label for="register_time_limit_value" class="col-sm-2 control-label">注册时间下限</label>
     <div class="col-sm-8">
-      <input type="text" class="form-control" id="register_time_limit" name="register_time_limit" value="<?php echo $model->getData('register_time_limit')?>" placeholder="">
-      <?php if($model->getError('register_time_limit') != NULL):?>
-      	<span class="help-block"><?php echo $model->getError('register_time_limit')?></span>
+      <input type="text" class="form-control" id="register_time_limit_value" name="register_time_limit_value" value="<?php echo $model->getData('register_time_limit_value')?>" placeholder="">
+      <?php if($model->getError('register_time_limit_value') != NULL):?>
+      	<span class="help-block"><?php echo $model->getError('register_time_limit_value')?></span>
       <?php endIf?>
     </div>
     <div class="col-sm-2">
-    	<select class="form-control" name="unit">
-      	  <option value="week" <?php if ($model->getData('unit') === 'week') echo "selected"?>>周</option>
-		  <option value="month" <?php if ($model->getData('unit') === 'month') echo "selected"?>>月</option>
-		  <option value="year" <?php if ($model->getData('unit') === 'year') echo "selected"?>>年</option>
+    	<select class="form-control" name="register_time_limit_unit">
+      	  <option value="week" <?php if ($model->getData('register_time_limit_unit') === 'week') echo "selected"?>>周</option>
+		  <option value="month" <?php if ($model->getData('register_time_limit_unit') === 'month') echo "selected"?>>月</option>
+		  <option value="year" <?php if ($model->getData('register_time_limit_unit') === 'year') echo "selected"?>>年</option>
 		</select>
     </div>
   </div>
@@ -78,7 +78,8 @@
       	<span class="help-block"><?php echo $model->getError('level')?></span>
       <?php endIf?>
     </div>
-  </div> 
+  </div>
+  
   <div class="form-group">
     <div class="col-sm-offset-6 col-sm-6">
       <button type="submit" class="btn btn-primary">确定</button>

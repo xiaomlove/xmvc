@@ -90,6 +90,11 @@ final class App
 			{
 				$file = APP_PATH.'protected'.DS.'modules'.DS.strtolower(MODULE).DS.'controllers'.DS.$className.'.php';
 			}
+			if (!file_exists($file))
+			{
+				//分模块时如果找不到，再回头找
+				$file = APP_PATH.'protected'.DS.'controllers'.DS.$className.'.php';
+			}
 			require $file;
 			if(self::$_debug)
 			{

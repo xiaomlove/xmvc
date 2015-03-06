@@ -1,5 +1,5 @@
 <?php
-class RoleController extends Controller
+class RoleController extends CommentController
 {
 	public $layout = 'manage';
 	
@@ -25,20 +25,24 @@ class RoleController extends Controller
 			if ($model->validate($_POST))
 			{
 				$timeLimitStr = '';
-				switch ($_POST['unit'])
+				switch ($_POST['register_time_limit_unit'])
 				{
 					case 'week':
-						$timeLimitStr = $_POST['register_time_limit'].'周';
-						$realTimeLimit = $_POST['register_time_limit']*3600*24*7;
+						$_POST['register_time_limit'] = $_POST['register_time_limit_value']*3600*24*7;
 						break;
 					case 'month':
-						$timeLimitStr = $_POST['register_time_limit'].'月';
-						$realTimeLimit = $_POST['register_time_limit']*3600*24*30;
+						$_POST['register_time_limit'] = $_POST['register_time_limit_value']*3600*24*30;
 						break;
 					case 'year':
-						$timeLimitStr = $_POST['register_time_limit'].'年';
-						$realTimeLimit = $_POST['register_time_limit']*3600*24*365;
+						$_POST['register_time_limit'] = $_POST['register_time_limit_value']*3600*24*365;
 						break;
+				}
+				
+				//分享率不能小于上传量/下载量
+				if ($_POST['uploaded_limit']/$_POST['downloaded_limit'] > $_POST['ratio_limit'])
+				{
+					$model->setError('ratio_limit', '分享率不能小于上传/下载');
+					goto A;
 				}
 				//检验等级数值是否跟其他数值相对应，也就是一个更高的等级不能有更低的其他数值
 				
@@ -69,9 +73,9 @@ class RoleController extends Controller
 						$model->setError('ratio_limit', '不能比更高等级的角色的分享率('.number_format($highLevel['ratio_limit'], 2, '.', '').')还高');
 						$noError = FALSE;
 					}
-					if ($realTimeLimit > $highLevel['register_time_limit'])
+					if ($_POST['register_time_limit'] > $highLevel['register_time_limit'])
 					{
-						$model->setError('register_time_limit', '不能比更高等级的角色的注册时间('.$highLevel['register_time_limit_string'].')还高');
+						$model->setError('register_time_limit_value', '不能比更高等级的角色的注册时间('.$highLevel['register_time_limit_value'].self::getUnit($highLevel['register_time_limit_unit']).')还高');
 						$noError = FALSE;
 					}
 					
@@ -107,9 +111,9 @@ class RoleController extends Controller
 						$model->setError('ratio_limit', '不能比更低等级的角色的分享率('.number_format($lowLevel['ratio_limit'], 2, '.', '').')还低');
 						$noError = FALSE;
 					}
-					if ($realTimeLimit < $lowLevel['register_time_limit'])
+					if ($_POST['register_time_limit'] < $lowLevel['register_time_limit'])
 					{
-						$model->setError('register_time_limit', '不能比更低等级的角色的注册时间('.$lowLevel['register_time_limit_string'].')还低');
+						$model->setError('register_time_limit_value', '不能比更低等级的角色的注册时间('.$lowLevel['register_time_limit_value'].self::getUnit($lowLevel['register_time_limit_unit']).')还低');
 						$noError = FALSE;
 					}
 					
@@ -119,9 +123,6 @@ class RoleController extends Controller
 					goto A;
 				}
 				
-				unset($_POST['unit']);
-				$_POST['register_time_limit_string'] = $timeLimitStr;
-				$_POST['register_time_limit'] = $realTimeLimit;
 				$result = $model->insert($_POST);
 				if (empty($result))
 				{
@@ -137,5 +138,154 @@ class RoleController extends Controller
 			$html = $this->render('roleform', array('model' => $model));
 			echo $html;
 		}
+	}
+	
+	public function actionRoleedit()
+	{
+		if (empty($_GET['id']) || !ctype_digit(strval($_GET['id'])))
+		{
+			$this->goError();
+		}
+		$model = RoleModel::model();
+		$role = $model->findByPk($_GET['id']);
+		$model->setData($role);//直接赋值，通过getData取出来，重用roleform。
+		$html = $this->render('roleform', array('model' => $model));
+		echo $html;
+	}
+	
+	public function submit(&$model, $data)
+	{
+		if ($model->validate($_POST))
+		{
+			$timeLimitStr = '';
+			switch ($_POST['register_time_limit_unit'])
+			{
+				case 'week':
+					$_POST['register_time_limit'] = $_POST['register_time_limit_value']*3600*24*7;
+					break;
+				case 'month':
+					$_POST['register_time_limit'] = $_POST['register_time_limit_value']*3600*24*30;
+					break;
+				case 'year':
+					$_POST['register_time_limit'] = $_POST['register_time_limit_value']*3600*24*365;
+					break;
+			}
+			
+			//分享率不能小于上传量/下载量
+			if ($_POST['uploaded_limit']/$_POST['downloaded_limit'] > $_POST['ratio_limit'])
+			{
+				$model->setError('ratio_limit', '分享率不能小于上传/下载');
+				goto A;
+			}
+			//检验等级数值是否跟其他数值相对应，也就是一个更高的等级不能有更低的其他数值
+			
+			$noError = TRUE;
+			
+			//更高级别，我的不能比它大
+			$highLevel = $model->where('level>'.$_POST['level'])->order('level ASC')->limit(1)->select();
+			if (!empty($highLevel))
+			{
+				$highLevel = $highLevel[0];
+				if ($_POST['bonus_limit'] > $highLevel['bonus_limit'])
+				{
+					$model->setError('bonus_limit', '不能比更高等级的角色的魔力('.$highLevel['bonus_limit'].')还高');
+					$noError = FALSE;
+				}
+				if ($_POST['downloaded_limit'] > $highLevel['downloaded_limit'])
+				{
+					$model->setError('downloaded_limit', '不能比更高等级的角色的下载量('.$highLevel['downloaded_limit'].')还高');
+					$noError = FALSE;
+				}
+				if ($_POST['uploaded_limit'] > $highLevel['uploaded_limit'])
+				{
+					$model->setError('uploaded_limit', '不能比更高等级的角色的上传量('.$highLevel['uploaded_limit'].')还高');
+					$noError = FALSE;
+				}
+				if ($_POST['ratio_limit'] > $highLevel['ratio_limit'])
+				{
+					$model->setError('ratio_limit', '不能比更高等级的角色的分享率('.number_format($highLevel['ratio_limit'], 2, '.', '').')还高');
+					$noError = FALSE;
+				}
+				if ($_POST['register_time_limit'] > $highLevel['register_time_limit'])
+				{
+					$model->setError('register_time_limit_value', '不能比更高等级的角色的注册时间('.$highLevel['register_time_limit_value'].self::getUnit($highLevel['register_time_limit_unit']).')还高');
+					$noError = FALSE;
+				}
+				
+			}
+			
+			if (!$noError)
+			{
+				goto A;
+			}
+			
+			//更低等级，我的不能比它小
+			$lowLevel = $model->where('level<'.$_POST['level'])->order('level DESC')->limit(1)->select();
+			if (!empty($lowLevel))
+			{
+				$lowLevel = $lowLevel[0];
+				if ($_POST['bonus_limit'] < $lowLevel['bonus_limit'])
+				{
+					$model->setError('bonus_limit', '不能比更低等级的角色的魔力('.$lowLevel['bonus_limit'].')还低');
+					$noError = FALSE;
+				}
+				if ($_POST['downloaded_limit'] < $lowLevel['downloaded_limit'])
+				{
+					$model->setError('downloaded_limit', '不能比更低等级的角色的下载量('.$lowLevel['downloaded_limit'].')还低');
+					$noError = FALSE;
+				}
+				if ($_POST['uploaded_limit'] < $lowLevel['uploaded_limit'])
+				{
+					$model->setError('uploaded_limit', '不能比更低等级的角色的上传量('.$lowLevel['uploaded_limit'].')还低');
+					$noError = FALSE;
+				}
+				if ($_POST['ratio_limit'] < $lowLevel['ratio_limit'])
+				{
+					$model->setError('ratio_limit', '不能比更低等级的角色的分享率('.number_format($lowLevel['ratio_limit'], 2, '.', '').')还低');
+					$noError = FALSE;
+				}
+				if ($_POST['register_time_limit'] < $lowLevel['register_time_limit'])
+				{
+					$model->setError('register_time_limit_value', '不能比更低等级的角色的注册时间('.$lowLevel['register_time_limit_value'].self::getUnit($lowLevel['register_time_limit_unit']).')还低');
+					$noError = FALSE;
+				}
+				
+			}
+			if (!$noError)
+			{
+				goto A;
+			}
+			
+			$result = $model->insert($_POST);
+			if (empty($result))
+			{
+				$model->setError('name', '未知错误，添加失败！');
+			}
+			else 
+			{
+				$this->redirect('manage/role/rolelist');
+			}
+		}
+		A:
+		$model->setData($_POST);
+		$html = $this->render('roleform', array('model' => $model));
+		echo $html;
+	}
+	
+	public function getUnit(&$unit)
+	{
+		switch ($unit)
+		{
+			case 'week':
+				$unit = '周';
+				break;
+			case 'month':
+				$unit = '月';
+				break;
+			case 'year':
+				$unit = '年';
+				break;
+		}
+		return $unit;
 	}
 }

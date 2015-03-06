@@ -27,9 +27,13 @@
 		<td><?php echo $role['downloaded_limit']?></td>
 		<td><?php echo $role['uploaded_limit']?></td>
 		<td><?php echo number_format($role['ratio_limit'], 2, '.', '')?></td>
-		<td><?php echo $role['register_time_limit_string']?></td>
 		<td>
-			<a href="#">编辑</a>
+			<?php 
+			echo $role['register_time_limit_value'].$this->getUnit($role['register_time_limit_unit']);
+			?>
+		</td>
+		<td>
+			<a href="<?php echo $this->createUrl('manage/role/roleedit', array('id' => $role['id']))?>">编辑</a>
 			<a href="#">权限</a>
 			<a href="#">删除</a>
 		</td>

@@ -1052,7 +1052,7 @@ abstract class Model
 		return $cache;
 	}
 	/**
-	 * 手动为data赋值，在非查询情况下用于表单的数据通过getData获取
+	 * 手动为data赋值，在非查询情况下用于表单的数据通过getData获取。只有setData后getData才有值
 	 * Enter description here ...
 	 * @param array $data
 	 */
