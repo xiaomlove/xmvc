@@ -1,6 +1,8 @@
 <?php
 class CommonController extends Controller
 {
+	public $breadcrumbs = array();//面包屑导航
+	
 	public function __construct()
 	{
 		parent::__construct();
@@ -294,5 +296,28 @@ class CommonController extends Controller
 		$HTML.= '<li'.$class.'><a class="next"><span aria-hidden="true">&raquo;</span></a></li>';
 		$HTML .= '</ul>';
 		return $HTML;
+	}
+	
+	protected function getBreadcrumbs($delimiter = '<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>')
+	{
+		$breadcrumbs = '';
+		if (!empty($this->breadcrumbs))
+		{
+			$count = count($this->breadcrumbs);
+			foreach ($this->breadcrumbs as $k => $breadcrumb)
+			{
+				$breadcrumbs .= '<a';
+				if (!empty($breadcrumb['url']))
+				{
+					$breadcrumbs .= ' href="'.$breadcrumb['url'].'"';
+				}
+				$breadcrumbs .= '>'.$breadcrumb['name'].'</a>';
+				if ($k < $count-1)
+				{
+					$breadcrumbs .= $delimiter;
+				}
+			}
+		}
+		return $breadcrumbs;
 	}
 }

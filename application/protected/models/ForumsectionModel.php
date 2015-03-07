@@ -12,6 +12,16 @@ class ForumsectionModel extends Model
 		return parent::getModel($className);
 	}
 	
+	public function rules()
+	{
+		return array(
+				array('name, master_name_list', 'required', '不能为空'),
+				array('sort', 'number', '必须是非负整数'),
+				array('sort', 'unique', '该排序已存在'),
+				array('name', 'unique', '名称已存在'),
+		);
+	}
+	
 	
 	
 }

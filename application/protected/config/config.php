@@ -38,11 +38,15 @@ return array(
 			
 			//论坛模块
 			'forum'=>'forum/section/list',
+			'forum/thread/list'=>'forum/thread/list',
+			'forum/thread/add'=>'forum/thread/add',
+			'forum/thread/detail'=>'forum/thread/detail',
 	
 			//管理模块
 			'admin'=>'manage/index/index',
 			'admin/forum'=>'manage/forum/sectionlist',
 			'admin/forum/section/add'=>'manage/forum/sectionadd',
+			'admin/forum/section/edit'=>'manage/forum/sectionedit',
 			'admin/user'=>'manage/user/userlist',
 			'admin/user/add'=>'manage/user/useradd',
 			'admin/role'=>'manage/role/rolelist',

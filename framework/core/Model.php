@@ -6,7 +6,7 @@ abstract class Model
 	private $_tableName = NULL;//每个模型都不一样，不应该静态化
 	private $_fields = array();
 	private $_pk = NULL;//主键
-	private $_pv = NULL;//主键的值
+	private $_pv = NULL;//主键的值，活跃记录时候才有值，否则为NULL，unique唯一验证时候出错
 	private $_noPk = FALSE;//是要取的字段是否含主键
 	
 	//链式写法部分
@@ -553,12 +553,11 @@ abstract class Model
 	/**
 	 * 通过主键更新
 	 * @param pk string 主键
-	 * @paramfield mixed 要更新的字段和值信息
-	 * @param options array 绑定的数据
+	 * @param field array 要更新的字段和值信息  索引数组 field=>value
 	 */
-	private function updateByPk($pk, $field, $options = array())
+	private function updateByPk($pk, array $fieldArr)
 	{
-		if(empty($pk) || empty($field))
+		if(empty($pk) || empty($fieldArr))
 		{
 			return false;
 		}
@@ -567,10 +566,16 @@ abstract class Model
 			trigger_error('没有主键！', E_USER_ERROR);
 			return false;
 		}
-		$field = $this->_parseParam($field);
+// 		$field = $this->_parseParam($field);
+		$field = '';
+		foreach ($fieldArr as $key => $value)
+		{
+			$field .= "$key='$value',";
+		}
+		$field = rtrim($field, ',');
 		
 		$sql = 'UPDATE '.$this->_tableName.' SET '.$field.' WHERE '.$this->_pk.'='.$pk;
-		return self::$_db->execute($sql, $options);
+		return self::$_db->execute($sql);
 	}
 	/**
 	 * 通过链式写法更新
@@ -891,7 +896,7 @@ abstract class Model
 						}
 						elseif($validator === 'unique')
 						{
-							$result = $this->_unique($field, $data[$field]);
+							$result = $this->_unique($field, $data);
 						}
 						elseif(method_exists($this, $validator))
 						{
@@ -992,15 +997,23 @@ abstract class Model
 	/**
 	 * 自动验证，唯一验证
 	 * @param unknown $field
-	 * @param unknown $value
+	 * @param unknown $value 表单传递过来的所有值（二维数组）包括主键的值
 	 * @return boolean
 	 */
-	private function _unique($field, $value)
+	private function _unique($field, $data)
 	{
-		if($this->chained)
+		$value = $data[$field];
+		if(!$this->chained || !isset($data[$this->_pk]))
+		{
+			//是新增操作，或者数据中没有主键的值也是新增操作。编辑操作传递过来的数组有主键的值
+			return $this->where($field.'=:value', array(':value'=>$value))->count() == 0;
+			
+		}
+		elseif(isset($data[$this->_pk]) || $this->_pv !== NULL)
 		{
 			//链式操作，是编辑保存
 			//如何确定是否唯一，选择到的是否是它自己？？
+			
 			$sql = 'SELECT '.$this->_pk.' FROM '.$this->_tableName.' WHERE '.$field.'=:value';
 			$result = self::$_db->getAllBySql($sql, array(':value'=>$value));
 			$count = count($result);
@@ -1008,16 +1021,22 @@ abstract class Model
 			{
 				return FALSE;
 			}
-			elseif(($count == 1) && ($result[0][$this->_pk] !== $this->_pv))
+			elseif(($count == 1))
 			{
+				$pv = $this->_pv !== NULL ? $this->_pv : $data[$this->_pk];
+				if (strval($result[0][$this->_pk]) === strval($pv))//这不太清楚什么时候是整型什么时候字符串真麻烦
+				{
+					return TRUE;
+				}
 				return FALSE;
 			}
+			
 			return TRUE;
 		}
 		else 
 		{
-			//是新增
-			return $this->where($field.'=:value', array(':value'=>$value))->count() == 0;
+			trigger_error('编辑操作且非活跃对象且没有传递主键的值，无法使用unique验证', E_USER_ERROR);
+			return FALSE;
 		}
 		
 	}

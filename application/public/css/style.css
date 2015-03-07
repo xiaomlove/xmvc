@@ -53,7 +53,12 @@
 
 #profile td:nth-of-type(1){width: 20%}
 
-
+/*论坛*/
+.forum-section-table thead{background-color: #ddd}
+.forum-thread-table thead{background-color: #ddd}
+.forum-thread-nav{text-align: right}
+.forum-thread-nav .pagination{margin: 0}
+.forum-section-today{color: red;font-weight: bold}
 
 
 /*管理界面*/

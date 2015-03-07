@@ -64,6 +64,18 @@ class Request
 		}
 	}
 	
+	public function getReferer()
+	{
+		if (!empty($_SERVER['HTTP_REFERER']))
+		{
+			return $_SERVER['HTTP_REFERER'];
+		}
+		else
+		{
+			return '#';
+		}
+	}
+	
 	
 	
 }

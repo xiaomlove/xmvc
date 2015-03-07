@@ -1,4 +1,9 @@
 <?php
 
-$a = '1年';
-var_dump(intval($a));
+$a = 'a';
+
+$result = preg_split('/\s/', $a);
+
+var_dump($result);
+
+

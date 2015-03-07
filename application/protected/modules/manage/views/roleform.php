@@ -3,7 +3,7 @@
 	<a class="btn btn-primary pull-right" href="<?php echo $this->createUrl('manage/role/rolelist')?>"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>返回列表</a>
 </h3>
 
-<form class="form-horizontal" action="<?php echo $this->createUrl('manage/role/roleadd')?>" method="post">
+<form class="form-horizontal" action="<?php echo $action?>" method="post">
   <div class="form-group <?php echo $model->getError('name') != NULL ? "has-error" : ""?>">
     <label for="name" class="col-sm-2 control-label">角色名</label>
     <div class="col-sm-10">
@@ -46,7 +46,7 @@
   <div class="form-group <?php echo $model->getError('ratio_limit') != NULL ? "has-error" : ""?>">
     <label for="ratio_limit" class="col-sm-2 control-label">分享率下限</label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" id="ratio_limit" name="ratio_limit" value="<?php echo number_format($model->getData('ratio_limit'), 2, '.', '')?>" placeholder="">
+      <input type="text" class="form-control" id="ratio_limit" name="ratio_limit" value="<?php echo $model->getData('ratio_limit') ? number_format($model->getData('ratio_limit'), 2, '.', '') : ""?>" placeholder="">
       <?php if($model->getError('ratio_limit') != NULL):?>
       	<span class="help-block"><?php echo $model->getError('ratio_limit')?></span>
       <?php endIf?>
@@ -79,7 +79,9 @@
       <?php endIf?>
     </div>
   </div>
-  
+  <?php if (isset($_GET['id'])):?>
+  <input type="hidden" value="<?php echo $_GET['id']?>" name="id">
+  <?php endIf?>
   <div class="form-group">
     <div class="col-sm-offset-6 col-sm-6">
       <button type="submit" class="btn btn-primary">确定</button>
