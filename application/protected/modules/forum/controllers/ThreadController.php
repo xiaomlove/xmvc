@@ -53,7 +53,7 @@ class ThreadController extends CommonController
 						trigger_error('更新所在版块和父版块信息出错', E_USER_ERROR);
 						exit;
 					}
-					$this->redirect('forum/thread/detail');
+					$this->redirect('forum/thread/detail', array('section_id' => $_POST['section_id'], 'id' => $result));
 				}
 			}
 			$model->setData($_POST);
