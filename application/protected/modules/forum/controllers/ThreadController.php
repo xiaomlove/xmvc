@@ -66,7 +66,8 @@ class ThreadController extends CommonController
 	
 	public function actionDetail()
 	{
-		echo '主题详情';
+		$html = $this->render('threaddetail');
+		echo $html;
 	}
 	
 	public function actionList()
