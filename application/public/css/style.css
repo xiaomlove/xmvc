@@ -62,7 +62,8 @@
 .forum-thread-action{text-align: center}
 .forum-thread-user-action{text-align: center}
 .forum-thread-user-action a{margin-right: 10px}
-.forum-thread-reply{padding:20px 0; border-bottom: 1px solid #ddd}
+.forum-thread-reply{padding:20px 0; border-top: 1px solid #ddd}
+#forum-thread-reply-list .forum-thread-reply:last-of-type{border-bottom: 1px solid #ddd}
 .forum-thread-reply-action, .forum-thread-action{margin-top: 20px}
 .forum-thread-reply-action .pagination{margin: 0}
 .forum-thread-support-title{margin-top: 15px;margin-bottom: 15px}

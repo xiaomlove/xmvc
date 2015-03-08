@@ -66,7 +66,7 @@ class ThreadController extends CommonController
 	
 	public function actionDetail()
 	{
-		$html = $this->render('threaddetail');
+		$html = $this->render('threaddetail', array('sectionId' => $this->section['id']));
 		echo $html;
 	}
 	

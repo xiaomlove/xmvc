@@ -1,3 +1,25 @@
+<nav class="forum-thread-nav" style="margin-bottom: 16px">
+		<a href="<?php echo $this->createUrl('forum/thread/add', array('section_id' => $sectionId))?>" class="btn btn-success pull-left"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发表主题</a>
+	  <ul class="pagination">
+	  	<li><a href="<?php echo $this->createUrl('forum/thread/list', array('section_id' => $sectionId))?>"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>返回</a></li>
+	    <li>
+	      <a href="#" aria-label="Previous">
+	        <span aria-hidden="true">&laquo;</span>
+	      </a>
+	    </li>
+	    <li><a href="#">1</a></li>
+	    <li><a href="#">2</a></li>
+	    <li><a href="#">3</a></li>
+	    <li><a href="#">4</a></li>
+	    <li><a href="#">5</a></li>
+	    <li>
+	      <a href="#" aria-label="Next">
+	        <span aria-hidden="true">&raquo;</span>
+	      </a>
+	    </li>
+	  </ul>
+</nav>
+<div id="forum-thread-reply-list">
 <div class="row forum-thread-reply">
 	<div class="col-md-2">
 		<h4><strong>xiaomiao</strong>(小学生)</h4>
@@ -40,7 +62,7 @@
 		<table class="table">
 			<thead>
 				<tr>
-					<th>参与人数<em class="text-danger bg-warning">+22</em></th>
+					<th>参与人数<em class="text-danger bg-warning">22</em></th>
 					<th>魔力<em class="text-danger bg-warning">+300</em></th>
 					<th>理由</th>
 					<th style="text-align: right"><a href="#">收起</a></th>
@@ -258,3 +280,57 @@
 		<div class="pull-right"><a href="#"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>回复</a></div>
 	</div>
 </div>
+</div>
+<nav class="forum-thread-nav" style="margin: 20px 0">
+		<a href="<?php echo $this->createUrl('forum/thread/add', array('section_id' => $sectionId))?>" class="btn btn-success pull-left"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发表主题</a>
+	  <ul class="pagination">
+	  	<li><a href="<?php echo $this->createUrl('forum/thread/list', array('section_id' => $sectionId))?>"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>返回</a></li>
+	    <li>
+	      <a href="#" aria-label="Previous">
+	        <span aria-hidden="true">&laquo;</span>
+	      </a>
+	    </li>
+	    <li><a href="#">1</a></li>
+	    <li><a href="#">2</a></li>
+	    <li><a href="#">3</a></li>
+	    <li><a href="#">4</a></li>
+	    <li><a href="#">5</a></li>
+	    <li>
+	      <a href="#" aria-label="Next">
+	        <span aria-hidden="true">&raquo;</span>
+	      </a>
+	    </li>
+	  </ul>
+</nav>
+
+<div class="row">
+	<div class="col-md-offset-3 col-md-6">
+		<form class="form-horizontal">
+		  <div class="form-group">
+		    <div class="col-sm-12">
+		      <script id="uecontainer" name="content" type="text/plain"></script>
+		    </div>
+		  </div>
+
+		  <div class="form-group">
+		    <div class="col-sm-offset-5 col-sm-7">
+		      <button type="submit" class="btn btn-success">回复</button>
+		      <button type="button" class="btn btn-default btn-sm pull-right">高级模式</button>
+		    </div>
+		  </div>
+		</form>
+	</div>
+</div>
+
+  <script src="<?php echo App::ins()->request->getBaseUrl()?>application/public/lib/ueditor/ueditor.config.thread-detail.js"></script>
+  <script src="<?php echo App::ins()->request->getBaseUrl()?>application/public/lib/ueditor/ueditor.all.min.js"></script>
+  <script type="text/javascript">
+  var ue = UE.getEditor('uecontainer');
+  ue.ready(function() {
+     
+      //获取html内容，返回: <p>hello</p>
+      //var html = ue.getContent();
+      //获取纯文本内容，返回: hello
+      //var txt = ue.getContentTxt();
+  });
+  </script>
