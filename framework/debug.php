@@ -1,9 +1,5 @@
 <?php
 
-$a = 'a';
-
-$result = preg_split('/\s/', $a);
-
-var_dump($result);
-
+$a = NULL;
+var_dump(!ctype_alnum(strval($a)));
 

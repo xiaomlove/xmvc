@@ -314,8 +314,8 @@
 
 		  <div class="form-group">
 		    <div class="col-sm-offset-5 col-sm-7">
-		      <button type="submit" class="btn btn-success">回复</button>
-		      <button type="button" class="btn btn-default btn-sm pull-right">高级模式</button>
+		      <button type="button" id="submit" class="btn btn-success">回复</button>
+		      <a href="<?php echo $this->createUrl('forum/reply/add', array('section_id' => $_GET['section_id'], 'thread_id' => $_GET['thread_id']))?>" type="button" class="btn btn-default btn-sm pull-right">高级模式</a>
 		    </div>
 		  </div>
 		</form>
@@ -333,4 +333,25 @@
       //获取纯文本内容，返回: hello
       //var txt = ue.getContentTxt();
   });
+	var $submit = $("#submit");
+	$submit.on("click", function(e){
+		var content = ue.getContent();
+		if (content == ""){
+			alert("请输入内容");
+			return;
+		}
+		var href = $submit.next().attr("href");
+		var hrefArr = href.split("?");
+		$.ajax({
+			url: hrefArr[0],
+			type: "POST",
+			data: hrefArr[1]+"&content="+content+"&quickReply=1",
+			dataType: 'html',
+			success: function(data){
+				console.log(data);
+			}
+		})
+		
+	})
+	  
   </script>

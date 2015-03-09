@@ -6,12 +6,16 @@ class ThreadController extends CommonController
 	
 	public function init()
 	{
-		if (empty($_GET['section_id']) || !ctype_digit(strval($_GET['section_id'])))
+		if (!ctype_digit($_GET['section_id']) && !ctype_digit($_POST['section_id']))
 		{
 			$this->goError();
 		}
 		$this->breadcrumbs[] = array('name' => 'TinyHD论坛', 'url' => $this->createUrl('forum/section/list'));
 		$section = $this->section = ForumsectionModel::model()->findByPk($_GET['section_id']);
+		if (empty($section))
+		{
+			$this->goError();
+		}
 		$this->breadcrumbs[] = array('name' => $section['name'], 'url' => $this->createUrl('forum/thread/list', array('section_id' => $_GET['section_id'])));
 	}
 	
