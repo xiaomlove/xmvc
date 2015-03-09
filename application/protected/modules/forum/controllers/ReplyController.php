@@ -95,17 +95,13 @@ class ReplyController extends CommonController
 					else 
 					{
 						//插入回复成功，渲染返回的html代码
-//						$userInfo = UserModel::model()->findByPk(App::ins()->user->getId());
-						$sql = "SELECT a.name,a.uploaded,a.downloaded,b.name,count(c.*) as threadCount,count(d.*) as replyCount,count(e.*) as commentCount  
-								FROM user a LEFT JOIN role b ON b.level=a.role_level 
-									LEFT JOIN forum_thread c ON c.user_id=a.id 
-									LEFT JOIN forum_reply d ON d.user_id=a.id 
-									LEFT JOIN comment e ON e.user_id=a.id 
-										WHERE a.id=".App::ins()->user->getId();
+						//应该加相关字段还是连一下表？？？太麻烦，还是加字段
+						$userId = App::ins()->user->getId();
+						$sql = "SELECT a.id,a.name,a.avatar_url,a.uploaded,a.downloaded,a.thread_count,a.reply_count,a.comment_count,b.name as roleName FROM user a LEFT JOIN role b ON b.level=a.role_level WHERE a.id=$userId";
 						$userInfo = $model->findBySql($sql);
-						var_dump($userInfo);exit;
+						$userInfo = $userInfo[0];
 						$html = $this->renderPartial('reply', array('maxFloor' => $maxFloor, 'content' => $_POST['content'], 'userInfo' => $userInfo));
-						echo json_encode(array('code' => 1, 'msg' => '发表回复成功！'));
+						echo json_encode(array('code' => 1, 'msg' => $html));
 					}
 					exit;
 					

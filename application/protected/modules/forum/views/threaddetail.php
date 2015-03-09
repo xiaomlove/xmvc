@@ -31,17 +31,17 @@
 	<div class="col-md-2">
 		<div><a href="#"><img src="<?php echo App::ins()->request->getBaseUrl()?>application/public/images/avatar.jpg" class="img-responsive"></a></div>
 		<div>
-			<table class="table">
+			<table class="table user-info-table">
 				<tbody>
 					<tr>
-						<td><p><a href="#">45GB</a></p>上传</td>
-						<td><p><a href="#">45GB</a></p>下载</td>
-						<td><p><a href="#">1.35</a></p>分享率</td>
+						<td><p><a href="#">45GB</a></p><p>上传</p></td>
+						<td><p><a href="#">45GB</a></p><p>下载</p></td>
+						<td><p><a href="#">1.35</a></p><p>分享率</p></td>
 					</tr>
 					<tr>
-						<td><p><a href="#">20</a></p>主题</td>
-						<td><p><a href="#">10</a></p>回复</td>
-						<td><p><a href="#">23</a></p>评论</td>
+						<td><p><a href="#">20</a></p><p>主题</p></td>
+						<td><p><a href="#">10</a></p><p>回复</p></td>
+						<td><p><a href="#">23</a></p><p>评论</p></td>
 					</tr>
 				</tbody>
 			</table>
@@ -112,17 +112,17 @@
 	<div class="col-md-2">
 		<div><a href="#"><img src="<?php echo App::ins()->request->getBaseUrl()?>application/public/images/avatar.jpg" class="img-responsive"></a></div>
 		<div>
-			<table class="table">
+			<table class="table user-info-table">
 				<tbody>
 					<tr>
-						<td><p><a href="#">45GB</a></p>上传</td>
-						<td><p><a href="#">45GB</a></p>下载</td>
-						<td><p><a href="#">1.35</a></p>分享率</td>
+						<td><p><a href="#">45GB</a></p><p>上传</p></td>
+						<td><p><a href="#">45GB</a></p><p>下载</p></td>
+						<td><p><a href="#">1.35</a></p><p>分享率</p></td>
 					</tr>
 					<tr>
-						<td><p><a href="#">20</a></p>主题</td>
-						<td><p><a href="#">10</a></p>回复</td>
-						<td><p><a href="#">23</a></p>评论</td>
+						<td><p><a href="#">20</a></p><p>主题</p></td>
+						<td><p><a href="#">10</a></p><p>回复</p></td>
+						<td><p><a href="#">23</a></p><p>评论</p></td>
 					</tr>
 				</tbody>
 			</table>
@@ -203,17 +203,17 @@
 	<div class="col-md-2">
 		<div><a href="#"><img src="<?php echo App::ins()->request->getBaseUrl()?>application/public/images/avatar.jpg" class="img-responsive"></a></div>
 		<div>
-			<table class="table">
+			<table class="table user-info-table">
 				<tbody>
 					<tr>
-						<td><p><a href="#">45GB</a></p>上传</td>
-						<td><p><a href="#">45GB</a></p>下载</td>
-						<td><p><a href="#">1.35</a></p>分享率</td>
+						<td><p><a href="#">45GB</a></p><p>上传</p></td>
+						<td><p><a href="#">45GB</a></p><p>下载</p></td>
+						<td><p><a href="#">1.35</a></p><p>分享率</p></td>
 					</tr>
 					<tr>
-						<td><p><a href="#">20</a></p>主题</td>
-						<td><p><a href="#">10</a></p>回复</td>
-						<td><p><a href="#">23</a></p>评论</td>
+						<td><p><a href="#">20</a></p><p>主题</p></td>
+						<td><p><a href="#">10</a></p><p>回复</p></td>
+						<td><p><a href="#">23</a></p><p>评论</p></td>
 					</tr>
 				</tbody>
 			</table>
@@ -346,9 +346,16 @@
 			url: hrefArr[0],
 			type: "POST",
 			data: hrefArr[1]+"&content="+content+"&quickReply=1",
-			dataType: 'html',
+			dataType: 'json',
+			beforeSend: function(){$submit.text("发表中...").attr("disabled", "disabled")},
 			success: function(data){
-				console.log(data);
+				if (data.code == 1){
+					$("#forum-thread-reply-list").append(data.msg);
+					$submit.removeAttr("disabled").text("发表");
+					ue.setContent('');
+				}else{
+					$submit.text(data.msg);
+				}
 			}
 		})
 		

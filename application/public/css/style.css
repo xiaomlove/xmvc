@@ -63,6 +63,7 @@
 .forum-thread-user-action{text-align: center}
 .forum-thread-user-action a{margin-right: 10px}
 .forum-thread-reply{padding:20px 0; border-top: 1px solid #ddd}
+.forum-thread-reply .user-info-table td p{white-space: nowrap}
 #forum-thread-reply-list .forum-thread-reply:last-of-type{border-bottom: 1px solid #ddd}
 .forum-thread-reply-action, .forum-thread-action{margin-top: 20px}
 .forum-thread-reply-action .pagination{margin: 0}

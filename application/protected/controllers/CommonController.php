@@ -77,7 +77,7 @@ class CommonController extends Controller
 	{
 		if(empty($size))
 		{
-			return NULL;
+			return 0;
 		}
 		if(!ctype_digit($size))
 		{

@@ -70,6 +70,30 @@ class ThreadController extends CommonController
 	
 	public function actionDetail()
 	{
+		if (!ctype_digit($_GET['thread_id']))
+		{
+			$this->goError();
+		}
+		//取thread信息
+		/*
+		$threadModel = ForumthreadModel::model();
+		$thread = $threadModel->findByPk($_GET['thread_id']);
+		if (empty($thread))
+		{
+			$this->goError();
+		}
+		echo '<pre/>';
+		var_dump($thread);
+		//取appraise信息
+		$sql = "SELECT a.*,b.name FROM forum_appraise a LEFT JOIN user b ON b.id=a.user_id WHERE thread_id={$_GET['thread_id']} ORDER BY id DESC";
+		$appraiseList = $threadModel->findBySql($sql);
+		var_dump($appraiseList);
+		//取reply信息
+		$sql = "select ";
+		$replyList = $threadModel->findBySql($sql);
+		var_dump($replyList);
+		exit;
+		*/
 		$html = $this->render('threaddetail', array('sectionId' => $this->section['id']));
 		echo $html;
 	}
