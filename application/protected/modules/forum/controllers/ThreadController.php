@@ -75,26 +75,36 @@ class ThreadController extends CommonController
 			$this->goError();
 		}
 		//取thread信息
-		/*
+		
 		$threadModel = ForumthreadModel::model();
-		$thread = $threadModel->findByPk($_GET['thread_id']);
+		$sql = "SELECT a.*,b.name,b.role_name,b.uploaded,b.downloaded,b.thread_count,b.reply_count as user_info_reply_count,b.comment_count FROM forum_thread a,user b WHERE b.id=a.user_id AND a.id=".$_GET['thread_id'];
+		$thread = $threadModel->findBySql($sql);
 		if (empty($thread))
 		{
 			$this->goError();
 		}
-		echo '<pre/>';
-		var_dump($thread);
+		$thread = $thread[0];
+//		echo '<pre/>';
+//		var_dump($thread);
 		//取appraise信息
 		$sql = "SELECT a.*,b.name FROM forum_appraise a LEFT JOIN user b ON b.id=a.user_id WHERE thread_id={$_GET['thread_id']} ORDER BY id DESC";
 		$appraiseList = $threadModel->findBySql($sql);
-		var_dump($appraiseList);
+//		var_dump($appraiseList);
 		//取reply信息
-		$sql = "select ";
+		$sql = "select aa.*,bb.name,bb.role_name,bb.uploaded,bb.downloaded,bb.thread_count,bb.reply_count as user_info_reply_count,bb.comment_count FROM (select b.* FROM forum_reply a LEFT JOIN forum_reply b ON b.thread_id=a.id OR b.id=a.id WHERE a.thread_id={$thread['id']} AND b.floor < 6 ORDER BY a.floor ASC,b.floor ASC) aa INNER JOIN user bb ON aa.user_id=bb.id";
 		$replyList = $threadModel->findBySql($sql);
-		var_dump($replyList);
-		exit;
-		*/
-		$html = $this->render('threaddetail', array('sectionId' => $this->section['id']));
+		if (!empty($replyList))
+		{
+			foreach ($replyList as &$reply)
+			{
+				if ($reply['reply_id'] == 0)
+				{
+					$replyList[$key]['children']
+				}
+			}
+		}
+//		var_dump($replyList);exit;
+		$html = $this->render('threaddetail', array('section' => $this->section, 'thread' => $thread, 'replyList' => $replyList, 'appraiseList' => $appraiseList));
 		echo $html;
 	}
 	
