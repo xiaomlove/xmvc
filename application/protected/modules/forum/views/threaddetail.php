@@ -19,16 +19,38 @@
 	    </li>
 	  </ul>
 </nav>
+
+<div class="row forum-thread-head"">
+	<div class="col-md-2">
+		<span>查看</span>
+		<span class="text-danger"><?php echo $thread['view_count']+1?></span>
+		<span>|</span>
+		<span>回复</span>
+		<span class="text-danger"><?php echo $thread['reply_count']?></span>
+	</div>
+	<div class="col-md-10">
+		<a href="#" class="forum-thread-title"><?php echo $thread['title']?></a>
+		<div class="pull-right">
+			<a href="#" class="glyphicon glyphicon-arrow-left" aria-hidden="true" title="上一主题" style="cursor: pointer"></a>
+			<a href="#" class="glyphicon glyphicon-arrow-right" aria-hidden="true" title="下一主题" style="cursor: pointer"></a>
+		</div>
+	</div>
+
+</div>
+
 <div id="forum-thread-reply-list">
+
+<!-- 楼主部分 -->
+
 <div class="row forum-thread-reply">
 	<div class="col-md-2">
 		<h4><strong><?php echo $thread['name']?></strong>(<?php echo $thread['role_name']?>)</h4>
 	</div>
 	<div class="col-md-10">
-		<h4>发表于&nbsp;&nbsp;<em><?php echo date('Y-m-d H:i', $thread['add_time'])?></em>&nbsp;&nbsp;<a href="#"><small>只看该作者</small></a><span class="pull-right"><i>楼主</i>&nbsp;&nbsp;<small title="输入层数后回车">电梯&nbsp;<input type="text" size="1" id="elevator"></small></span></h4>
+		<h4>发表于&nbsp;&nbsp;<em><?php echo date('Y-m-d H:i', $thread['add_time'])?></em>&nbsp;&nbsp;<a href="#"><small>只看该作者</small></a>&nbsp;&nbsp;<a href="#"><small>编辑</small></a><span class="pull-right"><i>楼主</i>&nbsp;&nbsp;<small title="输入层数后回车">电梯&nbsp;<input type="text" size="1" id="elevator"></small></span></h4>
 	</div>
 	
-	<div class="col-md-2">
+	<div class="col-md-2 forum-reply-user">
 		<div><a href="#"><img src="<?php echo App::ins()->request->getBaseUrl()?>application/public/images/avatar.jpg" class="img-responsive"></a></div>
 		<div>
 			<table class="table user-info-table">
@@ -36,7 +58,7 @@
 					<tr>
 						<td><p><a href="#"><?php echo $this->getSize($thread['uploaded'])?></a></p><p>上传</p></td>
 						<td><p><a href="#"><?php echo $this->getSize($thread['downloaded'])?></a></p><p>下载</p></td>
-						<td><p><a href="#"><?php echo number_format($thread['uploaded']/$thread['downloaded'], 2, '.', '')?></a></p><p>分享率</p></td>
+						<td><p><a href="#"><?php echo (!empty($thread['downloaded'])) ? number_format($thread['uploaded']/$thread['downloaded'], 2, '.', '') : 0?></a></p><p>分享率</p></td>
 					</tr>
 					<tr>
 						<td><p><a href="#"><?php echo $thread['thread_count']?></a></p><p>主题</p></td>
@@ -54,9 +76,8 @@
 	<div class="col-md-10">
 		<?php echo $thread['content']?>
 	</div>
-	
-	<div class="col-md-offset-2 col-md-4 bg-warning text-danger forum-thread-support-title"><h4><span class="glyphicon glyphicon-record" aria-hidden="true"></span>支持</h4></div>
 	<?php if (count($appraiseList)):?>
+	<div class="col-md-offset-2 col-md-10 bg-warning text-danger forum-thread-support-title"><h4><span class="glyphicon glyphicon-record" aria-hidden="true"></span>支持</h4></div>
 	<div class="col-md-offset-2 col-md-10">
 		<table class="table">
 			<thead>
@@ -91,17 +112,16 @@
 
 <?php if (!empty($replyList)):?>
 <?php foreach ($replyList as $reply):?>
-<?php if ($reply['reply_id'] == 0):?>
 <div class="row forum-thread-reply">
 	
 	<div class="col-md-2">
 		<h4><strong><?php echo $reply['name']?></strong>(<?php echo $reply['role_name']?>)</h4>
 	</div>
 	<div class="col-md-10">
-		<h4>发表于&nbsp;&nbsp;<em><?php echo date('Y-m-d H:i', $reply['add_time'])?></em>&nbsp;&nbsp;<a href="#"><small>只看该作者</small></a><span class="pull-right"><i><?php echo $reply['floor']?></i>楼</span></h4>
+		<h4>发表于&nbsp;&nbsp;<em><?php echo date('Y-m-d H:i', $reply['add_time'])?></em>&nbsp;&nbsp;<a href="#"><small>只看该作者</small></a>&nbsp;&nbsp;<a href="#"><small>编辑</small></a><span class="pull-right"><i><?php echo $reply['floor']?></i>楼</span></h4>
 	</div>
 	
-	<div class="col-md-2">
+	<div class="col-md-2 forum-reply-user">
 		<div><a href="#"><img src="<?php echo App::ins()->request->getBaseUrl()?>application/public/images/avatar.jpg" class="img-responsive"></a></div>
 		<div>
 			<table class="table user-info-table">
@@ -109,7 +129,7 @@
 					<tr>
 						<td><p><a href="#"><?php echo $this->getSize($reply['uploaded'])?></a></p><p>上传</p></td>
 						<td><p><a href="#"><?php echo $this->getSize($reply['downloaded'])?></a></p><p>下载</p></td>
-						<td><p><a href="#"><?php echo number_format($reply['uploaded']/$reply['downloaded'], 2, '.', '')?></a></p><p>分享率</p></td>
+						<td><p><a href="#"><?php echo !empty($reply['downloaded']) ? number_format($reply['uploaded']/$reply['downloaded'], 2, '.', '') : 0?></a></p><p>分享率</p></td>
 					</tr>
 					<tr>
 						<td><p><a href="#"><?php echo $reply['thread_count']?></a></p><p>主题</p></td>
@@ -131,11 +151,10 @@
 	<div class="col-md-offset-2 col-md-10 forum-thread-reply-action">
 		<div class="pull-left">
 			<a href="#" style="margin-right: 20px"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>支持</a>
-			<a href="#"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>反对</a>
+			<a href="#" style="margin-right: 20px"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>反对</a>
+			<a href="#" style="margin-right: 20px"><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>举报</a>
 		</div>
-		<div class="pull-right"><a href="#"><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>举报</a></div>
 	</div>
-<?php endIf?>
 	
 <?php if ($reply['reply_id'] != 0):?>
 	<div class="col-md-offset-2 col-md-10 forum-thread-reply-reply">
@@ -152,7 +171,7 @@
 <?php endIf?>
 
 	<div class="col-md-offset-2 col-md-10 forum-thread-reply-action">
-		<?php if ($reply['reply_id'] != 0):?>
+		<?php if (!empty($reply['front_reply'])):?>
 		<div class="pull-left">
 			<nav>
 			  <ul class="pagination pagination-sm">
@@ -174,9 +193,7 @@
 		<?php endIf?>
 		<div class="pull-right"><a href="#"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>回复</a></div>
 	</div>
-<?php if ($reply['reply_id'] != 0):?>	
 </div>
-<?php endIf?>
 
 <?php endForeach?>
 <?php endIf?>
@@ -311,7 +328,7 @@
 		</form>
 	</div>
 </div>
-
+<input type="hidden" id="add-view" value="<?php echo $this->createUrl('forum/thread/addview')?>">
   <script src="<?php echo App::ins()->request->getBaseUrl()?>application/public/lib/ueditor/ueditor.config.thread-detail.js"></script>
   <script src="<?php echo App::ins()->request->getBaseUrl()?>application/public/lib/ueditor/ueditor.all.min.js"></script>
   <script type="text/javascript">
@@ -323,15 +340,18 @@
       //获取纯文本内容，返回: hello
       //var txt = ue.getContentTxt();
   });
+  
 	var $submit = $("#submit");
+	var href = $submit.next().attr("href");
+	var hrefArr = href.split("?");
+	
 	$submit.on("click", function(e){
 		var content = ue.getContent();
 		if (content == ""){
 			alert("请输入内容");
 			return;
 		}
-		var href = $submit.next().attr("href");
-		var hrefArr = href.split("?");
+		
 		$.ajax({
 			url: hrefArr[0],
 			type: "POST",
@@ -349,6 +369,23 @@
 			}
 		})
 		
-	})
+	});
+
+	//添加浏览量
+	window.onload = function(){
+		if (!window.viewed){
+			$.ajax({
+				url: $("#add-view").val(),
+				type: "POST",
+				data: hrefArr[1]+"&addview=1",
+				dataType: "json",
+				success: function(data){
+					console.log(data);
+					window.viewed = 1;
+				}
+			})
+		}
+	}
+	
 	  
   </script>

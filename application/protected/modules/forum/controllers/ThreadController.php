@@ -6,6 +6,10 @@ class ThreadController extends CommonController
 	
 	public function init()
 	{
+		if (isset($_POST['addview']))
+		{
+			return;//添加浏览量不需要
+		}
 		if (!ctype_digit($_GET['section_id']) && !ctype_digit($_POST['section_id']))
 		{
 			$this->goError();
@@ -84,26 +88,16 @@ class ThreadController extends CommonController
 			$this->goError();
 		}
 		$thread = $thread[0];
-//		echo '<pre/>';
+// 		echo '<pre/>';
 //		var_dump($thread);
 		//取appraise信息
 		$sql = "SELECT a.*,b.name FROM forum_appraise a LEFT JOIN user b ON b.id=a.user_id WHERE thread_id={$_GET['thread_id']} ORDER BY id DESC";
 		$appraiseList = $threadModel->findBySql($sql);
 //		var_dump($appraiseList);
 		//取reply信息
-		$sql = "select aa.*,bb.name,bb.role_name,bb.uploaded,bb.downloaded,bb.thread_count,bb.reply_count as user_info_reply_count,bb.comment_count FROM (select b.* FROM forum_reply a LEFT JOIN forum_reply b ON b.thread_id=a.id OR b.id=a.id WHERE a.thread_id={$thread['id']} AND b.floor < 6 ORDER BY a.floor ASC,b.floor ASC) aa INNER JOIN user bb ON aa.user_id=bb.id";
+		$sql = "select aa.*,bb.name,bb.role_name,bb.uploaded,bb.downloaded,bb.thread_count,bb.reply_count as user_info_reply_count,bb.comment_count FROM forum_reply aa LEFT JOIN user bb ON aa.user_id=bb.id WHERE aa.thread_id=".$_GET['thread_id'];
 		$replyList = $threadModel->findBySql($sql);
-		if (!empty($replyList))
-		{
-			foreach ($replyList as &$reply)
-			{
-				if ($reply['reply_id'] == 0)
-				{
-					$replyList[$key]['children']
-				}
-			}
-		}
-//		var_dump($replyList);exit;
+// 		var_dump($replyList);exit;
 		$html = $this->render('threaddetail', array('section' => $this->section, 'thread' => $thread, 'replyList' => $replyList, 'appraiseList' => $appraiseList));
 		echo $html;
 	}
@@ -111,9 +105,29 @@ class ThreadController extends CommonController
 	public function actionList()
 	{
 		$model = ForumthreadModel::model();
-		$sql = "SELECT a.*,b.name as user_name,c.name as last_user_name FROM forum_thread a LEFT JOIN user b ON a.user_id=b.id LEFT JOIN user c ON a.last_user_id=c.id WHERE section_id={$_GET['section_id']} ORDER BY a.add_time DESC";
+		$sql = "SELECT a.*,b.name as user_name FROM forum_thread a LEFT JOIN user b ON a.user_id=b.id WHERE section_id={$_GET['section_id']} ORDER BY a.add_time DESC";
 		$threadList = $model->findBySql($sql);
 		$html = $this->render('threadlist', array('threadList' => $threadList, 'sectionId' => $_GET['section_id']));
 		echo $html;
+	}
+	
+	public function actionAddview()
+	{
+		if (!isset($_POST['thread_id']) || !ctype_digit($_POST['thread_id']))
+		{
+			echo json_encode(array('code' => -1, 'msg' => '参数不全'));
+			exit;
+		}
+		$model = ForumthreadModel::model();
+		$sql = "UPDATE forum_thread SET view_count=view_count+1 WHERE id=".$_POST['thread_id'];
+		$result = $model->execute($sql);
+		if (!empty($result))
+		{
+			echo json_encode(array('code' => 1, 'msg' => '增加成功'));
+		}
+		else
+		{
+			echo json_encode(array('code' => 0, 'msg' => '没有变化'));
+		}
 	}
 }

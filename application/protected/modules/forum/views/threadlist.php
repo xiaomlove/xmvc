@@ -39,9 +39,10 @@
 			<td><?php echo $thread['view_count']?></td>
 			<td>
 			<?php
-				if (!empty($thread['last_user_id']))
+				if (!empty($thread['last_reply']))
 				{
-					echo  $thread['last_user_name']."<br/>".date('Y-m-d H:i', $thread['last_reply_time']);
+					$reply = unserialize($thread['last_reply']);
+					echo  "<a href=\"#\">".$reply['userName']."</a><br/><small>".date('Y-m-d H:i', $reply['addTime'])."</small>";
 				}
 			?>
 			</td>

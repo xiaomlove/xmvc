@@ -42,6 +42,7 @@ return array(
 			'forum/thread/add'=>'forum/thread/add',
 			'forum/thread/detail'=>'forum/thread/detail',
 			'forum/reply/add'=>'forum/reply/add',
+			'forum/thread/addview'=>'forum/thread/addview',
 	
 			//管理模块
 			'admin'=>'manage/index/index',
