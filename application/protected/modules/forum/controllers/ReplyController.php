@@ -159,8 +159,10 @@ class ReplyController extends CommonController
 		}
 	}
 	
-	private function _updateThreadSectionUser($replyId, $reply)
+	private function _updateThreadSectionUser($replyId, $content)
 	{
+		$replyContent = strip_tags($content);//去标签
+		$replyContent = mb_substr($replyContent, 0, 20, 'UTF-8');//截取
 		$model = ForumthreadModel::model();
 		$userId = App::ins()->user->getId();
 		$userName = App::ins()->user->getName();
@@ -172,7 +174,7 @@ class ReplyController extends CommonController
 				'userName' => $userName,
 				'sectionId' => $sectionId,
 				'threadId' => $threadId,
-				'content' => $reply,
+				'content' => $replyContent,
 				'addTime' => $_SERVER['REQUEST_TIME'], 
 		));
 		//更新主题的回复数、最近回复
