@@ -85,7 +85,6 @@ class ReplyController extends CommonController
 				}
 				$reply->add_time = $_SERVER['REQUEST_TIME'];
 				$result = $reply->save();
-			
 				if (isset($_POST['quickReply']))
 				{
 					//快速回复，ajax请求
@@ -161,8 +160,7 @@ class ReplyController extends CommonController
 	
 	private function _updateThreadSectionUser($replyId, $content)
 	{
-		$replyContent = strip_tags($content);//去标签
-		$replyContent = mb_substr($replyContent, 0, 20, 'UTF-8');//截取
+		$replyContent = mb_substr(strip_tags($content), 0, 20, 'UTF-8');//去标签，截部分
 		$model = ForumthreadModel::model();
 		$userId = App::ins()->user->getId();
 		$userName = App::ins()->user->getName();
@@ -177,6 +175,7 @@ class ReplyController extends CommonController
 				'content' => $replyContent,
 				'addTime' => $_SERVER['REQUEST_TIME'], 
 		));
+		
 		//更新主题的回复数、最近回复
 		$sql = "UPDATE forum_thread SET reply_count=reply_count+1,last_reply='$content' WHERE id=".$threadId;
 		$model->execute($sql);

@@ -346,12 +346,11 @@
 	var hrefArr = href.split("?");
 	
 	$submit.on("click", function(e){
-		var content = ue.getContent();
+		var content = encodeURIComponent(ue.getContent());
 		if (content == ""){
 			alert("请输入内容");
 			return;
 		}
-		
 		$.ajax({
 			url: hrefArr[0],
 			type: "POST",
@@ -359,6 +358,7 @@
 			dataType: 'json',
 			beforeSend: function(){$submit.text("发表中...").attr("disabled", "disabled")},
 			success: function(data){
+//				console.log(data);return;
 				if (data.code == 1){
 					$("#forum-thread-reply-list").append(data.msg);
 					$submit.removeAttr("disabled").text("发表");
@@ -373,15 +373,17 @@
 
 	//添加浏览量
 	window.onload = function(){
-		var referrer = "http://"+location.hostname+$("#forum-nav").children("a").eq(1).attr("href");
-		console.log(referrer);
+		var referrer1 = "http://"+location.hostname+$("#forum-nav").children("a").eq(0).attr("href");
+		var referrer2 = "http://"+location.hostname+$("#forum-nav").children("a").eq(1).attr("href");
+		
+		console.log(referrer1,referrer2);
 		console.log(document.referrer);
-		if (referrer === document.referrer){
+		if (referrer1 === document.referrer || referrer2 === document.referrer){
 			$.ajax({
 				url: $("#add-view").val(),
 				type: "POST",
 				data: hrefArr[1]+"&addview=1",
-				dataType: "json",
+				dataType: "html",
 				success: function(data){
 					console.log(data);
 				}
