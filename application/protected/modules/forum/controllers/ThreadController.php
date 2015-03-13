@@ -30,11 +30,12 @@ class ThreadController extends CommonController
 		{
 			if ($model->validate($_POST))
 			{
+				$userId = App::ins()->user->getId();
 				$thread = new ForumthreadModel();
 				$thread->title = $_POST['title'];
 				$thread->content = $_POST['content'];
 				$thread->add_time = $_SERVER['REQUEST_TIME'];
-				$thread->user_id = App::ins()->user->getId();
+				$thread->user_id = $userId;
 				$thread->section_id = $_POST['section_id'];
 				if (isset($_POST['draft']))
 				{
@@ -55,13 +56,21 @@ class ThreadController extends CommonController
 					$sectionModel = ForumsectionModel::model();
 					$SectionParent = $sectionModel->findByPk($this->section['parent_id']);
 					$sql = "UPDATE forum_section SET thread_total_count=thread_total_count+1, thread_today_count=thread_today_count+1 WHERE id IN ({$_POST['section_id']},{$SectionParent['id']})";
-					$update = $sectionModel->execute($sql);
-					if (empty($update))
+					$updateSection = $sectionModel->execute($sql);
+					if (empty($updateSection))
 					{
 						trigger_error('更新所在版块和父版块信息出错', E_USER_ERROR);
 						exit;
 					}
-					$this->redirect('forum/thread/detail', array('section_id' => $_POST['section_id'], 'id' => $result));
+					//更新用户信息
+					$sql = "UPDATE user SET thread_count=thread_count+1 WHERE id=$userId";
+					$updateUser = $sectionModel->execute($sql);
+					if (empty($updateUser))
+					{
+						trigger_error('更新用户信息出错', E_USER_ERROR);
+						exit;
+					}
+					$this->redirect('forum/thread/detail', array('section_id' => $_POST['section_id'], 'thread_id' => $result));
 				}
 			}
 			$model->setData($_POST);

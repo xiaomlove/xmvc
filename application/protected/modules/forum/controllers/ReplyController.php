@@ -96,7 +96,7 @@ class ReplyController extends CommonController
 					else 
 					{
 						//更新主题表的回复数以及所在版块、父版块的回复数
-						$this->_updateThreadSection($result, $_POST['content']);
+						$this->_updateThreadSectionUser($result, $_POST['content']);
 						//插入回复成功，渲染返回的html代码
 						//应该加相关字段还是连一下表？？？太麻烦，还是加字段
 						$userId = App::ins()->user->getId();
@@ -118,7 +118,7 @@ class ReplyController extends CommonController
 					}
 					else 
 					{
-						$this->_updateThreadSection($result, $_POST['content']);
+						$this->_updateThreadSectionUser($result, $_POST['content']);
 						//跳到末页比较好，后面完善
 						$this->redirect('forum/thread/detail', array('section_id' => $_POST['section_id'], 'thread_id' => $_POST['thread_id']));
 					}
@@ -159,7 +159,7 @@ class ReplyController extends CommonController
 		}
 	}
 	
-	private function _updateThreadSection($replyId, $reply)
+	private function _updateThreadSectionUser($replyId, $reply)
 	{
 		$model = ForumthreadModel::model();
 		$userId = App::ins()->user->getId();
@@ -180,6 +180,9 @@ class ReplyController extends CommonController
 		$model->execute($sql);
 		//更新所在版块、父版块的回复数、最近回复
 		$sql = "UPDATE forum_section SET reply_total_count=reply_total_count+1,reply_today_count=reply_today_count+1,last_reply='$content' WHERE id IN ($sectionId,$parentSectionId)";
+		$model->execute($sql);
+		//更新用户信息
+		$sql = "UPDATE user SET reply_count=reply_count+1 WHERE id=$userId";
 		$model->execute($sql);
 	}
 	

@@ -373,7 +373,10 @@
 
 	//添加浏览量
 	window.onload = function(){
-		if (!window.viewed){
+		var referrer = "http://"+location.hostname+$("#forum-nav").children("a").eq(1).attr("href");
+		console.log(referrer);
+		console.log(document.referrer);
+		if (referrer === document.referrer){
 			$.ajax({
 				url: $("#add-view").val(),
 				type: "POST",
@@ -381,7 +384,6 @@
 				dataType: "json",
 				success: function(data){
 					console.log(data);
-					window.viewed = 1;
 				}
 			})
 		}

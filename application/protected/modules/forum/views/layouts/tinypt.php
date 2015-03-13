@@ -11,7 +11,7 @@
         <li role="presentation" <?php if(MODULE === 'Manage') echo "class=\"active\""?>><a href="<?php echo $this->createUrl('manage/index/index')?>">管理</a></li>
       </ul>
     </div>
-	<h3 class="page-header" style="text-align: center">
+	<h3 class="page-header" id="forum-nav" style="text-align: center">
 		<?php echo $this->getBreadcrumbs()?>
 	</h3>
 	<?php echo $content?>
