@@ -176,7 +176,8 @@ class TorrentController extends CommonController
 				if (!empty($content))
 				{
 					App::setConfig('noLog', TRUE);
-					$model->updateByPk($_GET['id'], 'download_times=download_times+1');
+					$sql = "UPDATE torrent SET download_times=download_times+1 WHERE id=".$_GET['id'];
+					$model->execute($sql);
 // 					exit('OK');
 					$this->downloadFile($file, $content);
 				}

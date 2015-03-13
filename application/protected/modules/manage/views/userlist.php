@@ -17,13 +17,15 @@
 	</thead>
 	
 	<tbody>
+	<?php if (!empty($userList)):?>
+	<?php foreach ($userList as $user):?>
 	<tr>
-		<td>xiaomiao</td>
-		<td>123@qq.com</td>
-		<td>初中</td>
-		<td>1024</td>
-		<td>1024</td>
-		<td>2013-3-3</td>
+		<td><?php echo $user['name']?></td>
+		<td><?php echo substr_replace($user['email'], '*', 0, 1)?></td>
+		<td><?php echo $user['role_name']?></td>
+		<td><?php echo $this->getSize($user['uploaded'])?></td>
+		<td><?php echo $this->getSize($user['downloaded'])?></td>
+		<td><?php echo date('Y-m-d H:i', $user['last_login_time'])?></td>
 		<td>
 			<a href="#">查看详情</a>
 			<a href="#">重置密码</a>
@@ -32,40 +34,11 @@
 			<a href="#">删除</a>
 		</td>
 	</tr>
-	<tr>
-		<td>xiaomiao</td>
-		<td>123@qq.com</td>
-		<td>初中</td>
-		<td>1024</td>
-		<td>1024</td>
-		<td>2013-3-3</td>
-		<td>
-			<a href="#">查看详情</a>
-			<a href="#">重置密码</a>
-			<a href="#">更改用户名</a>
-			<a href="#">禁用</a>
-			<a href="#">删除</a>
-		</td>
-	</tr>
-	<tr>
-		<td>xiaomiao</td>
-		<td>123@qq.com</td>
-		<td>初中</td>
-		<td>1024</td>
-		<td>1024</td>
-		<td>2013-3-3</td>
-		<td>
-			<a href="#">查看详情</a>
-			<a href="#">重置密码</a>
-			<a href="#">更改用户名</a>
-			<a href="#">禁用</a>
-			<a href="#">删除</a>
-		</td>
-	</tr>
-	
-	
-	
-	
+	<?php endForeach?>
+	<?php else:?>
+	<tr><td colspan="7">暂无用户</td></tr>
+	<?php endIf?>
+
 	</tbody>
 </table>
 <nav style="text-align:center">

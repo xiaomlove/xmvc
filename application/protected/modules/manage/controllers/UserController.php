@@ -1,11 +1,14 @@
 <?php
-class UserController extends Controller
+class UserController extends CommonController
 {
 	public $layout = 'manage';
 	
 	public function actionUserlist()
 	{
-		$html = $this->render('userlist');
+		$model = UserModel::model();
+		$userList = $model->field('id, name, email, role_name, uploaded, downloaded, last_login_time')->order('add_time ASC')->select();
+//		var_dump($userList);exit;
+		$html = $this->render('userlist', array('userList' => $userList));
 		echo $html;
 	}
 	

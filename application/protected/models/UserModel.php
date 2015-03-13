@@ -55,6 +55,8 @@ class UserModel extends Model
 	 */
 	public function login($id, $name, $password, $remember = TRUE, $expire = 108000)
 	{
+		$sql = "UPDATE user SET last_login_time=this_login_time,this_login_time=".$_SERVER['REQUEST_TIME']." WHERE id=$id";
+		$this->execute($sql);
 		$result = App::ins()->user->setLogin($id, $name, $password, $remember, $expire);
 		return $result;
 	}

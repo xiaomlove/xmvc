@@ -38,7 +38,8 @@ class CommentController extends CommonController
 			$result = $comment->save();
 			if (!empty($result))
 			{
-				$result = TorrentModel::model()->updateByPk($_POST['torrentId'], 'comment_count=comment_count+1');
+				$sql = "UPDATE torrent SET comment_count=comment_count+1 WHERE id=".$_POST['torrentId'];
+				$result = TorrentModel::model()->execute($sql);
 				if(!empty($result))
 				{
 					echo json_encode(array('code' => 1, 'msg' => '添加成功'));
