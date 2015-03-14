@@ -1,23 +1,8 @@
 <nav class="forum-thread-nav" style="margin-bottom: 16px">
-		<a href="<?php echo $this->createUrl('forum/thread/add', array('section_id' => $section['id']))?>" class="btn btn-success pull-left"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发表主题</a>
-	  <ul class="pagination">
-	  	<li><a href="<?php echo $this->createUrl('forum/thread/list', array('section_id' => $section['id']))?>"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>返回</a></li>
-	    <li>
-	      <a href="#" aria-label="Previous">
-	        <span aria-hidden="true">&laquo;</span>
-	      </a>
-	    </li>
-	    <li><a href="#">1</a></li>
-	    <li><a href="#">2</a></li>
-	    <li><a href="#">3</a></li>
-	    <li><a href="#">4</a></li>
-	    <li><a href="#">5</a></li>
-	    <li>
-	      <a href="#" aria-label="Next">
-	        <span aria-hidden="true">&raquo;</span>
-	      </a>
-	    </li>
-	  </ul>
+		
+	  	
+	  <a href="<?php echo $this->createUrl('forum/thread/add', array('section_id' => $section['id']))?>" class="btn btn-success pull-left"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发表主题</a>
+	  <?php echo $navHtml?>
 </nav>
 
 <div class="row forum-thread-head"">
@@ -41,7 +26,7 @@
 <div id="forum-thread-reply-list">
 
 <!-- 楼主部分 -->
-
+<?php if (!empty($thread)):?>
 <div class="row forum-thread-reply">
 	<div class="col-md-2">
 		<h4><strong><?php echo $thread['name']?></strong>(<?php echo $thread['role_name']?>)</h4>
@@ -76,14 +61,28 @@
 	<div class="col-md-10">
 		<?php echo $thread['content']?>
 	</div>
+	
+	<!-- 支持部分 -->
+	<div id="appraise">
 	<?php if (count($appraiseList)):?>
 	<div class="col-md-offset-2 col-md-10 bg-warning text-danger forum-thread-support-title"><h4><span class="glyphicon glyphicon-record" aria-hidden="true"></span>支持</h4></div>
 	<div class="col-md-offset-2 col-md-10">
 		<table class="table">
 			<thead>
 				<tr>
-					<th>参与人数<em class="text-danger bg-warning"><?php echo count($appraiseList)?></em></th>
-					<th>魔力<em class="text-danger bg-warning">22</em></th>
+					<th>参与人数<em class="text-danger bg-warning appraise-user-count"><?php echo count($appraiseList)?></em></th>
+					<th>魔力<em class="text-danger bg-warning appraise-bonus-count">
+					<?php
+						$sum = 0; 
+						foreach ($appraiseList as $appraise)
+						{
+							$sum += $appraise['award_value'];
+						}
+						unset($appraise);
+						reset($appraiseList);
+						echo $sum;			
+					?>
+					</em></th>
 					<th>理由</th>
 					<th style="text-align: right"><a href="#">收起</a></th>
 				</tr>
@@ -91,7 +90,7 @@
 			<tbody>
 			<?php foreach ($appraiseList as $appraise):?>
 				<tr>
-					<td><?php echo $appraise['name']?></td>
+					<td><a href="#"><?php echo $appraise['name']?></a></td>
 					<td><?php echo $appraise['award_value']?></td>
 					<td colspan="2"><?php echo $appraise['reason']?></td>
 				</tr>
@@ -100,14 +99,16 @@
 			</tbody>
 		</table>
 	</div>
+	
 	<?php endIf?>
+	</div>
 	<div class="col-md-offset-2 col-md-10 forum-thread-action">
-		<button class="btn btn-warning"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>支持</button>
-		<button class="btn btn-warning"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>收藏</button>
+		<button class="btn btn-warning" data-toggle="modal" data-target="#support" data-action="support"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>支持</button>
+		<button class="btn btn-warning" data-action="bookmark"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>收藏<?php echo empty($thread['bookmark_count']) ? "" : "(".$thread['bookmark_count'].")"?></button>
 	</div>
 
 </div>
-
+<?php endIf?>
 <!-- 回复开始 -->
 
 <?php if (!empty($replyList)):?>
@@ -290,6 +291,7 @@
 </div>
 <nav class="forum-thread-nav" style="margin: 20px 0">
 		<a href="<?php echo $this->createUrl('forum/thread/add', array('section_id' => $section['id']))?>" class="btn btn-success pull-left"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发表主题</a>
+<!--  
 	  <ul class="pagination">
 	  	<li><a href="<?php echo $this->createUrl('forum/thread/list', array('section_id' => $section['id']))?>"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>返回</a></li>
 	    <li>
@@ -308,6 +310,8 @@
 	      </a>
 	    </li>
 	  </ul>
+-->
+		<?php echo $navHtml?>
 </nav>
 
 <div class="row">
@@ -328,6 +332,83 @@
 		</form>
 	</div>
 </div>
+
+<div class="modal fade" id="support" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" style="text-align: center">奖励魔力—支持作者</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal">
+          <div class="form-group" data-type="bonus">
+            <label for="recipient-name" class="col-sm-3 control-label">由系统自动加上：</label>
+            <div class="col-sm-6">
+            	<input type="text" class="form-control" data-type="system" readonly>
+            </div>
+            <div class="col-sm-3">
+            	<div class="btn-group" role="group">
+				    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+				     请选择
+				      <span class="caret"></span>
+				    </button>
+				    <ul class="dropdown-menu" role="menu">
+				      <li><a>5</a></li>
+				      <li><a>10</a></li>
+				    </ul>
+				 </div>
+            </div>
+          </div>
+          <div class="form-group" data-type="bonus">
+            <label for="recipient-name" class="col-sm-3 control-label">从自己魔力里扣：</label>
+            <div class="col-sm-6">
+            	<input type="text" class="form-control" data-type="self" readonly>
+            </div>
+            <div class="col-sm-3">
+            	<div class="btn-group" role="group">
+				    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+				     请选择
+				      <span class="caret"></span>
+				    </button>
+				    <ul class="dropdown-menu" role="menu">
+				      <li><a>100</a></li>
+				      <li><a>200</a></li>
+				      <li><a>500</a></li>
+				      <li><a>1000</a></li>
+				    </ul>
+				 </div>
+            </div>
+          </div>
+          <div class="form-group" data-type="reason">
+            <label for="" class="col-sm-3 control-label">支持理由：</label>
+            <div class="col-sm-6">
+            	<input type="text" class="form-control" data-type="reason">
+            </div>
+            <div class="col-sm-3">
+            	<div class="btn-group" role="group">
+				    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+				     可选择
+				      <span class="caret"></span>
+				    </button>
+				    <ul class="dropdown-menu" role="menu">
+				      <li><a>技术帖必须支持！</a></li>
+				      <li><a>有你更精彩！</a></li>
+				    </ul>
+				 </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer" style="text-align: center">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary">确定</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<input type="hidden" id="add-support" value="<?php echo $this->createUrl('forum/thread/addappraise')?>">
 <input type="hidden" id="add-view" value="<?php echo $this->createUrl('forum/thread/addview')?>">
   <script src="<?php echo App::ins()->request->getBaseUrl()?>application/public/lib/ueditor/ueditor.config.thread-detail.js"></script>
   <script src="<?php echo App::ins()->request->getBaseUrl()?>application/public/lib/ueditor/ueditor.all.min.js"></script>
@@ -370,6 +451,61 @@
 		})
 		
 	});
+
+	//添加支持
+	var $support = $("#support");
+	$support.find("div[data-type=bonus]").find("li").on("click", function(){
+		$support.find("input").not("[data-type=reason]").removeClass("selected").val("");
+		$(this).parents(".form-group").find("input:first").addClass("selected").val($(this).children("a").text());
+	});
+	$support.find("div[data-type=reason]").find("li").on("click", function(){
+		$(this).parents(".form-group").find("input:first").val($(this).children("a").text());
+	})
+	var $supportButton =  $support.find(".modal-footer").children("button:last");
+	$supportButton.on("click", function(){
+		var reason = $support.find("input[data-type=reason]").val();
+		var $bonus = $support.find("input.selected");
+		var bonus = $bonus.val();
+		var type = $bonus.attr("data-type");
+		
+		if ($.trim(bonus) == ""){
+			alert("请选择魔力值");
+			return;
+		}
+		if ($.trim(reason) == ""){
+			alert("请填写理由！");
+			return;
+		}
+		$.ajax({
+			url: $("#add-support").val(),
+			type: "POST",
+			data: hrefArr[1]+"&reason="+encodeURIComponent(reason)+"&bonus="+bonus+"&type="+type+"&addappraise=1",
+			dataType: "json",
+			beforeSend: function(){$supportButton.text("支持中...")},
+			success: function(data){
+				if (data.code == 1){
+					$supportButton.text("确定").prev().trigger("click");
+					var $appraise = $("#appraise");
+					if ($appraise.find("table").length){
+						//不是第一个
+						$appraise.find("tbody").append(data.msg);
+						$appraise.find(".appraise-user-count").text(function(text){
+							return parseInt(text)+1;
+						});
+						$appraise.find(".appraise-bonus-count").text(function(text){
+							return parseInt(text)+bonus;
+						})
+					}else{
+						//第一个，直接插入
+						$appraise.append(data.msg);
+					}
+				}else{
+					$supportButton.text(data.msg).attr("disabled", "disabled");
+				}
+			}
+		})
+		
+	})
 
 	//添加浏览量
 	window.onload = function(){

@@ -6,11 +6,15 @@ class ThreadController extends CommonController
 	
 	public function init()
 	{
-		if (isset($_POST['addview']))
+		if (isset($_POST['addview']) || isset($_POST['addappraise']))
 		{
 			return;//添加浏览量不需要
 		}
-		if (!ctype_digit($_GET['section_id']) && !ctype_digit($_POST['section_id']))
+		if (isset($_GET['page']) && !ctype_digit($_GET['page']))
+		{
+			$this->goError();
+		}
+		if (isset($_GET['section_id']) && !ctype_digit($_GET['section_id']))
 		{
 			$this->goError();
 		}
@@ -83,40 +87,65 @@ class ThreadController extends CommonController
 	
 	public function actionDetail()
 	{
-		if (!ctype_digit($_GET['thread_id']))
+		if (!ctype_digit($_GET['thread_id']) || (isset($_GET['per_page']) && !ctype_digit($_GET['per_page'])))
 		{
 			$this->goError();
 		}
-		//取thread信息
-		
+		$thread = NULL;
+		$appraiseList = array();
 		$threadModel = ForumthreadModel::model();
-		$sql = "SELECT a.*,b.name,b.role_name,b.uploaded,b.downloaded,b.thread_count,b.reply_count as user_info_reply_count,b.comment_count FROM forum_thread a,user b WHERE b.id=a.user_id AND a.id=".$_GET['thread_id'];
-		$thread = $threadModel->findBySql($sql);
-		if (empty($thread))
+		if (empty($_GET['page']) || $_GET['page'] < 2)
 		{
-			$this->goError();
+			//取thread信息
+			$sql = "SELECT a.*,b.name,b.role_name,b.uploaded,b.downloaded,b.thread_count,b.reply_count as user_info_reply_count,b.comment_count FROM forum_thread a,user b WHERE b.id=a.user_id AND a.id=".$_GET['thread_id'];
+			$thread = $threadModel->findBySql($sql);
+			if (empty($thread))
+			{
+				$this->goError();
+			}
+			$thread = $thread[0];
+			// 		echo '<pre/>';
+			//		var_dump($thread);
+			//取appraise信息
+			$sql = "SELECT a.*,b.name FROM forum_appraise a LEFT JOIN user b ON b.id=a.user_id WHERE thread_id={$_GET['thread_id']} ORDER BY id DESC";
+			$appraiseList = $threadModel->findBySql($sql);
+			//		var_dump($appraiseList);
+			
 		}
-		$thread = $thread[0];
-// 		echo '<pre/>';
-//		var_dump($thread);
-		//取appraise信息
-		$sql = "SELECT a.*,b.name FROM forum_appraise a LEFT JOIN user b ON b.id=a.user_id WHERE thread_id={$_GET['thread_id']} ORDER BY id DESC";
-		$appraiseList = $threadModel->findBySql($sql);
-//		var_dump($appraiseList);
+		
 		//取reply信息
-		$sql = "select aa.*,bb.name,bb.role_name,bb.uploaded,bb.downloaded,bb.thread_count,bb.reply_count as user_info_reply_count,bb.comment_count FROM forum_reply aa LEFT JOIN user bb ON aa.user_id=bb.id WHERE aa.thread_id=".$_GET['thread_id'];
-		$replyList = $threadModel->findBySql($sql);
+// 		$sql = "select aa.*,bb.name,bb.role_name,bb.uploaded,bb.downloaded,bb.thread_count,bb.reply_count as user_info_reply_count,bb.comment_count FROM forum_reply aa LEFT JOIN user bb ON aa.user_id=bb.id WHERE aa.thread_id=".$_GET['thread_id'];
+		$data = $threadModel->getReplyList($_GET);
 // 		var_dump($replyList);exit;
-		$html = $this->render('threaddetail', array('section' => $this->section, 'thread' => $thread, 'replyList' => $replyList, 'appraiseList' => $appraiseList));
+		$replyList = $data['data'];
+		//分页代码及返回链接
+		$page = !empty($_GET['page']) ? $_GET['page'] : 1;
+		$per = $data['per_page'];
+		$total = ceil($data['count']/$per);
+		$backUrl = $this->createUrl('forum/thread/list', array('section_id' => $this->section['id']));
+		$referer = App::ins()->request->getReferer();
+		if (stripos($referer, $backUrl) !== FALSE)
+		{
+			$backUrl = $referer;
+		}
+		$prepend = "<li><a href=\"".$backUrl."\"><span class=\"glyphicon glyphicon-arrow-left\" aria-hidden=\"true\"></span>返回</a></li>";
+		$navHtml = $this->getNavHtml($page, $per, $total, $prepend);//导航链接上的其他参数从$_GET取
+		
+		$html = $this->render('threaddetail', array('section' => $this->section, 'thread' => $thread, 'replyList' => $replyList, 'appraiseList' => $appraiseList, 'navHtml' => $navHtml));
 		echo $html;
 	}
 	
 	public function actionList()
 	{
 		$model = ForumthreadModel::model();
-		$sql = "SELECT a.*,b.name as user_name FROM forum_thread a LEFT JOIN user b ON a.user_id=b.id WHERE section_id={$_GET['section_id']} ORDER BY a.add_time DESC";
-		$threadList = $model->findBySql($sql);
-		$html = $this->render('threadlist', array('threadList' => $threadList, 'sectionId' => $_GET['section_id']));
+		$data = $model->getThreadList($_GET);
+		$threadList = $data['data'];
+		$per = $data['per_page'];
+		$total = ceil($data['count']/$per);
+		$page = !empty($_GET['page']) ? $_GET['page'] : 1;
+		$prepend = "<li><a href=\"".$this->createUrl('forum/section/list')."\"><span class=\"glyphicon glyphicon-arrow-left\" aria-hidden=\"true\"></span>返回</a></li>";
+		$navHtml = $this->getNavHtml($page, $per, $total, $prepend);
+		$html = $this->render('threadlist', array('threadList' => $threadList, 'sectionId' => $_GET['section_id'], 'navHtml' => $navHtml));
 		echo $html;
 	}
 	
@@ -139,4 +168,76 @@ class ThreadController extends CommonController
 			echo json_encode(array('code' => 0, 'msg' => '没有变化'));
 		}
 	}
+	
+	public function actionAddappraise()
+	{
+		if (empty($_POST['thread_id']) || !ctype_digit($_POST['thread_id']))
+		{
+			echo json_encode(array('code' => -1, 'msg' => '参数不合法'));exit;
+		}
+		$model = ForumappraiseModel::model();
+		if ($model->validate($_POST))
+		{
+			//检查是否已经支持过
+			$userId = App::ins()->user->getId();
+			$userName = App::ins()->user->getName();
+			$count = $model->where('thread_id='.$_POST['thread_id'].',user_id='.$userId)->count();
+			if ($count > 0)
+			{
+				echo json_encode(array('code' => 0, 'msg' => '已经支持过了'));exit;
+			}
+			//如果是从自己魔力里扣，检查是否足够
+			if ($_POST['type'] === 'self')
+			{
+				$sql = "SELECT bonus FROM user WHERE id=$userId";
+				$result = $model->findBySql($sql);
+				if (!empty($result))
+				{
+					$userBonus = $result[0]['bonus'];
+					if ($userBonus < $_POST['bonus'])
+					{
+						echo json_encode(array('code' => 0, 'msg' => '你的魔力为'.$userBonus,'，不足以扣除'));exit;
+					}
+				}
+				else
+				{
+					echo json_encode(array('code' => 0, 'msg' => '你的用户账号信息异常'));exit;
+				}
+			}
+			$appraise = new ForumappraiseModel();
+			$appraise->thread_id = $_POST['thread_id'];
+			$appraise->user_id = $userId;
+			$appraise->reason = $_POST['reason'];
+			$appraise->award_type = 1;
+			$appraise->award_value = $_POST['bonus'];
+			$appraise->is_good = 1;
+			$result = $appraise->save();
+			if (!empty($result))
+			{
+				//扣除用户魔力
+				if ($_POST['type'] === 'self')
+				{
+					$sql = "UPDATE user SET bonus=bonus-".intval($_POST['bonus'])." WHERE id=$userId";
+					$result = $model->execute($sql);
+					if (empty($result))
+					{
+						echo json_encode(array('code' => 0, 'msg' => '用户魔力扣除失败'));exit;
+					}
+				}
+				$count = $model->where('thread_id='.$_POST['thread_id'])->count();
+				$return = $this->renderPartial('appraise', array('userName' => $userName, 'count' => $count, 'data' => $_POST));
+				echo json_encode(array('code' => 1, 'msg' => $return));exit;
+			}
+			else 
+			{
+				echo json_encode(array('code' => 0, 'msg' => '未知原因，支持失败'));exit;
+			}
+		}
+		else
+		{
+			echo json_encode(array('code' => 0, 'msg' => '没有通过验证'));
+		}
+		
+	}
+	
 }

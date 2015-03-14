@@ -102,16 +102,26 @@ class CommonController extends Controller
 	}
 	/**
 	 * 返回分页的HTML代码
-	 * Enter description here ...
-	 * @param unknown_type $page
-	 * @param unknown_type $per
-	 * @param unknown_type $total
+	 * @param unknown_type $page 当前活动页
+	 * @param unknown_type $per 每页显示条数
+	 * @param unknown_type $total 总页数
+	 * @param string $prepend 导航前面需要插入的项
+	 * @param string $append 导航后面需要插入的项
 	 */
-	protected function getNavHtml($page = 1, $per = 10, $total)
+	protected function getNavHtml($page = 1, $per = 10, $total, $prepend = '', $append = '')
 	{
 		$url = self::getNavHref();
 
 		$HTML = '<ul class="pagination">';
+		if (!empty($prepend))
+		{
+			$HTML .= $prepend;
+		}
+// 		var_dump($total);exit;
+		if ($total < 2)
+		{
+			goto A;
+		}
 		if ($total <= 10)//总页数少于10页
 		{
 			//拼凑上一页
@@ -142,6 +152,12 @@ class CommonController extends Controller
 		{
 			die('超过10页暂时不考虑');
 		}
+		
+		A:
+		if (!empty($append))
+		{
+			$HTML .= $append;
+		}
 		$HTML .= '</ul>';
 		return $HTML;
 	}
@@ -155,7 +171,8 @@ class CommonController extends Controller
 			unset($urlQueryArr['page']);
 			$queryStr = http_build_query($urlQueryArr);
 		}
-		$baseUrl = $this->createUrl(CONTROLLER.'/'.ACTION);
+		$baseUrl = $this->getMVCUrl();
+		
 		if(!empty($queryStr))
 		{
 			return $baseUrl.'?'.$queryStr.'&';
@@ -204,7 +221,7 @@ class CommonController extends Controller
 			$queryStr = 'sort_field='.$field.'&sort_type=desc';
 			$direction = 'up';
 		}
-		$baseUrl = $this->createUrl(CONTROLLER.'/'.ACTION);
+		$baseUrl = $this->getMVCUrl();
 		$href = $baseUrl.'?'.$queryStr;
 		$icon = '';
 		if (isset($_GET['sort_field']) && $field === $_GET['sort_field'])
@@ -319,5 +336,18 @@ class CommonController extends Controller
 			}
 		}
 		return $breadcrumbs;
+	}
+	
+	protected function getMVCUrl()
+	{
+		if (MODULE == NULL)
+		{
+			$baseUrl = $this->createUrl(CONTROLLER.'/'.ACTION);
+		}
+		else
+		{
+			$baseUrl = $this->createUrl(MODULE.'/'.CONTROLLER.'/'.ACTION);
+		}
+		return $baseUrl;
 	}
 }

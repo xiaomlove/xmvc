@@ -1,10 +1,6 @@
 <?php
 class ForumappraiseModel extends Model
 {
-	const STATE_DELETE = -1;//删除
-	const STATE_DRAFT = 0;//草稿
-	const STATE_PUBLISH = 1;//发表
-	const STATE_LOCK = 2;//锁定
 	
 	public function tableName()
 	{
@@ -23,7 +19,7 @@ class ForumappraiseModel extends Model
 	public function rules()
 	{
 		return array(
-			array('reason', 'required', '不能为空！'),
+			array('content', 'required', '不能为空！'),
 		);
 	}
 	

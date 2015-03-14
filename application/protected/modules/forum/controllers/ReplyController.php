@@ -176,8 +176,8 @@ class ReplyController extends CommonController
 				'addTime' => $_SERVER['REQUEST_TIME'], 
 		));
 		
-		//更新主题的回复数、最近回复
-		$sql = "UPDATE forum_thread SET reply_count=reply_count+1,last_reply='$content' WHERE id=".$threadId;
+		//更新主题的回复数、最近回复、最近回复时间
+		$sql = "UPDATE forum_thread SET reply_count=reply_count+1,last_reply='$content',last_reply_time={$_SERVER['REQUEST_TIME']} WHERE id=".$threadId;
 		$model->execute($sql);
 		//更新所在版块、父版块的回复数、最近回复
 		$sql = "UPDATE forum_section SET reply_total_count=reply_total_count+1,reply_today_count=reply_today_count+1,last_reply='$content' WHERE id IN ($sectionId,$parentSectionId)";

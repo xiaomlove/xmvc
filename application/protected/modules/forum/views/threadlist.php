@@ -1,23 +1,8 @@
 <nav class="forum-thread-nav">
 		<a href="<?php echo $this->createUrl('forum/thread/add', array('section_id' => $sectionId))?>" class="btn btn-success pull-left"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发表主题</a>
-	  <ul class="pagination">
-	  	<li><a href="<?php echo $this->createUrl('forum/section/list')?>"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>返回</a></li>
-	    <li>
-	      <a href="#" aria-label="Previous">
-	        <span aria-hidden="true">&laquo;</span>
-	      </a>
-	    </li>
-	    <li><a href="#">1</a></li>
-	    <li><a href="#">2</a></li>
-	    <li><a href="#">3</a></li>
-	    <li><a href="#">4</a></li>
-	    <li><a href="#">5</a></li>
-	    <li>
-	      <a href="#" aria-label="Next">
-	        <span aria-hidden="true">&raquo;</span>
-	      </a>
-	    </li>
-	  </ul>
+		<a href="<?php echo $this->createUrl('forum/thread/list', array('section_id' => $sectionId, 'filter' => 'add_time'))?>" class="btn btn-sm pull-left <?php echo !empty($_GET['filter']) && $_GET['filter'] === 'add_time' ? "btn-primary" : "bg-light-gray"?>">最新发表</a>
+		<!--<a href="<?php echo $this->createUrl('forum/thread/list', array('section_id' => $sectionId, 'filter' => 'support_count'))?>" class="btn btn-sm pull-left <?php echo !empty($_GET['filter']) && $_GET['filter'] === 'support_count' ? "btn-primary" : "bg-light-gray"?>">最多支持</a>  -->
+	  <?php echo $navHtml?>
 </nav>
 
 <table class="table forum-thread-table">
@@ -25,9 +10,9 @@
 		<tr>
 			<th>标题</th>
 			<th>作者</th>
-			<th>回复</th>
-			<th>查看</th>
-			<th>最近回复</th>
+			<th><?php echo $this->getSortHref('reply_count', '回复')?></th>
+			<th><?php echo $this->getSortHref('view_count', '查看')?></th>
+			<th><?php echo $this->getSortHref('last_reply_time', '最近回复')?></th>
 	</thead>
 	<tbody>
 	<?php if (!empty($threadList)):?>
@@ -55,22 +40,5 @@
 </table>
 <nav class="forum-thread-nav">
 		<a href="<?php echo $this->createUrl('forum/thread/add', array('section_id' => $sectionId))?>" class="btn btn-success pull-left"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发表主题</a>
-	  <ul class="pagination">
-	  	<li><a href="<?php echo $this->createUrl('forum/section/list')?>"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>返回</a></li>
-	    <li>
-	      <a href="#" aria-label="Previous">
-	        <span aria-hidden="true">&laquo;</span>
-	      </a>
-	    </li>
-	    <li><a href="#">1</a></li>
-	    <li><a href="#">2</a></li>
-	    <li><a href="#">3</a></li>
-	    <li><a href="#">4</a></li>
-	    <li><a href="#">5</a></li>
-	    <li>
-	      <a href="#" aria-label="Next">
-	        <span aria-hidden="true">&raquo;</span>
-	      </a>
-	    </li>
-	  </ul>
+	  <?php echo $navHtml?>
 </nav>

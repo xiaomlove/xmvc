@@ -43,10 +43,11 @@ return array(
 			'forum/thread/detail'=>'forum/thread/detail',
 			'forum/reply/add'=>'forum/reply/add',
 			'forum/thread/addview'=>'forum/thread/addview',
+			'forum/thread/addappraise'=>'forum/thread/addappraise',
 	
 			//管理模块
 			'admin'=>'manage/index/index',
-			'admin/forum'=>'manage/forum/sectionlist',
+			'admin/forum/section'=>'manage/forum/sectionlist',
 			'admin/forum/section/add'=>'manage/forum/sectionadd',
 			'admin/forum/section/edit'=>'manage/forum/sectionedit',
 			'admin/user'=>'manage/user/userlist',
@@ -54,6 +55,7 @@ return array(
 			'admin/role'=>'manage/role/rolelist',
 			'admin/role/add'=>'manage/role/roleadd',
 			'admin/role/edit'=>'manage/role/roleedit',
+			'admin/forumset' => 'manage/option/forumset',
 		),
 	),
 	

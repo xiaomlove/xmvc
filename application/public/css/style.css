@@ -54,10 +54,12 @@
 #profile td:nth-of-type(1){width: 20%}
 
 /*论坛*/
+.bg-light-gray{background-color: #eee}
 .forum-section-table thead{background-color: #ddd}
 .forum-thread-table thead{background-color: #ddd}
 .forum-thread-nav{text-align: right}
 .forum-thread-nav .pagination{margin: 0}
+.forum-thread-nav a:not(:first-of-type){margin:5px 0 0 10px}
 .forum-section-today{color: red;font-weight: bold}
 .forum-thread-action{text-align: center}
 .forum-thread-user-action{text-align: center}
@@ -77,6 +79,7 @@
 .forum-thread-head>div:first-of-type span{margin-right: 5px}
 .forum-reply-user{background-color:#F2F2F2;text-align: center}
 
+#support a{cursor: pointer}
 
 /*管理界面*/
 .manage{margin-top: 20px}
