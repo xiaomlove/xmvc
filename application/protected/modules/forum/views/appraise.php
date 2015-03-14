@@ -1,4 +1,4 @@
-<?php if ($count == 1):?>
+<?php if ($isFirst):?>
 <div class="col-md-offset-2 col-md-10 bg-warning text-danger forum-thread-support-title"><h4><span class="glyphicon glyphicon-record" aria-hidden="true"></span>支持</h4></div>
 <div class="col-md-offset-2 col-md-10">
 		<table class="table">

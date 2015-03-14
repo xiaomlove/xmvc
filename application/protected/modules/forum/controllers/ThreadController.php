@@ -224,8 +224,7 @@ class ThreadController extends CommonController
 						echo json_encode(array('code' => 0, 'msg' => '用户魔力扣除失败'));exit;
 					}
 				}
-				$count = $model->where('thread_id='.$_POST['thread_id'])->count();
-				$return = $this->renderPartial('appraise', array('userName' => $userName, 'count' => $count, 'data' => $_POST));
+				$return = $this->renderPartial('appraise', array('userName' => $userName, 'isFirst' => $_POST['isFirst'], 'data' => $_POST));
 				echo json_encode(array('code' => 1, 'msg' => $return));exit;
 			}
 			else 

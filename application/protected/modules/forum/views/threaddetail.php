@@ -467,7 +467,12 @@
 		var $bonus = $support.find("input.selected");
 		var bonus = $bonus.val();
 		var type = $bonus.attr("data-type");
-		
+		var $appraise = $("#appraise");
+		if ($appraise.find("table").length){
+			var isFirst = 0;//不是第一个支持
+		}else{
+			var isFirst = 1;
+		}
 		if ($.trim(bonus) == ""){
 			alert("请选择魔力值");
 			return;
@@ -479,14 +484,13 @@
 		$.ajax({
 			url: $("#add-support").val(),
 			type: "POST",
-			data: hrefArr[1]+"&reason="+encodeURIComponent(reason)+"&bonus="+bonus+"&type="+type+"&addappraise=1",
+			data: hrefArr[1]+"&reason="+encodeURIComponent(reason)+"&bonus="+bonus+"&type="+type+"&addappraise=1&isFirst="+isFirst,
 			dataType: "json",
 			beforeSend: function(){$supportButton.text("支持中...")},
 			success: function(data){
 				if (data.code == 1){
 					$supportButton.text("确定").prev().trigger("click");
-					var $appraise = $("#appraise");
-					if ($appraise.find("table").length){
+					if (!isFirst){
 						//不是第一个
 						$appraise.find("tbody").append(data.msg);
 						$appraise.find(".appraise-user-count").text(function(text){
