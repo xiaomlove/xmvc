@@ -36,9 +36,9 @@
 	<div class="col-md-offset-2 col-md-10 forum-thread-reply-action">
 		<div class="pull-left">
 			<a href="#" style="margin-right: 20px"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>支持</a>
-			<a href="#"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>反对</a>
+			<a href="#" style="margin-right: 20px"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>反对</a>
+			<a href="#" style="margin-right: 20px"><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>举报</a>
 		</div>
-		<div class="pull-right"><a href="#"><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>举报</a></div>
 	</div>
 	
 	<div class="col-md-offset-2 col-md-10 forum-thread-reply-action">

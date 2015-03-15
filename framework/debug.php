@@ -1,8 +1,7 @@
 <?php
 
-$a = 'extra=page%3D2%26filter%3Dlastpost%26orderby%3Dlastpost';
-
-echo urldecode($a);
+$a = array('a' => 0, 'b' => 1);
+$c = array('b');
 
 
 

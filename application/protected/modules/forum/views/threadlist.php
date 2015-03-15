@@ -20,14 +20,7 @@
 		<tr>
 			<td><strong><a href="
 			<?php
-				if(isset($_GET['extra']) && $_GET['filter'] === 'add_time')
-				{
-					echo $this->createUrl('forum/thread/detail', array('section_id' => $sectionId, 'thread_id' => $thread['id'], 'filter' => 'add_time'));
-				}
-				else
-				{
-					echo $this->createUrl('forum/thread/detail', array('section_id' => $sectionId, 'thread_id' => $thread['id']));
-				}
+				echo $this->createUrl('forum/thread/detail', array('section_id' => $sectionId, 'thread_id' => $thread['id'])).$this->getExtraParam(array('section_id'));
 			?>
 			"><?php echo $thread['title']?></a></strong></td>
 			<td><?php echo $thread['user_name']."<br/><small>".date('Y-m-d H:i', $thread['add_time'])."</small>"?></td>

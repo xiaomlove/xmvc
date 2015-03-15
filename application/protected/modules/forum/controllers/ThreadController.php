@@ -107,7 +107,7 @@ class ThreadController extends CommonController
 			// 		echo '<pre/>';
 			//		var_dump($thread);
 			//取appraise信息
-			$sql = "SELECT a.*,b.name FROM forum_appraise a LEFT JOIN user b ON b.id=a.user_id WHERE thread_id={$_GET['thread_id']} ORDER BY id DESC";
+			$sql = "SELECT a.*,b.name FROM forum_appraise a LEFT JOIN user b ON b.id=a.user_id WHERE thread_id={$_GET['thread_id']} ORDER BY a.id DESC";
 			$appraiseList = $threadModel->findBySql($sql);
 			//		var_dump($appraiseList);
 			
@@ -126,15 +126,17 @@ class ThreadController extends CommonController
 //		{
 //			$backUrl = $this->createUrl('forum/thread/list', array('section_id' => $this->section['id']));
 //		}
+		$detailUrl = $this->createUrl('forum/thread/detail', array('section_id' => $this->section['id']));
 		$backUrl = $this->createUrl('forum/thread/list', array('section_id' => $this->section['id']));
 		$referer = App::ins()->request->getReferer();
-//		echo $backUrl.'<br/>';
-//		echo $referer;
+// 		echo $backUrl.'<br/>';
+// 		echo $referer;exit;
 //		echo '<pre/>';
 //		var_dump($_SERVER);exit;
-		if (stripos($referer, $backUrl) !== FALSE && !empty($_GET['extra']))
+		if ((stripos($referer, $backUrl) !== FALSE || stripos($referer, $detailUrl) !== FALSE) && !empty($_GET['extra']))
 		{
-			$backUrl .= urldecode($_GET['extra']);
+			//直接进入第一页和分页后的referer不一样
+			$backUrl .= '&'.urldecode($_GET['extra']);
 		}
 		$prepend = "<li><a href=\"".$backUrl."\"><span class=\"glyphicon glyphicon-arrow-left\" aria-hidden=\"true\"></span>返回</a></li>";
 		$navHtml = $this->getNavHtml($page, $per, $total, $prepend);//导航链接上的其他参数从$_GET取

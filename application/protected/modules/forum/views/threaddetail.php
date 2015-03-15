@@ -1,5 +1,4 @@
 <nav class="forum-thread-nav" style="margin-bottom: 16px">
-		
 	  	
 	  <a href="<?php echo $this->createUrl('forum/thread/add', array('section_id' => $section['id']))?>" class="btn btn-success pull-left"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发表主题</a>
 	  <?php echo $navHtml?>
@@ -73,9 +72,15 @@
 					<th>参与人数<em class="text-danger bg-warning appraise-user-count"><?php echo count($appraiseList)?></em></th>
 					<th>魔力<em class="text-danger bg-warning appraise-bonus-count">
 					<?php
-						$sum = 0; 
+						$sum = 0;
+						$supported = FALSE;
+						$userId = App::ins()->user->getId();
 						foreach ($appraiseList as $appraise)
 						{
+							if (!$supported && $appraise['user_id'] == $userId)
+							{
+								$supported = TRUE;
+							}
 							$sum += $appraise['award_value'];
 						}
 						unset($appraise);
@@ -103,8 +108,8 @@
 	<?php endIf?>
 	</div>
 	<div class="col-md-offset-2 col-md-10 forum-thread-action">
-		<button class="btn btn-warning" data-toggle="modal" data-target="#support" data-action="support"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>支持</button>
-		<button class="btn btn-warning" data-action="bookmark"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>收藏<?php echo empty($thread['bookmark_count']) ? "" : "(".$thread['bookmark_count'].")"?></button>
+		<button class="btn btn-warning" data-toggle="modal" data-target="#support" data-action="support" data-supported="<?php echo isset($supported) && $supported ? 1: 0?>"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>支持</button>
+		<button class="btn btn-warning" data-action="bookmark"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>收藏<?php echo empty($thread['bookmark_count']) ? "" : "<span class=\"bookmark_count\">".$thread['bookmark_count']."</span>"?></button>
 	</div>
 
 </div>
@@ -192,7 +197,7 @@
 			</nav>
 		</div>
 		<?php endIf?>
-		<div class="pull-right"><a href="#"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>回复</a></div>
+		<div class="pull-right form-thread-reply-btn"><a href="javascript:;"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>回复</a></div>
 	</div>
 </div>
 
@@ -407,7 +412,7 @@
     </div>
   </div>
 </div>
-
+<input type="hidden" id="add-bookmark" value="<?php echo $this->createUrl('bookmark/add')?>">
 <input type="hidden" id="add-support" value="<?php echo $this->createUrl('forum/thread/addappraise')?>">
 <input type="hidden" id="add-view" value="<?php echo $this->createUrl('forum/thread/addview')?>">
   <script src="<?php echo App::ins()->request->getBaseUrl()?>application/public/lib/ueditor/ueditor.config.thread-detail.js"></script>
@@ -453,6 +458,14 @@
 	});
 
 	//添加支持
+	$action = $(".forum-thread-action").find("button[data-supported]");
+	$action.on("mousedown", function(e){
+		if ($(this).attr("data-supported") > 0){
+			alert("你已经支持过了");
+			e.stopPropagation();
+			return;
+		}
+	})
 	var $support = $("#support");
 	$support.find("div[data-type=bonus]").find("li").on("click", function(){
 		$support.find("input").not("[data-type=reason]").removeClass("selected").val("");
@@ -503,22 +516,62 @@
 						//第一个，直接插入
 						$appraise.append(data.msg);
 					}
+					$action.attr("data-supported", 1);
 				}else{
 					$supportButton.text(data.msg).attr("disabled", "disabled");
 				}
 			}
 		})
 		
+	});
+
+	//收藏
+	var $bookmark = $(".forum-thread-action").find("button[data-action=bookmark]");
+	$bookmark.on("mousedown", function(e){
+		if ($bookmark.attr("data-bookmarked") > 0){
+			alert("你已经收藏了");
+			return;
+		}
+		var idArr = hrefArr[1].split("&");
+		var resource_id = idArr[1].split("=")[1];
+		$.ajax({
+			url: $("#add-bookmark").val(),
+			type: "POST",
+			dataType: 'json',
+			data: "type=1&resource_id="+resource_id,
+			success: function(data){
+				if (data.code == 1){
+					alert(data.msg);
+					$bookmark.attr("data-bookmarked", 1);
+					var $bookmark_count = $(".bookmark_count");
+					if ($bookmark_count.length){
+						$bookmark_count.text(function(text){
+							return parseInt(text)+1;
+						});
+					}else{
+						$bookmark.append("<span class=\"bookmark_count\">1</span>");
+					}
+				}else if(data.code == 2){
+					alert(data.msg);
+				}else{
+					console.log(data.msg);
+				}
+			}
+		})
+	});
+
+	//展示楼层回复框
+	var $replyList = $("#forum-thread-reply-list");
+	$replyList.on("mousedown", ".forum-thread-reply-action .form-thread-reply-btn", function(e){
+		alert('sb');
 	})
 
 	//添加浏览量
 	window.onload = function(){
 		var referrer1 = "http://"+location.hostname+$("#forum-nav").children("a").eq(0).attr("href");
 		var referrer2 = "http://"+location.hostname+$("#forum-nav").children("a").eq(1).attr("href");
-		
-		console.log(referrer1,referrer2);
-		console.log(document.referrer);
-		if (referrer1 === document.referrer || referrer2 === document.referrer){
+		var referrer = document.referrer;
+		if (referrer1 === referrer || referrer2 === referrer || (referrer.indexOf(referrer2) > -1 && referrer.indexOf("&extra=") == -1)){
 			$.ajax({
 				url: $("#add-view").val(),
 				type: "POST",

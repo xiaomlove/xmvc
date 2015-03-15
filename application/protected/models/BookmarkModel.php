@@ -1,6 +1,8 @@
 <?php
-class OptionModel extends Model
+class BookmarkModel extends Model
 {
+	const BOOKMARK_TYPE_THREAD = 1;//论坛主题
+	const BOOKMARK_TYPE_TORRENT = 2;//种子
 	
 	public function tableName()
 	{

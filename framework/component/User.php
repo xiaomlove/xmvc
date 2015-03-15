@@ -3,9 +3,9 @@ class User
 {
 	public $guestName = 'Guest';
 	
-	private $isLogin = FALSE;
-	private $name = NULL;
-	private $id = NULL;
+	private static $isLogin = FALSE;
+	private static $name = NULL;
+	private static $id = NULL;
 	
 	public function __construct()
 	{
@@ -17,16 +17,35 @@ class User
 	}
 	public function isLogin()
 	{
+		if (self::$isLogin)
+		{
+			return TRUE;
+		}
 		$loginInfo = App::ins()->session->get('loginInfo');
 		if(!empty($loginInfo))
 		{
 			if(isset($loginInfo['expire']))
 			{
-				return $loginInfo['expire'] > time();
+				if ($loginInfo['expire'] > time())
+				{
+					self::$isLogin = TRUE;
+				}
+				else
+				{
+					self::$isLogin = FALSE;
+				}
 			}
-			return TRUE;
+			else
+			{
+				self::$isLogin = TRUE;
+			}
+			
 		}
-		return FALSE;
+		else
+		{
+			self::$isLogin = FALSE;
+		}
+		return self::$isLogin;
 	}
 	
 	public function setLogin($id, $name, $password, $remember, $expire)
@@ -52,14 +71,38 @@ class User
 	
 	public function getName()
 	{
+		if (!empty(self::$name))
+		{
+			return self::$name;
+		}
 		$loginInfo = App::ins()->session->get('loginInfo');
-		return empty($loginInfo) ? NULL : $loginInfo['name'];
+		if (!empty($loginInfo['name']))
+		{
+			$name = self::$name = $loginInfo['name'];
+		}
+		else
+		{
+			$name = '';
+		}
+		return $name;
 	}
 	
 	public function getId()
 	{
+		if (!empty(self::$id))
+		{
+			return self::$id;
+		}
 		$loginInfo = App::ins()->session->get('loginInfo');
-		return empty($loginInfo) ? NULL : $loginInfo['id'];
+		if (!empty($loginInfo['id']))
+		{
+			$id = self::$id = $loginInfo['id'];
+		}
+		else
+		{
+			$id = '';
+		}
+		return $id;
 	}
 	
 	public function setFlash($key, $value)

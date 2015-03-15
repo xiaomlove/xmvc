@@ -30,7 +30,8 @@ return array(
 			'download'=>'torrent/download',
 			'comment/add'=>'comment/add',
 			'comment/list'=>'comment/list',
-			
+			'addbookmark'=>'bookmark/add',
+				
 			'user/name/<name:.+>/age/<age:\d+>'=>'user/filter',
 			'user/sex/<sex:.+>'=>'user/filter',
 			'user/year/<year>'=>array('user/filter', 'urlSuffix'=>'.shtml'),

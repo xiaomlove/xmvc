@@ -351,22 +351,36 @@ class CommonController extends Controller
 		return $baseUrl;
 	}
 	
-	protected function getExtraParam($retain = '')
+	/**
+	 * 返回额外参数的urlencode结果
+	 * @param array $retain 要保留不进行urlencode的参数名组成的数组
+	 * @return string
+	 */
+	protected function getExtraParam(array $retain = array())
 	{
 		$urlQuery = $_SERVER['QUERY_STRING'];
+		$out = '';
 		if (!empty($urlQuery))
 		{
 			parse_str($urlQuery, $urlQueryArr);
-			if (!empty($retain) && !empty($urlQueryArr[$retain]))
+			if (!empty($retain))
 			{
-				unset($urlQueryArr[$retain]);
-				$string = http_build_query($urlQueryArr);
-				$out = '&extra='.urlencode($string);				
+				foreach ($retain as $key => $value)
+				{
+					unset($urlQueryArr[$value]);
+				}
+				if (!empty($urlQueryArr))
+				{
+					$string = http_build_query($urlQueryArr);
+					$out = '&extra='.urlencode($string);
+				}
+						
 			}
 			else 
 			{
-				
+				$out = '&extra='.urlencode($urlQuery);
 			}
 		}
+		return $out;
 	}
 }
