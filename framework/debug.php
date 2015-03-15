@@ -1,22 +1,8 @@
 <?php
 
-$a = array(
-		'abc@badidu.com',
-		'efg#baidu.com',   
-		'fejifj[at]baidu.com',
-		'ssb@baidu.com.cn'
-		);
+$a = 'extra=page%3D2%26filter%3Dlastpost%26orderby%3Dlastpost';
 
-$reg = '/(.*)(@|#|\[at\])baidu.com$/';
-
-foreach ($a as $value)
-{
-	if(preg_match($reg, $value, $match))
-	{
-		var_dump($match);
-	}
-	
-}
+echo urldecode($a);
 
 
 

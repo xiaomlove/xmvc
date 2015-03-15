@@ -350,4 +350,23 @@ class CommonController extends Controller
 		}
 		return $baseUrl;
 	}
+	
+	protected function getExtraParam($retain = '')
+	{
+		$urlQuery = $_SERVER['QUERY_STRING'];
+		if (!empty($urlQuery))
+		{
+			parse_str($urlQuery, $urlQueryArr);
+			if (!empty($retain) && !empty($urlQueryArr[$retain]))
+			{
+				unset($urlQueryArr[$retain]);
+				$string = http_build_query($urlQueryArr);
+				$out = '&extra='.urlencode($string);				
+			}
+			else 
+			{
+				
+			}
+		}
+	}
 }

@@ -122,11 +122,19 @@ class ThreadController extends CommonController
 		$page = !empty($_GET['page']) ? $_GET['page'] : 1;
 		$per = $data['per_page'];
 		$total = ceil($data['count']/$per);
+//		if (isset($_GET['filter']) && $_GET['filter'] === 'add_time')
+//		{
+//			$backUrl = $this->createUrl('forum/thread/list', array('section_id' => $this->section['id']));
+//		}
 		$backUrl = $this->createUrl('forum/thread/list', array('section_id' => $this->section['id']));
 		$referer = App::ins()->request->getReferer();
-		if (stripos($referer, $backUrl) !== FALSE)
+//		echo $backUrl.'<br/>';
+//		echo $referer;
+//		echo '<pre/>';
+//		var_dump($_SERVER);exit;
+		if (stripos($referer, $backUrl) !== FALSE && !empty($_GET['extra']))
 		{
-			$backUrl = $referer;
+			$backUrl .= urldecode($_GET['extra']);
 		}
 		$prepend = "<li><a href=\"".$backUrl."\"><span class=\"glyphicon glyphicon-arrow-left\" aria-hidden=\"true\"></span>返回</a></li>";
 		$navHtml = $this->getNavHtml($page, $per, $total, $prepend);//导航链接上的其他参数从$_GET取

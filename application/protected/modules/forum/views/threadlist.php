@@ -18,7 +18,18 @@
 	<?php if (!empty($threadList)):?>
 	<?php foreach ($threadList as $thread):?>
 		<tr>
-			<td><strong><a href="<?php echo $this->createUrl('forum/thread/detail', array('section_id' => $sectionId, 'thread_id' => $thread['id']))?>"><?php echo $thread['title']?></a></strong></td>
+			<td><strong><a href="
+			<?php
+				if(isset($_GET['extra']) && $_GET['filter'] === 'add_time')
+				{
+					echo $this->createUrl('forum/thread/detail', array('section_id' => $sectionId, 'thread_id' => $thread['id'], 'filter' => 'add_time'));
+				}
+				else
+				{
+					echo $this->createUrl('forum/thread/detail', array('section_id' => $sectionId, 'thread_id' => $thread['id']));
+				}
+			?>
+			"><?php echo $thread['title']?></a></strong></td>
 			<td><?php echo $thread['user_name']."<br/><small>".date('Y-m-d H:i', $thread['add_time'])."</small>"?></td>
 			<td><?php echo $thread['reply_count']?></td>
 			<td><?php echo $thread['view_count']?></td>
