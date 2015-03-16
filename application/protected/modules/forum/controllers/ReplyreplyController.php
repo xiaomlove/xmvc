@@ -8,6 +8,10 @@ class ReplyreplyController extends CommonController
 	public function init()
 	{
 		//检查必须包含section_id和thread_id
+		if (isset($_POST['viewmore']) && $_POST['viewmore'])
+		{
+			return;
+		}
 		if (!ctype_digit($_POST['section_id']))
 		{
 			$this->_goError('参数有误');
@@ -137,6 +141,40 @@ class ReplyreplyController extends CommonController
 		$sql .= " WHERE id={$_POST['reply_id']}";
 		$model->execute($sql);
 		echo json_encode(array('code' => 1, 'msg' => $html));
+	}
+	
+	public function actionList()
+	{
+		if (!ctype_digit($_POST['reply_id']) || !ctype_digit($_POST['viewmore']))//不进init的标记
+		{
+			echo json_encode(array('code' => -1, 'msg' => '参数有误'));exit;
+		}
+		$model = ForumreplyreplyModel::model();
+		
+		$page = !empty($_POST['page']) ? $_POST['page'] : 1;
+		$defaultPer = 10;
+		if (isset($_POST['first']) && $_POST['first'] == 1)
+		{
+			//第一点只需要把剩下的取回
+			$offset = $_POST['offset'];
+			$per = $defaultPer-$offset;
+		}
+		else
+		{
+			$per = $defaultPer;
+			$offset = ($page-1)*$per;
+		}
+// 		echo $offset,$per;exit;
+		$sql = "SELECT a.*,b.id as userid,b.name as username,b.avatar_url FROM forum_reply_reply a LEFT JOIN user b ON a.user_id=b.id WHERE a.reply_id=".$_POST['reply_id']." ORDER BY a.add_time ASC LIMIT $offset, $per";
+		$data = $model->findBySql($sql);
+// 		var_dump($data);exit;
+		$dataHtml = $this->renderPartial('replyreplylist', array('data' => $data));
+		
+		$count = $model->where('reply_id=:replyId', array(':replyId' => $_POST['reply_id']))->count();
+		$total = ceil($count/10);
+// 		echo $count,$total;exit;
+		$navHtml = $this->renderPartial('replyreplynav', array('total' => $total, 'page' => $page));
+		echo json_encode(array('code' => 1, 'msg' => '获取成功', 'data' => $dataHtml, 'nav' => $navHtml));
 	}
 	
 	

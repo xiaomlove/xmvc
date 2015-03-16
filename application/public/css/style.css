@@ -70,8 +70,10 @@
 .forum-thread-reply-action, .forum-thread-action{}
 .forum-thread-reply-action .pagination{margin: 0}
 .forum-thread-support-title{margin-top: 15px;margin-bottom: 15px}
-.forum-thread-reply-reply{}
-.forum-thread-reply-reply .row{padding-top: 5px;padding-bottom: 5px;border-bottom: 1px dotted gray}
+.forum-thread-reply-reply{padding-right:0}
+.forum-thread-reply-reply>.row{padding-top: 5px;padding-bottom: 5px;border-bottom: 1px dotted gray;margin:0}
+.forum-thread-reply-reply div[class^=col-]{padding-left:0;padding-right:0}
+.forum-thread-reply-reply img{max-width:50px}
 .forum-thread-reply-reply .row:last-of-type{margin-bottom: 20px}
 .forum-thread-reply-reply .row .forum-thread-reply-reply-reply{cursor: pointer; margin-left: 10px}
 

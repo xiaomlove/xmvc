@@ -46,6 +46,7 @@ return array(
 			'forum/thread/addview'=>'forum/thread/addview',
 			'forum/thread/addappraise'=>'forum/thread/addappraise',
 			'forum/replyreply/add'=>'forum/replyreply/add',
+			'forum/replyreply/list'=>'forum/replyreply/list',
 	
 			//管理模块
 			'admin'=>'manage/index/index',

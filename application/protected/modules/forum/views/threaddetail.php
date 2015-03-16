@@ -124,7 +124,15 @@
 		<h4><strong><?php echo $reply['name']?></strong>(<?php echo $reply['role_name']?>)</h4>
 	</div>
 	<div class="col-md-10">
-		<h4>发表于&nbsp;&nbsp;<em><?php echo date('Y-m-d H:i', $reply['add_time'])?></em>&nbsp;&nbsp;<a href="#"><small>只看该作者</small></a>&nbsp;&nbsp;<a href="#"><small>编辑</small></a><span class="pull-right"><i><?php echo $reply['floor']?></i>楼</span></h4>
+		<h4>
+			发表于&nbsp;&nbsp;<em><?php echo date('Y-m-d H:i', $reply['add_time'])?></em>
+			&nbsp;&nbsp;<a href="#"><small>只看该作者</small></a>
+			&nbsp;&nbsp;<a href="#"><small>举报</small></a>
+			<?php if ($reply['user_id'] == $userId):?>
+			&nbsp;&nbsp;<a href="#"><small>编辑</small></a>
+			<?php endIf?>
+			<span class="pull-right"><i><?php echo $reply['floor']?></i>楼</span>
+		</h4>
 	</div>
 	
 	<div class="col-md-2 forum-reply-user">
@@ -150,16 +158,8 @@
 			<a href="#">加好友</a>
 		</div>
 	</div>
-	<div class="col-md-10">
+	<div class="col-md-10" style="margin-bottom:20px">
 		<?php echo $reply['content']?>
-	</div>
-	
-	<div class="col-md-offset-2 col-md-10 forum-thread-reply-action" style="margin-top: 20px;margin-bottom: 20px">
-		<div class="pull-left">
-			<a href="#" style="margin-right: 20px"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>支持</a>
-			<a href="#" style="margin-right: 20px"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>反对</a>
-			<a href="#" style="margin-right: 20px"><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>举报</a>
-		</div>
 	</div>
 	
 
@@ -171,8 +171,8 @@
 
 	<div class="col-md-offset-2 col-md-10 forum-thread-reply-action">
 		<?php if (!empty($reply['front_reply'])):?>
-		<div class="pull-left">
-		<?php if ($reply['reply_count'] > 5) echo '还有'.($reply['reply_count']-5).'条回复，<a href="javascript:;">点击查看</a>'?>
+		<div class="pull-left forum-thread-reply-reply-nav">
+		<?php if ($reply['reply_count'] > 5) echo '还有'.($reply['reply_count']-5).'条回复，<a href="javascript:;" class="view-more">点击查看</a>'?>
 		<!-- 
 			<nav>
 			  <ul class="pagination pagination-sm">
@@ -296,26 +296,7 @@
 </div>
 <nav class="forum-thread-nav" style="margin: 20px 0">
 		<a href="<?php echo $this->createUrl('forum/thread/add', array('section_id' => $section['id']))?>" class="btn btn-success pull-left"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发表主题</a>
-<!--  
-	  <ul class="pagination">
-	  	<li><a href="<?php echo $this->createUrl('forum/thread/list', array('section_id' => $section['id']))?>"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>返回</a></li>
-	    <li>
-	      <a href="#" aria-label="Previous">
-	        <span aria-hidden="true">&laquo;</span>
-	      </a>
-	    </li>
-	    <li><a href="#">1</a></li>
-	    <li><a href="#">2</a></li>
-	    <li><a href="#">3</a></li>
-	    <li><a href="#">4</a></li>
-	    <li><a href="#">5</a></li>
-	    <li>
-	      <a href="#" aria-label="Next">
-	        <span aria-hidden="true">&raquo;</span>
-	      </a>
-	    </li>
-	  </ul>
--->
+
 		<?php echo $navHtml?>
 </nav>
 
@@ -416,6 +397,8 @@
 <input type="hidden" id="add-support" value="<?php echo $this->createUrl('forum/thread/addappraise')?>">
 <input type="hidden" id="add-view" value="<?php echo $this->createUrl('forum/thread/addview')?>">
 <input type="hidden" id="add-reply-reply" value="<?php echo $this->createUrl('forum/replyreply/add')?>">
+<input type="hidden" id="view-more" value="<?php echo $this->createUrl('forum/replyreply/list')?>">
+
   <script src="<?php echo App::ins()->request->getBaseUrl()?>application/public/lib/ueditor/ueditor.config.thread-detail.js"></script>
   <script src="<?php echo App::ins()->request->getBaseUrl()?>application/public/lib/ueditor/ueditor.all.min.js"></script>
   <script type="text/javascript">
@@ -565,6 +548,16 @@
 	var $replyList = $("#forum-thread-reply-list");
 	$replyList.on("mousedown", ".forum-thread-reply-action .form-thread-reply-btn", function(e){
 		$(this).parent().next().toggleClass("hide");
+		$parent = $(this).parents("[data-id]");
+		$parent.find(".submit").removeAttr("data-userid").removeAttr("data-username");
+		$parent.find(".forum-reply-reply-form").text("");
+	});
+	$replyList.on("mousedown", ".forum-thread-reply-reply-reply", function(e){
+		var $dataUser = $(this).parents("[data-userid]");
+		var $parentRow = $dataUser.parents("[data-id]");
+		$parentRow.find(".submit").attr("data-userid", $dataUser.attr("data-userid")).attr("data-username", $dataUser.attr("data-username"));
+		$parentRow.find(".forum-reply-reply-form-wrap").removeClass("hide").find(".forum-reply-reply-form").text("回复  "+$dataUser.attr("data-username")+"：");
+		
 	});
 	$replyList.on("mousedown", ".forum-reply-reply-form-wrap .submit", function(e){
 		var $content = $(this).parent().prev();
@@ -578,10 +571,14 @@
 		var reply_id = $parentRow.attr("data-id");
 		var sectionThreadId = hrefArr[1];
 		var $replyWrap = $parentRow.find(".forum-thread-reply-reply");
+		var extra = "";
+		if ($submitBtn.attr("data-userid")){
+			extra = "&to_user_id="+$submitBtn.attr("data-userid")+"&to_user_name="+$submitBtn.attr("data-username");
+		}
 //		console.log($("#add-reply-reply").val());return;
 		$.ajax({
 			url: $("#add-reply-reply").val(),
-			data: sectionThreadId+"&reply_id="+reply_id+"&content="+encodeURIComponent(content),
+			data: sectionThreadId+"&reply_id="+reply_id+"&content="+encodeURIComponent(content)+extra,
 			dataType: "json",
 			type: "POST",
 			beforeSend: function(){$submitBtn.text("提交中...").attr("disabled", "disabled")},
@@ -597,7 +594,56 @@
 		})
 		
 		
-	})
+	});
+
+	//查看楼中楼更多
+	$replyList.on("mousedown", ".view-more", function(e){
+		var $row = $(this).parents("[data-id]");
+		var replyId = $row.attr("data-id");
+		var $replyReplyList = $row.find(".forum-thread-reply-reply");
+		var offset = $replyReplyList.children(".row").length;
+		$.ajax({
+			url: $("#view-more").val(),
+			data: "reply_id="+replyId+"&offset="+offset+"&viewmore=1&first=1",
+			type: "POST",
+			dataType: "json",
+			success: function(data){
+				if (data.code == 1){
+					$replyReplyList.append(data.data);
+					$row.find(".forum-thread-reply-reply-nav").html(data.nav);
+				}
+			}
+		})
+	});
+
+	//楼中楼分页查看
+	$replyList.on("mousedown", ".pagination a", function(e){
+		
+		var $row = $(this).parents("[data-id]");
+		var replyId = $row.attr("data-id");
+		var $replyReplyList = $row.find(".forum-thread-reply-reply");
+		var $active = $(this).parent().parent().find(".active");
+		if ($(this).attr("aria-label") == "Previous"){
+			page = parseInt($active.children("a").text())-1;
+		}else if($(this).attr("aria-label") == "Next"){
+			page = parseInt($active.children("a").text())+1;
+		}else{
+			page = $(this).text();
+		}
+// 		alert(page);
+		$.ajax({
+			url: $("#view-more").val(),
+			data: "reply_id="+replyId+"&viewmore=1&page="+page,
+			type: "POST",
+			dataType: "json",
+			success: function(data){
+				if (data.code == 1){
+					$replyReplyList.html(data.data);
+					$row.find(".forum-thread-reply-reply-nav").html(data.nav);
+				}
+			}
+		})
+	});
 
 	//添加浏览量
 	window.onload = function(){
