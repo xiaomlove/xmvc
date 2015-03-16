@@ -1,5 +1,5 @@
 <?php
-class ForumreplyModel extends Model
+class ForumreplyreplyModel extends Model
 {
 	const STATE_DELETE = -1;//删除
 	const STATE_DRAFT = 0;//草稿
@@ -23,7 +23,7 @@ class ForumreplyModel extends Model
 	public function rules()
 	{
 		return array(
-			array('section_id, thread_id, reply_id', 'number', '非负整数'),
+			array('reply_id, floor', 'number', '非负整数'),
 			array('content', 'required', '不能为空'),
 		);
 	}

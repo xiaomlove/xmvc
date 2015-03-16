@@ -23,7 +23,6 @@ class ForumreplyModel extends Model
 	public function rules()
 	{
 		return array(
-			array('section_id, thread_id', 'number', '非负整数'),
 			array('content', 'required', '不能为空'),
 		);
 	}

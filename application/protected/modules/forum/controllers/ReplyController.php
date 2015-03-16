@@ -40,11 +40,13 @@ class ReplyController extends CommonController
 			$this->_goError('主题不存在');
 		}
 		//面包屑
-		$this->breadcrumbs[] = array('name' => 'TinyHD论坛', 'url' => $this->createUrl('forum/section/list'));
-		$this->breadcrumbs[] = array('name' => $section['name'], 'url' => $this->createUrl('forum/thread/list', array('section_id' => $section['id'])));
-		$this->breadcrumbs[] = array('name' => $thread['title'], 'url' => $this->createUrl('forum/thread/detail', array('section_id' => $section['id'], 'thread_id' => $thread['id'])));
-		$this->breadcrumbs[] = array('name' => '发表回复');
-		
+		if (!App::ins()->request->isAjax())
+		{
+			$this->breadcrumbs[] = array('name' => 'TinyHD论坛', 'url' => $this->createUrl('forum/section/list'));
+			$this->breadcrumbs[] = array('name' => $section['name'], 'url' => $this->createUrl('forum/thread/list', array('section_id' => $section['id'])));
+			$this->breadcrumbs[] = array('name' => $thread['title'], 'url' => $this->createUrl('forum/thread/detail', array('section_id' => $section['id'], 'thread_id' => $thread['id'])));
+			$this->breadcrumbs[] = array('name' => '发表回复');
+		}
 	}
 	
 	/**
@@ -95,14 +97,14 @@ class ReplyController extends CommonController
 					else 
 					{
 						//更新主题表的回复数以及所在版块、父版块的回复数
-						$this->_updateThreadSectionUser($result, $_POST['content']);
+						$this->_updateThreadSectionUser($result, $_POST['content'], $model);
 						//插入回复成功，渲染返回的html代码
 						//应该加相关字段还是连一下表？？？太麻烦，还是加字段
 						$userId = App::ins()->user->getId();
 						$sql = "SELECT a.id,a.name,a.avatar_url,a.uploaded,a.downloaded,a.thread_count,a.reply_count,a.comment_count,b.name as roleName FROM user a LEFT JOIN role b ON b.level=a.role_level WHERE a.id=$userId";
 						$userInfo = $model->findBySql($sql);
 						$userInfo = $userInfo[0];
-						$html = $this->renderPartial('reply', array('maxFloor' => $maxFloor, 'content' => $_POST['content'], 'userInfo' => $userInfo));
+						$html = $this->renderPartial('reply', array('maxFloor' => $maxFloor, 'content' => $_POST['content'], 'userInfo' => $userInfo, 'replyId' => $result));
 						echo json_encode(array('code' => 1, 'msg' => $html));
 					}
 					exit;
@@ -117,7 +119,7 @@ class ReplyController extends CommonController
 					}
 					else 
 					{
-						$this->_updateThreadSectionUser($result, $_POST['content']);
+						$this->_updateThreadSectionUser($result, $_POST['content'], $model);
 						//跳到末页比较好，后面完善
 						$this->redirect('forum/thread/detail', array('section_id' => $_POST['section_id'], 'thread_id' => $_POST['thread_id']));
 					}
@@ -158,10 +160,9 @@ class ReplyController extends CommonController
 		}
 	}
 	
-	private function _updateThreadSectionUser($replyId, $content)
+	private function _updateThreadSectionUser($replyId, $content, $model)
 	{
 		$replyContent = mb_substr(strip_tags($content), 0, 20, 'UTF-8');//去标签，截部分
-		$model = ForumthreadModel::model();
 		$userId = App::ins()->user->getId();
 		$userName = App::ins()->user->getName();
 		$sectionId = $this->section['id'];

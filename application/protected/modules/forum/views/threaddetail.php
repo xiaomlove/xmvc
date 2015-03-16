@@ -118,7 +118,7 @@
 
 <?php if (!empty($replyList)):?>
 <?php foreach ($replyList as $reply):?>
-<div class="row forum-thread-reply">
+<div class="row forum-thread-reply" data-id="<?php echo $reply['id']?>">
 	
 	<div class="col-md-2">
 		<h4><strong><?php echo $reply['name']?></strong>(<?php echo $reply['role_name']?>)</h4>
@@ -154,7 +154,7 @@
 		<?php echo $reply['content']?>
 	</div>
 	
-	<div class="col-md-offset-2 col-md-10 forum-thread-reply-action">
+	<div class="col-md-offset-2 col-md-10 forum-thread-reply-action" style="margin-top: 20px;margin-bottom: 20px">
 		<div class="pull-left">
 			<a href="#" style="margin-right: 20px"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>支持</a>
 			<a href="#" style="margin-right: 20px"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>反对</a>
@@ -162,23 +162,18 @@
 		</div>
 	</div>
 	
-<?php if ($reply['reply_id'] != 0):?>
+
 	<div class="col-md-offset-2 col-md-10 forum-thread-reply-reply">
-		<div class="row">
-			<div class="col-md-1">
-				<img src="<?php echo App::ins()->request->getBaseUrl()?>application/public/images/avatar.jpg" class="img-responsive">
-			</div>
-			<div class="col-md-11">
-				<a href="#"><?php echo $reply['name']?></a>：<?php echo $reply['content']?>
-			</div>
-			<div class="col-md-offset-1 col-md-10"><i class="pull-right"><span><?php echo date('Y-m-d H:i', $reply['add_time'])?></span><span class="forum-thread-reply-reply-reply">回复</span></i></div>
-		</div>
+	<?php if ($reply['reply_count'] > 0) echo $reply['front_reply']?>
+		
 	</div>
-<?php endIf?>
+
 
 	<div class="col-md-offset-2 col-md-10 forum-thread-reply-action">
 		<?php if (!empty($reply['front_reply'])):?>
 		<div class="pull-left">
+		<?php if ($reply['reply_count'] > 5) echo '还有'.($reply['reply_count']-5).'条回复，<a href="javascript:;">点击查看</a>'?>
+		<!-- 
 			<nav>
 			  <ul class="pagination pagination-sm">
 			    <li>
@@ -195,10 +190,15 @@
 			    </li>
 			  </ul>
 			</nav>
+		 -->
 		</div>
 		<?php endIf?>
 		<div class="pull-right form-thread-reply-btn"><a href="javascript:;"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>回复</a></div>
 	</div>
+	<div class="col-md-offset-2 col-md-10 forum-reply-reply-form-wrap hide">
+		<div contenteditable="true" class="forum-reply-reply-form"></div>
+		<div><a class="btn btn-default btn-sm pull-right submit">提交</a></div>
+	</div> 
 </div>
 
 <?php endForeach?>
@@ -241,7 +241,7 @@
 		<img src="<?php echo App::ins()->request->getBaseUrl()?>application/public/images/1.jpg" class="img-responsive" style="width: 600px">
 	</div>
 	
-	<div class="col-md-offset-2 col-md-10 forum-thread-reply-action">
+	<div class="col-md-offset-2 col-md-10 forum-thread-reply-action" style="margin-top: 20px;margin-bottom: 20px">
 		<div class="pull-left">
 			<a href="#" style="margin-right: 20px"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>支持</a>
 			<a href="#"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>反对</a>
@@ -415,6 +415,7 @@
 <input type="hidden" id="add-bookmark" value="<?php echo $this->createUrl('bookmark/add')?>">
 <input type="hidden" id="add-support" value="<?php echo $this->createUrl('forum/thread/addappraise')?>">
 <input type="hidden" id="add-view" value="<?php echo $this->createUrl('forum/thread/addview')?>">
+<input type="hidden" id="add-reply-reply" value="<?php echo $this->createUrl('forum/replyreply/add')?>">
   <script src="<?php echo App::ins()->request->getBaseUrl()?>application/public/lib/ueditor/ueditor.config.thread-detail.js"></script>
   <script src="<?php echo App::ins()->request->getBaseUrl()?>application/public/lib/ueditor/ueditor.all.min.js"></script>
   <script type="text/javascript">
@@ -560,10 +561,42 @@
 		})
 	});
 
-	//展示楼层回复框
+	//楼层回复
 	var $replyList = $("#forum-thread-reply-list");
 	$replyList.on("mousedown", ".forum-thread-reply-action .form-thread-reply-btn", function(e){
-		alert('sb');
+		$(this).parent().next().toggleClass("hide");
+	});
+	$replyList.on("mousedown", ".forum-reply-reply-form-wrap .submit", function(e){
+		var $content = $(this).parent().prev();
+		var content = $content.text();
+		var $submitBtn = $(this);
+		if ($.trim(content) == ""){
+			alert("请输入内容");
+			return;
+		}
+		var $parentRow = $(this).parents("[data-id]");
+		var reply_id = $parentRow.attr("data-id");
+		var sectionThreadId = hrefArr[1];
+		var $replyWrap = $parentRow.find(".forum-thread-reply-reply");
+//		console.log($("#add-reply-reply").val());return;
+		$.ajax({
+			url: $("#add-reply-reply").val(),
+			data: sectionThreadId+"&reply_id="+reply_id+"&content="+encodeURIComponent(content),
+			dataType: "json",
+			type: "POST",
+			beforeSend: function(){$submitBtn.text("提交中...").attr("disabled", "disabled")},
+			success: function(data){
+				if (data.code == 1){
+					$content.text("");
+					$submitBtn.text("提交").removeAttr("disabled").parent().parent().addClass("hide");
+					$replyWrap.append(data.msg);
+				}else{
+					$submitBtn.text(data.msg);
+				}
+			}
+		})
+		
+		
 	})
 
 	//添加浏览量

@@ -1,4 +1,4 @@
-<div class="row forum-thread-reply">
+<div class="row forum-thread-reply" data-id="<?php echo $replyId?>">
 	<div class="col-md-2">
 		<h4><strong><?php echo $userInfo['name']?></strong>(<?php echo $userInfo['roleName']?>)</h4>
 	</div>
@@ -33,7 +33,7 @@
 		<?php echo $content?>
 	</div>
 	
-	<div class="col-md-offset-2 col-md-10 forum-thread-reply-action">
+	<div class="col-md-offset-2 col-md-10 forum-thread-reply-action" style="margin-top: 20px;margin-bottom: 20px">
 		<div class="pull-left">
 			<a href="#" style="margin-right: 20px"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>支持</a>
 			<a href="#" style="margin-right: 20px"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>反对</a>
@@ -41,7 +41,14 @@
 		</div>
 	</div>
 	
-	<div class="col-md-offset-2 col-md-10 forum-thread-reply-action">
-		<div class="pull-right"><a href="#"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>回复</a></div>
+	<div class="col-md-offset-2 col-md-10 forum-thread-reply-reply">
+
 	</div>
+	<div class="col-md-offset-2 col-md-10 forum-thread-reply-action">
+		<div class="pull-right form-thread-reply-btn"><a href="javascript:;"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>回复</a></div>
+	</div>
+	<div class="col-md-offset-2 col-md-10 forum-reply-reply-form-wrap hide">
+		<div contenteditable="true" class="forum-reply-reply-form"></div>
+		<div><a class="btn btn-default btn-sm pull-right submit">提交</a></div>
+	</div> 
 </div>

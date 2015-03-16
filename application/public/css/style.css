@@ -67,17 +67,20 @@
 .forum-thread-reply{padding:20px 0; border-top: 1px solid #ddd}
 .forum-thread-reply .user-info-table td p{white-space: nowrap}
 #forum-thread-reply-list .forum-thread-reply:last-of-type{border-bottom: 1px solid #ddd}
-.forum-thread-reply-action, .forum-thread-action{margin-top: 20px}
+.forum-thread-reply-action, .forum-thread-action{}
 .forum-thread-reply-action .pagination{margin: 0}
 .forum-thread-support-title{margin-top: 15px;margin-bottom: 15px}
-.forum-thread-reply-reply{margin-top: 20px}
-.forum-thread-reply-reply .row{margin-bottom: 10px}
+.forum-thread-reply-reply{}
+.forum-thread-reply-reply .row{padding-top: 5px;padding-bottom: 5px;border-bottom: 1px dotted gray}
+.forum-thread-reply-reply .row:last-of-type{margin-bottom: 20px}
 .forum-thread-reply-reply .row .forum-thread-reply-reply-reply{cursor: pointer; margin-left: 10px}
+
 .forum-thread-title{font-size: 30px;font-weight: bold;color: #555}
 .forum-thread-head{line-height: 50px;height: 50px}
 .forum-thread-head>div:first-of-type{text-align: center;}
 .forum-thread-head>div:first-of-type span{margin-right: 5px}
 .forum-reply-user{background-color:#F2F2F2;text-align: center}
+.forum-reply-reply-form{min-height: 50px;height: auto;border: 1px solid #a0b3d6;margin: 10px 0;padding: 5px}
 
 #support a{cursor: pointer}
 
