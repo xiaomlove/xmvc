@@ -2,7 +2,7 @@
   <div class="form-group <?php echo $model->hasError('title') ? "has-error" : ""?>">
     <label for="title" class="col-sm-2 control-label">主题标题</label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" id="title" name="title" value="<?php echo $threadTitle?>" placeholder="主题标题" readonly>
+      <input type="text" class="form-control" id="title" name="title" value="<?php echo $model->getData('title')?>" placeholder="主题标题" readonly>
         <?php if($model->hasError('title')):?>
         <span class="help-block"><?php echo $model->getError('title')?></span>
         <?php endIf?>
@@ -20,12 +20,14 @@
   <div class="form-group">
     <div class="col-sm-offset-6 col-sm-6">
       <button type="submit" class="btn btn-success">发表</button>
-      <button type="button" class="btn btn-default pull-right">保存草稿</button>
     </div>
   </div>
   
   <input type="hidden" name="section_id" value="<?php echo $sectionId?>">
   <input type="hidden" name="thread_id" value="<?php echo $threadId?>">
+  <?php if (!empty($_GET['reply_id'])):?>
+   <input type="hidden" name="reply_id" value="<?php echo $_GET['reply_id']?>">
+  <?php endIf?>
 </form>
 
   <script src="<?php echo App::ins()->request->getBaseUrl()?>application/public/lib/ueditor/ueditor.config2.js"></script>

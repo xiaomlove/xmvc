@@ -1,29 +1,18 @@
-
- <h1 class="page-header">欢迎光临TinyHD</h1>
-<div class="row">
-	<div class="col-md-offset-3 col-md-6">
-		<table class="table table-bordered table-hover" id="profile">
-			<caption>个人信息<a class="btn btn-danger btn-xs pull-right" data-toggle="modal" data-target=".bs-example-modal-sm">退出</a></caption>
-			<tr>
-				<td>用户名：</td>
-				<td><?php echo App::ins()->user->getName()?></td>
-			</tr>
-			<tr>
-				<td>登陆IP：</td>
-				<td id="ip"><?php echo App::ins()->request->getClientIP()?></td>
-			</tr>
-			<tr>
-				<td>上传量：</td>
-				<td><?php echo isset($userInfo['uploaded']) ? $userInfo['uploaded'] : 0?></td>
-			</tr>
-			<tr>
-				<td>下载量：</td>
-				<td><?php echo isset($userInfo['downloaded']) ? $userInfo['downloaded'] : 0?></td>
-			</tr>
-				
-		</table>
+<div class="row page-header">
+	<div class="welcome"><h2>欢迎光临TinyHD</h2></div>
+	<div class="userbox">
+		<ul class="list-inline text-success">
+			<li>用户名:<?php echo App::ins()->user->getName()?></li>
+			<li>上传量:<?php echo $this->getSize($userInfo['uploaded'])?></li>
+			<li>下载量:<?php echo $this->getSize($userInfo['downloaded'])?></li>
+			<li>登陆IP:<span id="ip"><?php echo App::ins()->request->getClientIP()?></span></li>
+		</ul>
+		
 	</div>
+	<a class="btn btn-danger btn-xs pull-right" data-toggle="modal" data-target=".bs-example-modal-sm" style="margin-top: 30px">退出</a>
 </div>
+
+<h3 style="text-align: center">聊天室</h3>
 
 <div id="checkout-logout-modal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-sm">

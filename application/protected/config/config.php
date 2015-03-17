@@ -44,6 +44,7 @@ return array(
 			'forum/thread/detail'=>'forum/thread/detail',
 			'forum/thread/edit'=>'forum/thread/edit',
 			'forum/reply/add'=>'forum/reply/add',
+			'forum/reply/edit'=>'forum/reply/edit',
 			'forum/thread/addview'=>'forum/thread/addview',
 			'forum/thread/addappraise'=>'forum/thread/addappraise',
 			'forum/replyreply/add'=>'forum/replyreply/add',

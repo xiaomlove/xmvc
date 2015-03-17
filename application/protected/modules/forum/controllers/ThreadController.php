@@ -82,6 +82,10 @@ class ThreadController extends CommonController
 			elseif ($type === 'update')
 			{
 				$thread = $model->active()->findByPk($_POST['thread_id']);
+				if ($thread->state == ForumthreadModel::STATE_DRAFT && $_POST['draft'] == 0)
+				{
+					$updateSectionUser = TRUE;//原来是草稿，更新不再保存为草稿，更新相关信息
+				}
 			}
 			else
 			{
@@ -93,7 +97,14 @@ class ThreadController extends CommonController
 			$thread->content = $_POST['content'];
 			$thread->user_id = $userId;
 			$thread->section_id = $_POST['section_id'];
-			$thread->state = ForumthreadModel::STATE_PUBLISH;//这里都是非草稿的操作跳转操作，新增主题或者编辑主题，都是发表的状态
+			if ($_POST['draft'] == 1)
+			{
+				$thread->state = ForumthreadModel::STATE_DRAFT;
+			}
+			else
+			{
+				$thread->state = ForumthreadModel::STATE_PUBLISH;
+			}
 //			echo '<pre/>';
 			$result = $thread->save();
 //			var_dump($result);exit;
@@ -106,13 +117,20 @@ class ThreadController extends CommonController
 				if ($type === 'insert')
 				{
 					$gotoId = $result;
-					$this->_updateSectionUser();
+					if ($_POST['draft'] == 0)
+					{
+						$this->_updateSectionUser();//不为草稿才更新
+					}
 					$this->redirect('forum/thread/detail', array('section_id' => $_POST['section_id'], 'thread_id' => $gotoId));
 				}
 				else
 				{
 					//是更新操作
 					$gotoId = $_POST['thread_id'];
+					if (isset($updateSectionUser) && $updateSectionUser)
+					{
+						$this->_updateSectionUser();//原草稿已正式发表，更新相关信息
+					}
 					$this->redirect('forum/thread/detail', array('section_id' => $_POST['section_id'], 'thread_id' => $gotoId));
 				}
 				
@@ -148,6 +166,7 @@ class ThreadController extends CommonController
 			exit;
 		}
 	}
+	
 	
 	public function actionDetail()
 	{

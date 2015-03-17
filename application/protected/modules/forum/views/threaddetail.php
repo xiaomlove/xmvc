@@ -13,7 +13,7 @@
 		<span class="text-danger"><?php echo $thread['reply_count']?></span>
 	</div>
 	<div class="col-md-10">
-		<a href="#" class="forum-thread-title"><?php echo $thread['title']?></a>
+		<a href="#" class="forum-thread-title"><?php echo $thread['state'] == ForumthreadModel::STATE_DRAFT ? "【草稿】".$thread['title'] : $thread['title']?></a>
 		<div class="pull-right">
 			<a href="#" class="glyphicon glyphicon-arrow-left" aria-hidden="true" title="上一主题" style="cursor: pointer"></a>
 			<a href="#" class="glyphicon glyphicon-arrow-right" aria-hidden="true" title="下一主题" style="cursor: pointer"></a>
@@ -133,7 +133,7 @@
 			发表于&nbsp;&nbsp;<em><?php echo date('Y-m-d H:i', $reply['add_time'])?></em>
 			&nbsp;&nbsp;<a href="#"><small>只看该作者</small></a>
 			<?php if ($reply['user_id'] == $userId):?>
-			&nbsp;&nbsp;<a href="#"><small>编辑</small></a>
+			&nbsp;&nbsp;<a href="<?php echo $this->createUrl('forum/reply/edit', array('section_id' => $section['id'], 'thread_id' => $thread['id'], 'reply_id' => $reply['id']))?>"><small>编辑</small></a>
 			<?php endIf?>
 			&nbsp;&nbsp;<a href="#"><small>举报</small></a>
 			<span class="pull-right"><i><?php echo $reply['floor']?></i>楼</span>

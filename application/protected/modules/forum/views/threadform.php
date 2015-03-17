@@ -17,7 +17,7 @@
         <?php endIf?>
      </div>
   </div>
-  
+  <input type="hidden" name="draft" id="draft" value="0">
   <input type="hidden" name="section_id" value="<?php echo $_GET['section_id']?>">
   <?php if ($model->hasData('thread_id')):?>
   <input type="hidden" name="thread_id" value="<?php echo $model->getData('thread_id')?>">
@@ -32,7 +32,6 @@
     </div>
   </div>
 </form>
-<input type="hidden" id="draft-thread-id" value="">
   <script src="<?php echo App::ins()->request->getBaseUrl()?>application/public/lib/ueditor/ueditor.config2.js"></script>
   <script src="<?php echo App::ins()->request->getBaseUrl()?>application/public/lib/ueditor/ueditor.all.min.js"></script>
   <script type="text/javascript">
@@ -45,39 +44,9 @@
   //保存手稿
 	$saveBtn = $("#save-draft");
 	if (!$saveBtn.hasClass("disabled")){
-		$saveBtn.on("mousedownss", function(e){
-			var content = ue.getContent();
-			if ($.trim(content) == ""){
-				alert("请填写内容");
-				return;
-			}
-			var title = $("#title").val();
-			if ($.trim(title) == ""){
-				alert("请填写内容");
-				return;
-			}
-			var url = document.URL;
-			var thread_id = "";
-			if (url.indexOf("thread_id=") == -1){
-				thread_id = $("form").find("input[name=thread_id]").val();
-				if(!thread_id){
-					thread_id = $("#draft-thread-id").val();
-				}
-				if (thread_id){
-					thread_id = "&thread_id="+thread_id;
-				}
-			}
-			$.ajax({
-				url: url,
-				type: "POST",
-				dataType: "json",
-				beforeSend: function(){$saveBtn.text("保存中...").attr("disabled", "disabled")},
-				data: "title="+encodeURIComponent(title)+"&content="+encodeURIComponent(content)+"&draft=1"+thread_id,
-				success: function(data){
-					console.log(data);
-				}
-			})
-			
+		$saveBtn.on("mousedown", function(e){
+			$("#draft").val(1);
+			$(this).prev().click();
 		})
 	}
   

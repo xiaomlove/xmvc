@@ -33,13 +33,6 @@
 		<?php echo $content?>
 	</div>
 	
-	<div class="col-md-offset-2 col-md-10 forum-thread-reply-action" style="margin-top: 20px;margin-bottom: 20px">
-		<div class="pull-left">
-			<a href="#" style="margin-right: 20px"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>支持</a>
-			<a href="#" style="margin-right: 20px"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>反对</a>
-			<a href="#" style="margin-right: 20px"><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>举报</a>
-		</div>
-	</div>
 	
 	<div class="col-md-offset-2 col-md-10 forum-thread-reply-reply">
 

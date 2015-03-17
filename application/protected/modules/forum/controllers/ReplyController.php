@@ -11,7 +11,7 @@ class ReplyController extends CommonController
 		//检查必须包含section_id和thread_id
 		if (App::ins()->request->isGet())
 		{
-			if (!ctype_digit($_GET['section_id']) || !ctype_digit($_GET['thread_id']))
+			if (empty($_GET['section_id']) || !ctype_digit($_GET['section_id']) || empty($_GET['thread_id']) || !ctype_digit($_GET['thread_id']))
 			{
 				$this->_goError('参数有误');
 			}
@@ -20,7 +20,7 @@ class ReplyController extends CommonController
 		}
 		elseif (App::ins()->request->isPost())
 		{
-			if (!ctype_digit($_POST['section_id']) || !ctype_digit($_POST['thread_id']))
+			if (empty($_POST['section_id']) || !ctype_digit($_POST['section_id']) || empty($_POST['thread_id']) || !ctype_digit($_POST['thread_id']))
 			{
 				$this->_goError('参数有误');
 			}
@@ -186,6 +186,47 @@ class ReplyController extends CommonController
 		//更新用户信息
 		$sql = "UPDATE user SET reply_count=reply_count+1 WHERE id=$userId";
 		$model->execute($sql);
+	}
+	
+	public function actionEdit()
+	{
+		$model = ForumreplyModel::model();
+		if (App::ins()->request->isPost())
+		{
+			if (empty($_POST['reply_id']) || !ctype_digit($_POST['reply_id']))
+			{
+				$this->goError();
+			}
+			$result = $model->updateByPk($_POST['reply_id'], array('content' => $_POST['content']));
+			if ($result !== FALSE)
+			{
+				$this->redirect('forum/thread/detail', array('section_id' => $_POST['section_id'], 'thread_id' => $_POST['thread_id']));
+			}
+			else 
+			{
+				$model->setData($_POST);
+				$html = $this->render('replyform', array('model' => $model, 'sectionId' => $this->section['id'], 'threadId' => $this->thread['id']));
+				echo $html;
+			}
+		}
+		else
+		{
+			if (empty($_GET['reply_id']) || !ctype_digit($_GET['reply_id']))
+			{
+				$this->goError();
+			}
+			$userId = App::ins()->user->getId();
+			$reply = $model->where("user_id=$userId,id=".$_GET['reply_id'])->limit(1)->select();
+			if (empty($reply))
+			{
+				$this->goError();
+			}
+			$reply = $reply[0];
+			$reply['title'] = $this->thread['title'];
+			$model->setData($reply);
+			$html = $this->render('replyform', array('model' => $model, 'sectionId' => $this->section['id'], 'threadId' => $this->thread['id']));
+			echo $html;
+		}
 	}
 	
 	
