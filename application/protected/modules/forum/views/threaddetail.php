@@ -31,7 +31,12 @@
 		<h4><strong><?php echo $thread['name']?></strong>(<?php echo $thread['role_name']?>)</h4>
 	</div>
 	<div class="col-md-10">
-		<h4>发表于&nbsp;&nbsp;<em><?php echo date('Y-m-d H:i', $thread['add_time'])?></em>&nbsp;&nbsp;<a href="#"><small>只看该作者</small></a>&nbsp;&nbsp;<a href="#"><small>编辑</small></a><span class="pull-right"><i>楼主</i>&nbsp;&nbsp;<small title="输入层数后回车">电梯&nbsp;<input type="text" size="1" id="elevator"></small></span></h4>
+		<h4>
+			发表于&nbsp;&nbsp;<em><?php echo date('Y-m-d H:i', $thread['add_time'])?></em>
+			&nbsp;&nbsp;<a href="#"><small>只看该作者</small></a>
+			&nbsp;&nbsp;<a href="<?php echo $this->createUrl('forum/thread/edit', array('section_id' => $section['id'], 'thread_id' => $thread['id']))?>"><small>编辑</small></a>
+			<span class="pull-right"><i>楼主</i>&nbsp;&nbsp;<small title="输入层数后回车">电梯&nbsp;<input type="text" size="1" id="elevator"></small></span>
+		</h4>
 	</div>
 	
 	<div class="col-md-2 forum-reply-user">
@@ -127,10 +132,10 @@
 		<h4>
 			发表于&nbsp;&nbsp;<em><?php echo date('Y-m-d H:i', $reply['add_time'])?></em>
 			&nbsp;&nbsp;<a href="#"><small>只看该作者</small></a>
-			&nbsp;&nbsp;<a href="#"><small>举报</small></a>
 			<?php if ($reply['user_id'] == $userId):?>
 			&nbsp;&nbsp;<a href="#"><small>编辑</small></a>
 			<?php endIf?>
+			&nbsp;&nbsp;<a href="#"><small>举报</small></a>
 			<span class="pull-right"><i><?php echo $reply['floor']?></i>楼</span>
 		</h4>
 	</div>
@@ -204,7 +209,7 @@
 <?php endForeach?>
 <?php endIf?>
 
-
+<!--
 <div class="row forum-thread-reply">
 	<div class="col-md-2">
 		<h4><strong>xiaomiao</strong>(小学生)</h4>
@@ -293,6 +298,7 @@
 		<div class="pull-right"><a href="#"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>回复</a></div>
 	</div>
 </div>
+-->
 </div>
 <nav class="forum-thread-nav" style="margin: 20px 0">
 		<a href="<?php echo $this->createUrl('forum/thread/add', array('section_id' => $section['id']))?>" class="btn btn-success pull-left"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发表主题</a>

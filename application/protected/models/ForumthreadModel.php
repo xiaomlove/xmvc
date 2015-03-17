@@ -104,7 +104,7 @@ class ForumthreadModel extends Model
 		$offset = ((int)$default['page'] - 1) * $per;
 		$sortField = $default['sort_field'];
 		$sortType = strtoupper($default['sort_type']);
-		$sql = "SELECT a.*,b.name as user_name FROM forum_thread a LEFT JOIN user b ON a.user_id=b.id WHERE section_id={$_GET['section_id']}";
+		$sql = "SELECT a.*,b.name as user_name FROM forum_thread a LEFT JOIN user b ON a.user_id=b.id WHERE section_id={$_GET['section_id']} AND state=".self::STATE_PUBLISH;
 		if (!empty($default['filter']) && ($default['filter'] === 'add_time' || $default['filter'] === 'support_count'))
 		{
 			$sql .= " ORDER BY {$default['filter']} DESC,$sortField $sortType";
@@ -115,7 +115,7 @@ class ForumthreadModel extends Model
 		}
 		$sql .= " LIMIT $offset, $per";
 		$result = $this->findBySql($sql);
-		$sql = "SELECT count(*) as count FROM forum_thread WHERE section_id={$_GET['section_id']}";
+		$sql = "SELECT count(*) as count FROM forum_thread WHERE section_id={$_GET['section_id']} AND state=".self::STATE_PUBLISH;
 		$count = $this->findBySql($sql);
 		// 		var_dump($count);exit;
 		return array('data' => $result, 'count' => $count[0]['count'], 'per_page' => $per);

@@ -98,7 +98,7 @@ abstract class Model
 		$chainedList = array('distinct', 'field', 'group', 'having', 'join', 'limit', 'order', 'table', 'where', 'active', 
 							'findByPk', 'findBySql', 'select', 'deleteByPk', 'delete', 'updateByPk', 'update', 'insert', 'execute',
 							'beginTransaction', 'commit', 'rollBack', 'count', 'validate', 'getError', 'setError', 'hasError', 'cache',
-							'setData', 'getData',
+							'setData', 'getData', 'hasData',
 						);
 		//活跃对象可以执行的方法
 		$activeList = array('delete', 'save');
@@ -767,6 +767,10 @@ abstract class Model
 				//没有取主键的值
 				unset($result[$this->_pk]);
 			}
+			if ($this->active)
+			{
+				$obj->active = TRUE;
+			}
 			$obj->data = $result;
 			$obj->isNew = FALSE;
 			
@@ -782,6 +786,10 @@ abstract class Model
 				if($this->_noPk)
 				{
 					unset($data[$this->_pk]);
+				}
+				if ($this->active)
+				{
+					$obj->active = TRUE;
 				}
 				$obj->data = $data;
 				$obj->isNew = FALSE;
@@ -1090,6 +1098,11 @@ abstract class Model
 		{
 			return NULL;
 		}
+	}
+	
+	private function hasData($key)
+	{
+		return isset($this->data[$key]);
 	}
 	
 }

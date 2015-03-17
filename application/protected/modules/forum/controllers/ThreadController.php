@@ -32,57 +32,121 @@ class ThreadController extends CommonController
 		$model = ForumthreadModel::model();
 		if (App::ins()->request->isPost())
 		{
-			if ($model->validate($_POST))
+			$this->_submit($model, 'insert');
+		}
+		else
+		{
+			$html = $this->render('threadform', array('model' => $model));
+			echo $html;
+		}
+		
+	}
+	
+	public function actionEdit()
+	{
+		$model = ForumthreadModel::model();
+		if (App::ins()->request->isPost())
+		{
+			if (empty($_POST['thread_id']) || !ctype_digit($_POST['thread_id']))
 			{
-				$userId = App::ins()->user->getId();
+				$this->goError();
+			}
+			$this->_submit($model, 'update');//编辑都是update,这里都是非保存草稿
+		}
+		else 
+		{
+			if (empty($_GET['thread_id']) || !ctype_digit($_GET['thread_id']))
+			{
+				$this->goError();
+			}
+			$data = $model->findByPk($_GET['thread_id']);
+			$data['thread_id'] = $data['id'];
+			$model->setData($data);
+//			var_dump($model->getData('state'));exit;
+			$html = $this->render('threadform', array('model' => $model));
+			echo $html;
+		}
+		
+	}
+	
+	private function _submit($model, $type = 'insert')
+	{
+		if ($model->validate($_POST))
+		{
+			$userId = App::ins()->user->getId();
+			if ($type === 'insert')
+			{
 				$thread = new ForumthreadModel();
-				$thread->title = $_POST['title'];
-				$thread->content = $_POST['content'];
 				$thread->add_time = $_SERVER['REQUEST_TIME'];
-				$thread->user_id = $userId;
-				$thread->section_id = $_POST['section_id'];
-				if (isset($_POST['draft']))
+			}
+			elseif ($type === 'update')
+			{
+				$thread = $model->active()->findByPk($_POST['thread_id']);
+			}
+			else
+			{
+				trigger_error('_submit需要的type参数错误', E_USER_ERROR);
+				exit;
+			}
+			
+			$thread->title = $_POST['title'];
+			$thread->content = $_POST['content'];
+			$thread->user_id = $userId;
+			$thread->section_id = $_POST['section_id'];
+			$thread->state = ForumthreadModel::STATE_PUBLISH;//这里都是非草稿的操作跳转操作，新增主题或者编辑主题，都是发表的状态
+//			echo '<pre/>';
+			$result = $thread->save();
+//			var_dump($result);exit;
+			if (empty($result) && $type === 'insert')
+			{
+				$model->setError('title', '未知错误，发表失败');
+			}
+			else 
+			{
+				if ($type === 'insert')
 				{
-					$thread->state = ForumthreadModel::STATE_DRAFT;
+					$gotoId = $result;
+					$this->_updateSectionUser();
+					$this->redirect('forum/thread/detail', array('section_id' => $_POST['section_id'], 'thread_id' => $gotoId));
 				}
 				else
 				{
-					$thread->state = ForumthreadModel::STATE_PUBLISH;
+					//是更新操作
+					$gotoId = $_POST['thread_id'];
+					$this->redirect('forum/thread/detail', array('section_id' => $_POST['section_id'], 'thread_id' => $gotoId));
 				}
-				$result = $thread->save();
-				if (empty($result))
-				{
-					$model->setError('title', '未知错误，发表失败');
-				}
-				else 
-				{
-					//更新所在版块的信息
-					$sectionModel = ForumsectionModel::model();
-					$SectionParent = $sectionModel->findByPk($this->section['parent_id']);
-					$sql = "UPDATE forum_section SET thread_total_count=thread_total_count+1, thread_today_count=thread_today_count+1 WHERE id IN ({$_POST['section_id']},{$SectionParent['id']})";
-					$updateSection = $sectionModel->execute($sql);
-					if (empty($updateSection))
-					{
-						trigger_error('更新所在版块和父版块信息出错', E_USER_ERROR);
-						exit;
-					}
-					//更新用户信息
-					$sql = "UPDATE user SET thread_count=thread_count+1 WHERE id=$userId";
-					$updateUser = $sectionModel->execute($sql);
-					if (empty($updateUser))
-					{
-						trigger_error('更新用户信息出错', E_USER_ERROR);
-						exit;
-					}
-					$this->redirect('forum/thread/detail', array('section_id' => $_POST['section_id'], 'thread_id' => $result));
-				}
+				
 			}
-			$model->setData($_POST);
 		}
-		
+		$model->setData($_POST);
 		$this->breadcrumbs[] = array('name' => '发表主题');
 		$html = $this->render('threadform', array('model' => $model));
 		echo $html;
+	}
+	
+	/**
+	 * 发布主题后更新版块和用户信息
+	 * Enter description here ...
+	 */
+	private function _updateSectionUser()
+	{
+		$sectionModel = ForumsectionModel::model();
+		$SectionParent = $sectionModel->findByPk($this->section['parent_id']);
+		$sql = "UPDATE forum_section SET thread_total_count=thread_total_count+1, thread_today_count=thread_today_count+1 WHERE id IN ({$_POST['section_id']},{$SectionParent['id']})";
+		$updateSection = $sectionModel->execute($sql);
+		if (empty($updateSection))
+		{
+			trigger_error('更新所在版块和父版块信息出错', E_USER_ERROR);
+			exit;
+		}
+		//更新用户信息
+		$sql = "UPDATE user SET thread_count=thread_count+1 WHERE id=".App::ins()->user->getId();
+		$updateUser = $sectionModel->execute($sql);
+		if (empty($updateUser))
+		{
+			trigger_error('更新用户信息出错', E_USER_ERROR);
+			exit;
+		}
 	}
 	
 	public function actionDetail()

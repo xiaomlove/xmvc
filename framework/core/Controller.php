@@ -40,6 +40,10 @@ class Controller
 	
 	protected function redirect($mvc, $options = array())
 	{
+		if (defined('STOP_REDIRECT') && (STOP_REDIRECT === 1 || STOP_REDIRECT === TRUE))
+		{
+			exit('defined stop redirect !');
+		}
 		$url = $this->createUrl($mvc, $options);
 		header("Location:".$url);exit;
 	}

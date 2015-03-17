@@ -3,6 +3,7 @@
 define('APP_PATH', __DIR__.'/application/');
 define('DEBUG', true);
 define('NO_LOG_AJAX', true);
+define('STOP_REDIRECT', true);
 
 $config = require './application/protected/config/config.php';
 require './framework/setup.php';
