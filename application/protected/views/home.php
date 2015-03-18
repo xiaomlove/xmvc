@@ -1,7 +1,7 @@
 <div class="row page-header" style="margin-top: 20px">
 	<div class="welcome"><h2>欢迎光临TinyHD</h2></div>
 	<div class="userbox">
-		<ul class="list-inline text-success">
+		<ul class="list-inline">
 			<li>用户名:<?php echo App::ins()->user->getName()?></li>
 			<li>上传量:<?php echo $this->getSize($userInfo['uploaded'])?></li>
 			<li>下载量:<?php echo $this->getSize($userInfo['downloaded'])?></li>
@@ -23,7 +23,7 @@
 						<div><img src="application/public/images/avatar.jpg" class="img-responsive"/></div>
 						<div class="name-level"><span>xiaomlove</span>(小学生)&nbsp;&nbsp;--&nbsp;&nbsp;<small>10:34:15</small></div>
 					</div>
-					<div class="alert alert-success">
+					<div class="alert ">
 						哈哈，好开心！
 					</div>
 				</div>
@@ -32,7 +32,7 @@
 						<div><img src="application/public/images/avatar.jpg" class="img-responsive"/></div>
 						<div class="name-level"><span>xiaomlove</span>(小学生)&nbsp;&nbsp;--&nbsp;&nbsp;<small>10:34:15</small></div>
 					</div>
-					<div class="alert alert-success">
+					<div class="alert ">
 						上边煞逼一个！
 					</div>
 				</div>
@@ -42,7 +42,7 @@
 						<div><img src="application/public/images/avatar.jpg" class="img-responsive"/></div>
 						<div class="name-level"><span>xiaomlove</span>(小学生)&nbsp;&nbsp;--&nbsp;&nbsp;<small>10:34:15</small></div>
 					</div>
-					<div class="alert alert-success">
+					<div class="alert ">
 						有种来打我啊！
 					</div>
 				</div>
@@ -51,7 +51,7 @@
 						<div><img src="application/public/images/avatar.jpg" class="img-responsive"/></div>
 						<div class="name-level"><span>xiaomlove</span>(小学生)&nbsp;&nbsp;--&nbsp;&nbsp;<small>10:34:15</small></div>
 					</div>
-					<div class="alert alert-success">
+					<div class="alert ">
 						吐了！
 					</div>
 				</div>
@@ -124,11 +124,13 @@
 	});
 
 	$(document).ready(function(){
+		//获取IP信息
 		var $ip = $("#ip");
 		if($.trim(ip) !== "unknown"){
 			$.ajax({
 				url: "getipinfo?ip="+$.trim($ip.text()),
 				type: "GET",
+				async: true,
 				dataType: "json",
 				success: function(data){
 // 					console.log(data);return;
@@ -150,5 +152,8 @@
 				}
 			})
 		}
+
+		//开启websocker聊天
+		
 	})
 </script>

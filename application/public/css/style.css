@@ -18,7 +18,7 @@
 .online-user-head{text-align: center;border-bottom: 1px solid #999;margin-bottom: 10px}
 .talk-content{border-right: 1px dotted gray;padding: 15px}
 .talk-item{padding: 10px;margin: 0px;border: 1px -solid #e69;-border-radius: 5px}
-.talk-item .alert{margin-bottom: 0}
+.talk-item .alert{margin-bottom: 0;}
 .talker-info{position: relative;margin-bottom: 10px}
 .talker-info .name-level{position:relative;top: 2px}
 .talker-info .name-level>span:first-of-type{font-size: 18px}
@@ -30,7 +30,8 @@
 .online-user{padding-bottom: 20px}
 .online-user-list{overflow: auto;height: 330px;}
 .online-user-list img{display: inline-block;max-width: 20px;margin-right: 10px}
-.online-user-list li{height: 20px;line-height: 20px;margin:5px 0}
+.online-user-list li{height: 20px;line-height: 20px;margin:5px 0;cursor: pointer}
+.online-user-list li:hover{background-color: #ddd}
 .submit-wrap{text-align: center}
 .submit-form{height: 50px;border: 1px solid #e69;margin: 10px;padding: 5px;text-align: left;border-radius: 5px}
 .submit-btn{}
