@@ -84,7 +84,7 @@
 		
 		<div class="col-md-offset-2 col-md-6 submit-wrap">
 			<div contenteditable="true" class="submit-form"></div>
-			<button class="btn btn-success btn-sm submit-btn">发射</button>
+			<button class="btn btn-primary btn-sm submit-btn">发射</button>
 		</div>
 	</div>
 </div>
