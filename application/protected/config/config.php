@@ -14,6 +14,7 @@ return array(
 		'ruleSeparator'=>'/',//规则分割符，默认/，可以换-等，换了rules里边也得换，要一致
 		//rules配置的左边是浏览器看到的，是域名后面不包含入口文件(如果显示入口文件)和?a=1&b=3的部分
 		'rules'=>array(
+			'talk'=>'index/talk',
 			'index.html'=>'index/home',//如果不传参，把后缀名写到左边全部匹配，减轻匹配工作量，不用数组传了
 			'register.html'=>'index/register',
 			'login.html'=>'index/login',

@@ -89,7 +89,6 @@
 	</div>
 </div>
 
-
 <div id="checkout-logout-modal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
@@ -104,6 +103,8 @@
     </div>
   </div>
 </div>
+<input type="hidden" id="socket-url" value="<?php echo $this->createUrl('talk')?>">
+
 
 <script>
 	var $logout = $("#logout");
@@ -154,6 +155,23 @@
 		}
 
 		//开启websocker聊天
+		var host = "ws://"+location.host+$("#socket-url").val();
+		var socket = new WebSocket(host);
+		socket.onopen = function(e){
+			console.log("socket open.");
+		}
+
+		socket.onmessage = function(e){
+			console.log("message:"+e.data);
+		}
+
+		socket.onerror = function(e){
+			console.log("error:"+e.data);
+		}
+
+		socket.onclose = function(e){
+			console.log("close:"+e.data);
+		}
 		
 	})
 </script>

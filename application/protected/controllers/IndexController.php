@@ -158,11 +158,12 @@ class IndexController extends CommonController
 		echo $this->renderPartial('error', array('bgImg' => $imgurl));
 	}
 	
-	public function init()
+	/**
+	 * websocket聊天返回
+	 */
+	public function actionTalk()
 	{
-// 		echo '控制器初始化方法，实例化控制器时执行！<br/>';
-// 		$this->setPageTitle('设置的标题');
-// 		echo $this->pageTitle;
 		
 	}
+	
 }
