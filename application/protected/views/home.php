@@ -1,4 +1,4 @@
-<div class="row page-header">
+<div class="row page-header" style="margin-top: 20px">
 	<div class="welcome"><h2>欢迎光临TinyHD</h2></div>
 	<div class="userbox">
 		<ul class="list-inline text-success">
@@ -12,7 +12,83 @@
 	<a class="btn btn-danger btn-xs pull-right" data-toggle="modal" data-target=".bs-example-modal-sm" style="margin-top: 30px">退出</a>
 </div>
 
-<h3 style="text-align: center">聊天室</h3>
+<h3 style="text-align: center">Tiny Talk</h3>
+<div class="row">
+	<div class="col-md-offset-2 col-md-8">
+		<div class="row talk-wrap">
+			<div class="col-md-9 talk-content">
+				<div class="talk-join alert alert-info"><strong>xiaomiao</strong><small>加入了聊天室&nbsp;--&nbsp;<span>10:12:45</span></small></div>
+				<div class="talk-item">
+					<div class="talker-info">
+						<div><img src="application/public/images/avatar.jpg" class="img-responsive"/></div>
+						<div class="name-level"><span>xiaomlove</span>(小学生)&nbsp;&nbsp;--&nbsp;&nbsp;<small>10:34:15</small></div>
+					</div>
+					<div class="alert alert-success">
+						哈哈，好开心！
+					</div>
+				</div>
+				<div class="talk-item">
+					<div class="talker-info">
+						<div><img src="application/public/images/avatar.jpg" class="img-responsive"/></div>
+						<div class="name-level"><span>xiaomlove</span>(小学生)&nbsp;&nbsp;--&nbsp;&nbsp;<small>10:34:15</small></div>
+					</div>
+					<div class="alert alert-success">
+						上边煞逼一个！
+					</div>
+				</div>
+				<div class="talk-join alert alert-info"><strong>xiaomlove</strong><small>加入了聊天室&nbsp;--&nbsp;<span>10:12:45</span></small></div>
+				<div class="talk-item">
+					<div class="talker-info">
+						<div><img src="application/public/images/avatar.jpg" class="img-responsive"/></div>
+						<div class="name-level"><span>xiaomlove</span>(小学生)&nbsp;&nbsp;--&nbsp;&nbsp;<small>10:34:15</small></div>
+					</div>
+					<div class="alert alert-success">
+						有种来打我啊！
+					</div>
+				</div>
+				<div class="talk-item">
+					<div class="talker-info">
+						<div><img src="application/public/images/avatar.jpg" class="img-responsive"/></div>
+						<div class="name-level"><span>xiaomlove</span>(小学生)&nbsp;&nbsp;--&nbsp;&nbsp;<small>10:34:15</small></div>
+					</div>
+					<div class="alert alert-success">
+						吐了！
+					</div>
+				</div>
+			</div>
+			<div class="col-md-3 online-user">
+				<div  class="online-user-head"><h4>在线用户<em>(12)</em></h4></div>
+				<div class="online-user-list">
+					<ul class="list-unstyled">
+						<li><img src="application/public/images/avatar.jpg" class="img-responsive"/>xiaomiao</li>
+						<li><img src="application/public/images/avatar.jpg" class="img-responsive"/>xiaomiao</li>
+						<li><img src="application/public/images/avatar.jpg" class="img-responsive"/>xiaomiao</li>
+						<li><img src="application/public/images/avatar.jpg" class="img-responsive"/>xiaomiao</li>
+						<li><img src="application/public/images/avatar.jpg" class="img-responsive"/>xiaomiao</li>
+						<li><img src="application/public/images/avatar.jpg" class="img-responsive"/>xiaomiao</li>
+						<li><img src="application/public/images/avatar.jpg" class="img-responsive"/>xiaomiao</li>
+						<li><img src="application/public/images/avatar.jpg" class="img-responsive"/>xiaomiao</li>
+						<li><img src="application/public/images/avatar.jpg" class="img-responsive"/>xiaomiao</li>
+						<li><img src="application/public/images/avatar.jpg" class="img-responsive"/>xiaomiao</li>
+						<li><img src="application/public/images/avatar.jpg" class="img-responsive"/>xiaomiao</li>
+						<li><img src="application/public/images/avatar.jpg" class="img-responsive"/>xiaomiao</li>
+						<li><img src="application/public/images/avatar.jpg" class="img-responsive"/>xiaomiao</li>
+						<li><img src="application/public/images/avatar.jpg" class="img-responsive"/>xiaomiao</li>
+						<li><img src="application/public/images/avatar.jpg" class="img-responsive"/>xiaomiao</li>
+						<li><img src="application/public/images/avatar.jpg" class="img-responsive"/>xiaomiao</li>
+						<li><img src="application/public/images/avatar.jpg" class="img-responsive"/>xiaomiao</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-md-offset-2 col-md-6 submit-wrap">
+			<div contenteditable="true" class="submit-form"></div>
+			<button class="btn btn-success btn-sm submit-btn">发射</button>
+		</div>
+	</div>
+</div>
+
 
 <div id="checkout-logout-modal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-sm">
