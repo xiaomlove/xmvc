@@ -94,7 +94,7 @@
     <div class="modal-content">
       
       <div class="modal-body">
-        	<string>确定退出吗？</strong>
+        	<strong>确定退出吗？</strong>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -155,7 +155,8 @@
 		}
 
 		//开启websocker聊天
-		var host = "ws://"+location.host+$("#socket-url").val();
+		// var host = "ws://"+location.host+$("#socket-url").val();
+		var host = "ws://127.0.0.1:9000";
 		var socket = new WebSocket(host);
 		socket.onopen = function(e){
 			console.log("socket open.");
