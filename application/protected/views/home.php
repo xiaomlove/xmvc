@@ -90,6 +90,7 @@
 		<div class="col-md-offset-2 col-md-6 submit-wrap">
 			<div contenteditable="true" class="submit-form" id="submit-form"></div>
 			<button class="btn btn-primary btn-sm submit-btn" id="launch">发射</button>
+			<button class="btn btn-primary btn-sm submit-btn" id="close">关闭</button>
 		</div>
 	</div>
 </div>
@@ -173,8 +174,9 @@
 		}
 
 		//开启websocker聊天
-		// var host = "ws://"+location.host+$("#socket-url").val();
-		var host = "ws://127.0.0.1:9000";
+		var port = 8888;
+		var host = "ws://"+location.host+":"+port;
+// 		var host = "ws://127.0.0.1:2222";
 		var socket = new WebSocket(host);
 		var username = $("#user-name").text();
 		var userid = $("#user-id").val();
@@ -221,9 +223,13 @@
 				alert("请输入内容");
 				return;
 			};
-			var send = JSON.stringify({"msg":text});
+			var send = JSON.stringify({type: TYPE_MESSAGE, msg: text});
 			socket.send(send);
 			
+		});
+
+		$("#close").click(function(e){
+			socket.close();
 		})
 		
 	})

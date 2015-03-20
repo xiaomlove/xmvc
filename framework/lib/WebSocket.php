@@ -1,6 +1,6 @@
 <?php
 $host = '127.0.0.1';
-$port = 9000;
+$port = 2222;
 $maxClient = 1000;
 const MSG_TYPE_HANDSHAKE = 0;//握住信息
 const MSG_TYPE_MESSAGE = 1;//正常聊天信息
@@ -73,6 +73,8 @@ while(1)
 			$bytes = socket_recv($client, $buf, 1024, 0);//读取发送过来的信息的字节数
 			echo "receive bytes:\r\n";
 			var_dump($bytes);
+			echo "receive buf:\r\n";
+			var_dump($buf);
 			if ($bytes === FALSE)
 			{
 				echo 'socket_recv() failed:'.socket_strerror(socket_last_error());
