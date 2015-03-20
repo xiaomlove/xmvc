@@ -1,4 +1,5 @@
 <?php
+ob_implicit_flush();
 $host = '127.0.0.1';
 $port = 2222;
 $maxClient = 1000;
@@ -45,7 +46,21 @@ while(1)
 	$write = NULL;//函数参数是传递引用，必须定义变量
 	$except = NULL;
 	$tv_sec = NULL;
+	echo "------------------------------\r\n";
+	echo "before sockets\r\n:";
+	var_dump($sockets);
+	echo "before clients:\r\n:";
+	var_dump($clients);
+	echo "before users:\r\n:";
+	var_dump($users);
 	socket_select($sockets, $write, $except, $tv_sec);//多路选择，监听哪些socket有状态变化，返回时将有状态变化的保留在$sockets中，其他都删除之！
+	echo "------after sockets\r\n:";
+	var_dump($sockets);
+	echo "------after clients:\r\n:";
+	var_dump($clients);
+	echo "after users:\r\n:";
+	var_dump($users);
+	echo "------------------------------\r\n";
 	//循环有状态变化的socket
 	foreach ($sockets as $socket)
 	{
@@ -70,11 +85,16 @@ while(1)
 		else
 		{
 			//其他socket的状态变化
-			$bytes = socket_recv($client, $buf, 1024, 0);//读取发送过来的信息的字节数
+			$bytes = socket_recv($socket, $buf, 1024, 0);//读取发送过来的信息的字节数
 			echo "receive bytes:\r\n";
 			var_dump($bytes);
 			echo "receive buf:\r\n";
 			var_dump($buf);
+			echo "data:\r\n";
+			var_dump(frameDecode($buf));
+			$read = socket_read($socket, 1024);
+			echo "socket read:\r\n";
+			var_dump($read);
 			if ($bytes === FALSE)
 			{
 				echo 'socket_recv() failed:'.socket_strerror(socket_last_error());
@@ -82,24 +102,26 @@ while(1)
 			elseif($bytes == 0)
 			{
 				//没有内容，是断开连接         这里有问题！！！断开时并不是字节为0！！！！！！！！！！！！！！！！！！！！！！！
-				socket_getpeername($client, $ip);//获取用户IP地址
-				$response = frameEncode(json_encode(array('type' => MSG_TYPE_DISCONNECT, 'msg' => $ip.' disconnect')));
-				sendMessage($response);
-				$index = array_search($client, $clients);//寻找该socket在用户列表中的位置
-				unset($clients[$index]);//删除用户
-				unset($users[$index]);
-				echo "user $ip disconnect\r\n";
+// 				socket_getpeername($socket, $ip);//获取用户IP地址
+// 				$response = frameEncode(json_encode(array('type' => MSG_TYPE_DISCONNECT, 'msg' => $ip.' disconnect')));
+// 				sendMessage($response);
+// 				$index = array_search($socket, $clients);//寻找该socket在用户列表中的位置
+// 				unset($clients[$index]);//删除用户
+// 				unset($users[$index]);
+				echo "bytes=0, user $ip disconnect\r\n";
 			}
 			else
 			{
 				//正常聊天信息
 				$data = json_decode(frameDecode($buf));
+				echo "normal message\r\n";
+				/*
 				if ($data->type == MSG_TYPE_JOIN)
 				{
 					//握手成功请求加入
-					$index = array_search($client, $clients);
+					$index = array_search($socket, $clients);
 					$users[$index] = $data->userinfo;//记录用户信息，含id的用户名的json字符串
-					sendUserList($client, $data->userinfo);//发送用户列表
+					sendUserList($socket, $data->userinfo);//发送用户列表
 					echo "ask to join in {$data->userinfo}\r\n";
 				}
 				elseif($data->type == MSG_TYPE_MESSAGE)
@@ -109,6 +131,7 @@ while(1)
 					sendMessage($response);
 					echo "receive message {$data->msg}\r\n";
 				}
+				*/
 			}
 		}
 	}
@@ -122,6 +145,7 @@ while(1)
 function doHandshake($client)
 {
 	$header = socket_read($client, 1024);//读取头信息
+// 	var_dump($header);
 	if (preg_match("/Sec-WebSocket-Key: (.*)\r\n/", $header, $match))//冒号后面有个空格
 	{
 		$secKey = $match[1];

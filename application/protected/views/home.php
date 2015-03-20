@@ -174,7 +174,7 @@
 		}
 
 		//开启websocker聊天
-		var port = 8888;
+		var port = 2222;
 		var host = "ws://"+location.host+":"+port;
 // 		var host = "ws://127.0.0.1:2222";
 		var socket = new WebSocket(host);
@@ -219,12 +219,12 @@
 
 		$("#launch").click(function(e){
 			var text = $("#submit-form").text().trim();
-			if (text == ""){
-				alert("请输入内容");
-				return;
-			};
+// 			if (text == ""){
+// 				alert("请输入内容");
+// 				return;
+// 			};
 			var send = JSON.stringify({type: TYPE_MESSAGE, msg: text});
-			socket.send(send);
+			socket.send(text);
 			
 		});
 

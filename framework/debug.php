@@ -1,6 +1,9 @@
 <?php
 
-var_dump(ctype_digit($_POST['a']));
+$ss = 'sb';
 
+$result = json_decode($ss);
+
+var_dump($result);
 
 
