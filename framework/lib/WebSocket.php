@@ -15,7 +15,7 @@ if ($master === FALSE)
 	echo 'socket_create() failed:'.socket_strerror(socket_last_error());
 	exit();
 }
-socket_set_option($master, SOL_SOCKET, SO_REUSEADDR, 1);//一个端口释放可立即使用
+socket_set_option($master, SOL_SOCKET, SO_REUSEADDR, 1);//一个端口释放可立即使用，测试其实还是不可用
 $bind = socket_bind($master, $host, $port);
 if ($bind === FALSE)
 {
@@ -46,12 +46,12 @@ while(1)
 	$write = NULL;//函数参数是传递引用，必须定义变量
 	$except = NULL;
 	$tv_sec = NULL;
-	echo "------------------------------\r\n";
-	echo "before sockets\r\n:";
+	echo "---------------------------------------------------------\r\n";
+	echo "BEFOER sockets\r\n:";
 	var_dump($sockets);
-	echo "before clients:\r\n:";
+	echo "BEFOER clients:\r\n:";
 	var_dump($clients);
-	echo "before users:\r\n:";
+	echo "BEFOER users:\r\n:";
 	var_dump($users);
 	socket_select($sockets, $write, $except, $tv_sec);//多路选择，监听哪些socket有状态变化，返回时将有状态变化的保留在$sockets中，其他都删除之！
 	echo "------after sockets\r\n:";
@@ -60,8 +60,9 @@ while(1)
 	var_dump($clients);
 	echo "after users:\r\n:";
 	var_dump($users);
-	echo "------------------------------\r\n";
+	echo "---------------------------------------------------------------\r\n";
 	//循环有状态变化的socket
+	$time = date('Y-m-d H:i:s', time());
 	foreach ($sockets as $socket)
 	{
 		if ($socket === $master)
@@ -77,61 +78,73 @@ while(1)
 				$clients[] = $client;//加入用户列表
 				doHandshake($client);//进行握手
 				socket_getpeername($client, $ip);//获取用户IP地址
-				$response = frameEncode(json_encode(array('type' => MSG_TYPE_HANDSHAKE, 'msg' => $ip.' connected')));//编码数据帧
-				sendMessage($response);
+				$response = frameEncode(json_encode(array('type' => MSG_TYPE_HANDSHAKE, 'msg' => $ip.' connected', 'time' => $time)));//编码数据帧
+				sendMessage($response, $client);
 				echo "new connected $ip\r\n";
 			}
 		}
 		else
 		{
 			//其他socket的状态变化
+			
 			$bytes = socket_recv($socket, $buf, 1024, 0);//读取发送过来的信息的字节数
-			echo "receive bytes:\r\n";
+			$data = frameDecode($buf);//正常信息为json字符串，
+			echo "recv bytes:\r\n";
 			var_dump($bytes);
-			echo "receive buf:\r\n";
+			echo "receive buf:\r\n";//关闭浏览器为空字符串，浏览器执行close()方法为6字节的字符串
 			var_dump($buf);
 			echo "data:\r\n";
-			var_dump(frameDecode($buf));
-			$read = socket_read($socket, 1024);
-			echo "socket read:\r\n";
-			var_dump($read);
+			var_dump($data);
+// 			$read = socket_read($socket, 1024);//这里加个read怎么就给堵住了？？
+// 			echo "socket read:\r\n";
+// 			var_dump($read);
 			if ($bytes === FALSE)
 			{
 				echo 'socket_recv() failed:'.socket_strerror(socket_last_error());
 			}
-			elseif($bytes == 0)
+			elseif($bytes <= 6 || empty($data) || !is_object(json_decode($data)))//不会有为0的情况，测试最小为6。刷新浏览器时候为8字节，其实规定正常的信息都json格式decode后不是obj就不是正常信息了
 			{
+				echo '************************************************************************\r\n';
 				//没有内容，是断开连接         这里有问题！！！断开时并不是字节为0！！！！！！！！！！！！！！！！！！！！！！！
-// 				socket_getpeername($socket, $ip);//获取用户IP地址
-// 				$response = frameEncode(json_encode(array('type' => MSG_TYPE_DISCONNECT, 'msg' => $ip.' disconnect')));
-// 				sendMessage($response);
-// 				$index = array_search($socket, $clients);//寻找该socket在用户列表中的位置
-// 				unset($clients[$index]);//删除用户
-// 				unset($users[$index]);
-				echo "bytes=0, user $ip disconnect\r\n";
+				$index = array_search($socket, $clients);//寻找该socket在用户列表中的位置
+// 				if ($index === FALSE)
+// 				{
+// 					//已经删除，不存在
+// 					continue;
+// 				}
+				$userInfo = $users[$index];
+// 				var_dump($userInfo);
+				socket_getpeername($socket, $ip);//获取用户IP地址
+				$response = frameEncode(json_encode(array('type' => MSG_TYPE_DISCONNECT, 'msg' => $userInfo, 'time' => $time)));
+				sendMessage($response);
+				
+				unset($clients[$index]);//删除用户
+				unset($users[$index]);
+				socket_close($socket);
+				echo "user $ip($index) disconnect\r\n";
 			}
 			else
 			{
 				//正常聊天信息
-				$data = json_decode(frameDecode($buf));
+				$data = json_decode($data);//对象
 				echo "normal message\r\n";
-				/*
+				
 				if ($data->type == MSG_TYPE_JOIN)
 				{
 					//握手成功请求加入
 					$index = array_search($socket, $clients);
 					$users[$index] = $data->userinfo;//记录用户信息，含id的用户名的json字符串
 					sendUserList($socket, $data->userinfo);//发送用户列表
-					echo "ask to join in {$data->userinfo}\r\n";
+					echo "ask to join in \r\n";
 				}
-				elseif($data->type == MSG_TYPE_MESSAGE)
-				{
-					$time = date('Y-m-d H:i:s', time());
-					$response = frameEncode(json_encode(array('type' => MSG_TYPE_MESSAGE, 'msg' => $data->msg, 'time' => $time)));
+ 				elseif($data->type == MSG_TYPE_MESSAGE)
+				//else
+ 				{
+ 					$response = frameEncode(json_encode(array('type' => MSG_TYPE_MESSAGE, 'msg' => $data->msg, 'time' => $time, 'username' => $data->username)));
 					sendMessage($response);
-					echo "receive message {$data->msg}\r\n";
+					echo "receive message\r\n";
 				}
-				*/
+				
 			}
 		}
 	}
@@ -218,12 +231,19 @@ function frameDecode($text) {
  * Enter description here ...
  * @param unknown_type $msg
  */
-function sendMessage($msg)
+function sendMessage($msg, $receiver = '')
 {
-	global $clients;
-	foreach ($clients as $client)
+	if (!empty($receiver))
 	{
-		socket_write($client, $msg, strlen($msg));
+		socket_write($receiver, $msg, strlen($msg));
+	}
+	else 
+	{
+		global $clients;
+		foreach ($clients as $client)
+		{
+			socket_write($client, $msg, strlen($msg));
+		}
 	}
 }
 

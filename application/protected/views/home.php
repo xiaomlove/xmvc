@@ -28,6 +28,7 @@
 						哈哈，好开心！
 					</div>
 				</div>
+				
 				<div class="talk-item">
 					<div class="talker-info">
 						<div><img src="application/public/images/avatar.jpg" class="img-responsive"/></div>
@@ -37,6 +38,7 @@
 						上边煞逼一个！
 					</div>
 				</div>
+				
 				<div class="talk-join alert alert-info"><strong>xiaomlove</strong><small>加入了聊天室&nbsp;--&nbsp;<span>10:12:45</span></small></div>
 				<div class="talk-item">
 					<div class="talker-info">
@@ -59,7 +61,7 @@
 				 -->
 			</div>
 			<div class="col-md-3 online-user">
-				<div  class="online-user-head"><h4>在线用户<em id="user-count">(12)</em></h4></div>
+				<div  class="online-user-head"><h4>在线用户<em>(<span id="user-count">12</span>)</em></h4></div>
 				<div class="online-user-list">
 					<ul class="list-unstyled" id="user-list">
 					<!-- 
@@ -90,7 +92,7 @@
 		<div class="col-md-offset-2 col-md-6 submit-wrap">
 			<div contenteditable="true" class="submit-form" id="submit-form"></div>
 			<button class="btn btn-primary btn-sm submit-btn" id="launch">发射</button>
-			<button class="btn btn-primary btn-sm submit-btn" id="close">关闭</button>
+<!-- 			<button class="btn btn-primary btn-sm submit-btn" id="close">关闭</button> -->
 		</div>
 	</div>
 </div>
@@ -111,20 +113,32 @@
 </div>
 <input type="hidden" id="socket-url" value="<?php echo $this->createUrl('talk')?>">
 <input type="hidden" id="user-id" value="<?php echo $userInfo['id']?>">
-<script type="application/tpl" data-type="alert">
-<div class="talk-join alert alert-info"><strong class="username">xiaomiao</strong><small>加入了聊天室&nbsp;--&nbsp;<span class="login-time">10:12:45</span></small></div>
-</script>
-<script type="application/tpl" data-type="message">
-<div class="talk-item">
-	<div class="talker-info">
-		<div><img src="application/public/images/avatar.jpg" class="img-responsive"/></div>
-		<div class="name-level"><span class="username">xiaomlove</span>&nbsp;&nbsp;--&nbsp;&nbsp;<small class="message-time">10:34:15</small></div>
-	</div>
-	<div class="alert message-content">
-		哈哈，好开心！
+
+<!-- 模板 -->
+<div style="display: none" id="tpl-join">
+	<div class="talk-join alert alert-info"><strong class="username">xiaomiao</strong>&nbsp;加入了聊天室&nbsp;--&nbsp;<small><span class="time">10:12:45</span></small></div>
+</div>
+
+<div style="display: none" id="tpl-leave">
+	<div class="talk-join alert alert-info"><strong class="username">xiaomiao</strong>&nbsp;离开了聊天室&nbsp;--&nbsp;<small><span class="time">10:12:45</span></small></div>
+</div>
+
+<div style="display: none" id="tpl-connect-info">
+	<div class="talk-join alert alert-info"><strong class="info">握手成功，正在登陆...</strong>&nbsp;--&nbsp;<small><span class="time">10:12:45</span></small></div>
+</div>
+
+<div style="display: none" id="tpl-message">
+	<div class="talk-item">
+		<div class="talker-info">
+			<div><img src="application/public/images/avatar.jpg" class="img-responsive"/></div>
+			<div class="name-level"><span class="username">xiaomlove</span>&nbsp;&nbsp;--&nbsp;&nbsp;<small class="time">10:34:15</small></div>
+		</div>
+		<div class="alert message-content">
+			哈哈，好开心！
+		</div>
 	</div>
 </div>
-</script>
+
 <script>
 	var $logout = $("#logout");
 	$logout.on("click", function(e){
@@ -177,33 +191,88 @@
 		var port = 2222;
 		var host = "ws://"+location.host+":"+port;
 // 		var host = "ws://127.0.0.1:2222";
-		var socket = new WebSocket(host);
+		
 		var username = $("#user-name").text();
 		var userid = $("#user-id").val();
 		var $talkContent = $("#talk-content");
-		var $alert = $("script[data-type=alert]");
-		var $message = $("script[data-type=message]");
+		var $join = $("#tpl-join");
+		var $leave = $("#tpl-leave");
+		var $connect = $("#tpl-connect-info");
+		var $message = $("#tpl-message");
+		var $userList = $("#user-list");
+		var $userCount = $("#user-count");
+		var $submitForm = $("#submit-form");
 		var TYPE_HANDSHAKE = 0, TYPE_DISCONNECT = -1, TYPE_MESSAGE = 1, TYPE_JOIN = 2, TYPE_LOGIN = 3;
+
+		if (window.WebSocket){
+			var socket = new WebSocket(host);
+		}else{
+			$connect.find(".info").html("你的浏览器不支持WebSocket");
+			$connect.find(".time").html((new Date()).toLocaleString());
+			$talkContent.append($connect.html());
+			return;
+		}
 		
 		socket.onopen = function(e){
 			console.log("socket open.");
-			$alert.children(".talk-join").html("socket open，正在连接...");
-			console.log($alert.html());return;
-			$talkContent.append($alert.html());
+			$connect.find(".info").html("socket open，正在连接...");
+			$connect.find(".time").html((new Date()).toLocaleString());
+			$talkContent.append($connect.html());
 		}
 
 		socket.onmessage = function(e){
-			var data = e.data;
-			console.log("receive message:"+data);
+			var data = e.data;//json字符串而已！！！！！！！！！！！！！！
+			data = JSON.parse(data);
 			if (data.type == TYPE_HANDSHAKE){
-				$alert.children(".talk-join").text("握手成功，正在登陆...");
-				$talkContent.append($alert.html());
+				$connect.find(".info").html("握手成功，正在登陆...");
+				$connect.find(".time").html(data.time);
+				$talkContent.append($connect.html());
 				//发送请求登陆信息
+				console.log("handshake success ask for join in"+username);
 				var send = {type: TYPE_JOIN, userinfo: {userid: userid, username: username}};
-				socket.send(JSON_stringify(send));
+				socket.send(JSON.stringify(send));
 			}else if (data.type == TYPE_JOIN){
-				//登陆成功，返回在线用户列表
-				console.log("在线用户列表已返回");
+// 				//加入成功，返回在线用户列表
+				console.log("在线用户列表已返回："+data.msg);
+				var userList = JSON.parse(data.msg);
+				var HTML = [];
+				for( var i in userList){
+					HTML.push('<li data-id="'+userList[i].userid+'"><img src="application/public/images/avatar.jpg" class="img-responsive"/>'+userList[i].username+'</li>');
+				}
+				$userList.append(HTML.join(""));
+				$userCount.html(data.count);
+			}else if(data.type == TYPE_MESSAGE){
+				console.log("正常消息："+data.msg);
+				$message.find(".username").html(data.username);
+				$message.find(".time").html(data.time);
+				$message.find(".message-content").html(data.msg);
+				append($message.html());
+				
+			}else if(data.type == TYPE_DISCONNECT){
+				console.log("用户退出："+data.msg.username);
+				$leave.find(".username").html(data.msg.username);
+				$leave.find(".time").html(data.time);
+				append($leave.html());
+				$userList.find("li[data-id="+data.msg.userid+"]").remove();
+				$userCount.html(function(index, text){
+					console.log(text);
+					return parseInt(text)-1;
+				})
+				
+			}else if(data.type == TYPE_LOGIN){
+				//用户登陆成功
+				console.log(data.msg);
+				$join.find(".username").html(data.msg.username);
+				$join.find(".time").html(data.time);
+				append($join.html());
+				var id = data.msg.userid;
+				if (!$userList.find("li[data-id="+id+"]").length){
+					var html = '<li data-id="'+data.msg.userid+'"><img src="application/public/images/avatar.jpg" class="img-responsive"/>'+data.msg.username+'</li>';
+					$userList.append(html);
+					$userCount.html(function(index, text){
+						return parseInt(text)+1;
+					})
+				}
 			}
 			
 			
@@ -215,6 +284,9 @@
 
 		socket.onclose = function(e){
 			console.log("close:"+e.data);
+			$connect.find(".info").html("已断开服务器连接...");
+			$connect.find(".time").html((new Date()).toLocaleString());
+			append($connect.html());
 		}
 
 		$("#launch").click(function(e){
@@ -223,14 +295,21 @@
 // 				alert("请输入内容");
 // 				return;
 // 			};
-			var send = JSON.stringify({type: TYPE_MESSAGE, msg: text});
-			socket.send(text);
-			
+			var send = JSON.stringify({type: TYPE_MESSAGE, msg: text, username: username});
+			socket.send(send);
+			$submitForm.html("");
 		});
 
 		$("#close").click(function(e){
 			socket.close();
-		})
+		});
+
+		function append(content){
+			$talkContent.append(content);
+			$talkContent.scrollTop(function(){
+				return this.scrollHeight-$(this).height();
+			});
+		}
 		
 	})
 </script>

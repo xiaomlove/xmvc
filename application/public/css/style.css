@@ -18,7 +18,7 @@
 .online-user-head{text-align: center;border-bottom: 1px solid #999;margin-bottom: 10px}
 .talk-content{border-right: 1px dotted gray;padding: 15px}
 .talk-item{padding: 10px;margin: 0px;border: 1px -solid #e69;-border-radius: 5px}
-.talk-item .alert{margin-bottom: 0;}
+.talk-item .alert{margin-bottom: 0;padding-top: 0;padding-bottom: 0}
 .talker-info{position: relative;margin-bottom: 10px}
 .talker-info .name-level{position:relative;top: 2px}
 .talker-info .name-level>span:first-of-type{font-size: 18px}
