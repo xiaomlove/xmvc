@@ -62,6 +62,10 @@ return array(
 			'admin/role/add'=>'manage/role/roleadd',
 			'admin/role/edit'=>'manage/role/roleedit',
 			'admin/forumset' => 'manage/option/forumset',
+			'admin/rule/list'=>'manage/rule/list',
+			'admin/rule/add'=>'manage/rule/add',
+			'admin/rule/edit'=>'manage/rule/edit',
+			'admin/rule/delete'=>'mamage/rule/delete',
 		),
 	),
 	

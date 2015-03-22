@@ -291,10 +291,10 @@
 
 		$("#launch").click(function(e){
 			var text = $("#submit-form").text().trim();
-// 			if (text == ""){
-// 				alert("请输入内容");
-// 				return;
-// 			};
+			if (text == ""){
+				alert("请输入内容");
+				return;
+			};
 			var send = JSON.stringify({type: TYPE_MESSAGE, msg: text, username: username});
 			socket.send(send);
 			$submitForm.html("");
