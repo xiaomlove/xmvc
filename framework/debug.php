@@ -1,9 +1,7 @@
 <?php
 
-$ss = 'sb';
+$a = uniqid('tinyhd', true);
 
-$result = json_decode($ss);
-
-var_dump($result);
+echo $a;
 
 
