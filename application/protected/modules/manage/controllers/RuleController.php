@@ -6,7 +6,7 @@ class RuleController extends CommonController
 	public function actionList()
 	{
 		$model = RuleModel::model();
-		$ruleList = $model->order('sort ASC,id DESC')->select();
+		$ruleList = $model->order('path ASC')->select();
 		$html = $this->render('rulelist', array('ruleList' => $ruleList));
 		echo $html;
 	}
@@ -66,5 +66,45 @@ class RuleController extends CommonController
 		$model->setData($data);
 		$html = $this->render('ruleform', array('model' => $model));
 		echo $html;
+	}
+	
+	protected function getParentSelect($name, $id = 0, $parentId = 0)
+	{
+		$model = RuleModel::model();
+		if ($id > 0)
+		{
+// 			if ($parentId > 0)
+// 			{
+				$sql = "SELECT * FROM rule WHERE path NOT LIKE concat((SELECT path FROM rule WHERE id=$id),'%')";
+// 			}
+// 			else
+// 			{
+// 				$sql = "SELECT * FROM rule WHERE id !=$id AND path NOT LIKE '0,$id%'";
+// 			}
+		}
+		else
+		{
+			$sql = "SELECT * FROM rule";
+		}
+		$sql .= " ORDER BY path ASC";		
+		$parentList = $model->findBySql($sql);
+// 		echo '<pre/>';
+// 		var_dump($parentList);exit();
+		$selectHtml = "<select class=\"form-control\" id=\"$name\" name=\"$name\">";
+		$selectHtml .= "<option value=\"0\">无(一级权限)</option>";
+		if (!empty($parentList))
+		{
+			foreach ($parentList as $rule)
+			{
+				$selected = "";
+				if ($id == $rule['id'])
+				{
+					$selected = " selected";
+				}
+				$selectHtml .= "<option value=\"{$rule['id']}\"{$selected}>".str_repeat("----", $rule['level']-1).$rule['name']."</option>";
+			}
+			$selectHtml .= "</select>";
+		}
+		return $selectHtml;
 	}
 }

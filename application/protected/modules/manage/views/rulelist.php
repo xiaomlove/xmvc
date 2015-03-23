@@ -16,7 +16,7 @@
 	<?php if (!empty($ruleList)):?>
 	<?php foreach ($ruleList as $rule):?>
 		<tr>
-			<td><?php echo $rule['name']?></td>
+			<td><?php echo str_repeat("----", $rule['level']-1).$rule['name']?></td>
 			<td><?php echo $rule['rule_key']?></td>
 			<td><?php echo $rule['rule_mvc']?></td>
 			<td>

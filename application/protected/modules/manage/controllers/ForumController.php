@@ -183,7 +183,7 @@ class ForumController extends CommonController
 				$selected = '';
 				if ($role['level'] == $selectedValue)
 				{
-					$selected = "selected";
+					$selected = " selected";
 				}
 				$selectHtml .= '<option value="'.$role['level'].'"'.$selected.'>'.$role['name'].'</option>';
 			}

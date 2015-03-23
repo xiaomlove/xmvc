@@ -17,6 +17,17 @@
       <?php endIf?>
     </div>
   </div>
+  
+  <div class="form-group <?php echo $model->hasError('parent_id') ? "has-error" : ""?>">
+    <label for="parent_id" class="col-sm-2 control-label">父权限</label>
+    <div class="col-sm-10">
+      <?php echo $this->getParentSelect('parent_id', $model->getData('id'), $model->getData('parent_id'))?>
+      <?php if($model->hasError('parent_id')):?>
+      	<span class="help-block"><?php echo $model->getError('parent_id')?></span>
+      <?php endIf?>
+    </div>
+  </div>
+  
   <div class="form-group <?php echo $model->hasError('rule_key') ? "has-error" : ""?>">
     <label for="rule_key" class="col-sm-2 control-label">权限key</label>
     <div class="col-sm-10">
