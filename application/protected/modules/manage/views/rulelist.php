@@ -7,6 +7,7 @@
 	<thead>
 		<tr>
 			<th>权限名称</th>
+			<th>排序</th>
 			<th>权限key</th>
 			<th>权限mvc</th>
 			<th>操作</th>
@@ -17,6 +18,7 @@
 	<?php foreach ($ruleList as $rule):?>
 		<tr>
 			<td><?php echo str_repeat("----", $rule['level']-1).$rule['name']?></td>
+			<td><?php echo $rule['sort']?></td>
 			<td><?php echo $rule['rule_key']?></td>
 			<td><?php echo $rule['rule_mvc']?></td>
 			<td>

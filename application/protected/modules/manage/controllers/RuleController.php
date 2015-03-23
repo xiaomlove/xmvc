@@ -6,7 +6,7 @@ class RuleController extends CommonController
 	public function actionList()
 	{
 		$model = RuleModel::model();
-		$ruleList = $model->order('path ASC')->select();
+		$ruleList = $model->order('sort ASC,path ASC')->select();
 		$html = $this->render('rulelist', array('ruleList' => $ruleList));
 		echo $html;
 	}
@@ -50,16 +50,32 @@ class RuleController extends CommonController
 	{
 		if ($model->validate($data))
 		{
+			if ($data['parent_id'] > 0)
+			{
+				$sort = $data['sort'];
+				unset($data['sort']);
+			}
 			if ($action === 'insert')
 			{
 				$result = $model->insert($data);
+				$id = $result;
 			}
 			elseif ($action === 'update')
 			{
 				$result = $model->updateByPk($data['id'], $data);
+				$id = $data['id'];
 			}
 			if ($result >= 0)
 			{
+				if (isset($sort) && $id)
+				{
+					$sql = "UPDATE rule SET sort=$sort WHERE path LIKE concat((SELECT path FROM rule WHERE id=$id),%)";
+					$updateSort = $model->execute($sql);
+					if ($updateSort === FALSE)
+					{
+						trigger_error('更新sort失败', E_USER_ERROR);exit;
+					}
+				}
 				$this->redirect('manage/rule/list');
 			}
 		}
@@ -86,7 +102,7 @@ class RuleController extends CommonController
 		{
 			$sql = "SELECT * FROM rule";
 		}
-		$sql .= " ORDER BY path ASC";		
+		$sql .= " ORDER BY sort ASC";		
 		$parentList = $model->findBySql($sql);
 // 		echo '<pre/>';
 // 		var_dump($parentList);exit();
