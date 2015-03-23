@@ -30,7 +30,7 @@
   <div class="form-group <?php echo $model->hasError('rule_mvc') ? "has-error" : ""?>">
     <label for="rule_mvc" class="col-sm-2 control-label">权限mvc</label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" id="rule_mvc" name="rule_mvc" value="<?php echo $model->getData('rule_mvc')?>" placeholder="对应操作的MVC，确保正确，否则无效">
+      <input type="text" class="form-control" id="rule_mvc" name="rule_mvc" value="<?php echo $model->getData('rule_mvc')?>" placeholder="对应操作的MVC，确保正确，否则无效。格式：module/controller/action">
       <?php if($model->hasError('rule_mvc')):?>
       	<span class="help-block"><?php echo $model->getError('rule_mvc')?></span>
       <?php endIf?>
@@ -40,7 +40,7 @@
    <div class="form-group <?php echo $model->hasError('sort') ? "has-error" : ""?>">
     <label for="sort" class="col-sm-2 control-label">排序</label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" id="sort" name="sort" value="<?php echo $model->getData('sort')?>" placeholder="影响在列表中的显示先后顺序">
+      <input type="text" class="form-control" id="sort" name="sort" value="<?php echo $model->getData('sort')?>" placeholder="影响在列表中的显示先后顺序，值越大越往后">
       <?php if($model->hasError('sort')):?>
       	<span class="help-block"><?php echo $model->getError('sort')?></span>
       <?php endIf?>
