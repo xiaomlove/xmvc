@@ -131,3 +131,6 @@
 .manage .manage-main .main-title{margin-bottom: 20px}
 .manage .manage-main .user-search{margin: 0 10px}
 .manage .manage-main .glyphicon-search{cursor: pointer}
+
+
+.role-add-rule label input{position: relative;top: 2px}

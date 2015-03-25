@@ -193,4 +193,27 @@ class RoleController extends CommentController
 		}
 		return $unit;
 	}
+	/**
+	 * 为角色添加权限
+	 */
+	public function actionAddRule()
+	{
+		if (App::ins()->request->isGet())
+		{
+			if (empty($_GET['id']) || !ctype_digit($_GET['id']))
+			{
+				$this->goError();
+			}
+			$ruleModel = RuleModel::model();
+			$ruleList = $ruleModel->order('sort ASC,path ASC')->select();
+// 			echo '<pre/>';
+// 			var_dump($ruleList);exit;
+			$html = $this->render('addrule', array('ruleList' => $ruleList));
+			echo $html;
+		}
+		else
+		{
+			
+		}
+	}
 }

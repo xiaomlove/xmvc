@@ -1,6 +1,8 @@
 <?php
 class RuleModel extends Model
 {
+	private $_ruleList = array();
+	
 	public function tableName()
 	{
 		return 'rule';	
@@ -18,6 +20,19 @@ class RuleModel extends Model
 				array('sort', 'number', '请输入非负正整数'),
 				array('rule_key, rule_mvc', 'unique', '已经存在'),
 		);
+	}
+	
+	public function hasRule($ruleKey)
+	{
+		if (!is_string($ruleKey) || empty($ruleKey))
+		{
+			return FALSE;
+		}
+		if (!App::ins()->user->isLogin())
+		{
+			$ruleList = $this->where('');
+		}
+		
 	}
 	
 	

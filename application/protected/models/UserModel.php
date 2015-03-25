@@ -1,6 +1,7 @@
 <?php
 class UserModel extends Model
 {
+
 	public function tableName()
 	{
 		return 'user';	

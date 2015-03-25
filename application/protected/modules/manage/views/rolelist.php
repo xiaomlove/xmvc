@@ -34,7 +34,7 @@
 		</td>
 		<td>
 			<a href="<?php echo $this->createUrl('manage/role/roleedit', array('id' => $role['id']))?>">编辑</a>
-			<a href="#">权限</a>
+			<a href="<?php echo $this->createUrl('manage/role/addrule', array('id' => $role['id']))?>">权限</a>
 			<a href="#">删除</a>
 		</td>
 	</tr>
