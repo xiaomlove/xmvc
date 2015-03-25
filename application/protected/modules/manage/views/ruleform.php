@@ -51,7 +51,7 @@
    <div class="form-group <?php echo $model->hasError('sort') ? "has-error" : ""?>">
     <label for="sort" class="col-sm-2 control-label">排序</label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" id="sort" name="sort" value="<?php echo $model->getData('sort')?>" placeholder="影响在列表中的显示先后顺序，值越大越往后。只对一级权限有效">
+      <input type="text" class="form-control" id="sort" name="sort" value="<?php echo $model->getData('sort') ? $model->getData('sort') : 50?>" placeholder="影响在列表中的显示先后顺序，值越大越往后。只对一级权限有效">
       <?php if($model->hasError('sort')):?>
       	<span class="help-block"><?php echo $model->getError('sort')?></span>
       <?php endIf?>
