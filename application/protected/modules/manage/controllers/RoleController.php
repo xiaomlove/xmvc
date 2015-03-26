@@ -238,17 +238,17 @@ class RoleController extends CommentController
 			{
 				echo json_encode(array('code' => -1, 'msg' => 'role_id非法'));exit;
 			}
-			if (empty($_POST['ruleIdList']))
-			{
-				echo json_encode(array('code' => 0, 'msg' => '没有分配任何权限'));exit;
-			}
+			
 			else
 			{
 				$model = RoleModel::model();
 				//先清空之前数据
 				$sql = "DELETE FROM role_rule WHERE role_id=".$_POST['role_id'];
 				$delete = $model->execute($sql);
-				
+				if (empty($_POST['ruleIdList']))
+				{
+					echo json_encode(array('code' => 0, 'msg' => '没有分配任何权限'));exit;
+				}
 				$ruleIdArr = explode('_', $_POST['ruleIdList']);
 				$sql = "INSERT INTO role_rule (role_id, rule_id) VALUES ";
 				foreach ($ruleIdArr as $ruleId)

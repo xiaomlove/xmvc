@@ -8,7 +8,7 @@
 	<?php foreach ($ruleList as $rule):?>
 		<div><label><span><?php echo str_repeat('----', $rule['level']-1)?></span><input type="checkbox"<?php if ($rule['checked']) echo "checked"?> data-id="<?php echo $rule['id']?>" data-path="<?php echo $rule['path']?>" data-level="<?php echo $rule['level']?>" data-parent="<?php echo $rule['parent_id']?>"><?php echo $rule['name']?></label></div>
 	<?php endForeach?>
-		<div style="margin-top: 50px">
+		<div style="margin-top: 20px">
 			<button class="btn btn-primary" id="submit" data-container="body" data-toggle="popover" data-placement="right" data-content="">保存</button>
 		</div>
 	<?php endIf?>	
