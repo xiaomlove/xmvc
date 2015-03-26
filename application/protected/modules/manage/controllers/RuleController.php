@@ -97,7 +97,7 @@ class RuleController extends CommonController
 						goto A;
 					}
 					//当它为一级权限，改变了其sort其后代也跟着变
-					$sql = "UPDATE rule SET sort={$data['sort']} WHERE path LIKE '{$id}%'";
+					$sql = "UPDATE rule SET sort={$data['sort']} WHERE path LIKE '{$id},%'";
 					//$sql = "UPDATE rule SET sort={$data['sort']} WHERE path LIKE concat((SELECT path FROM rule WHERE id=$id),%)";
 					$updateSort = $model->execute($sql);
 					if ($updateSort === FALSE)
