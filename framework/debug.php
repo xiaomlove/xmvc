@@ -1,7 +1,6 @@
 <?php
+$a = 's';
 
-$a = uniqid('tinyhd', true);
+$b = explode('_', $a);
 
-echo $a;
-
-
+var_dump($b);

@@ -206,14 +206,71 @@ class RoleController extends CommentController
 			}
 			$ruleModel = RuleModel::model();
 			$ruleList = $ruleModel->order('sort ASC,path ASC')->select();
+			$ruleHaved = $ruleModel->table('role_rule')->where('role_id='.$_GET['id'])->select();
+			if (!empty($ruleHaved))
+			{
+				$ruleIdHaved = array();
+				foreach ($ruleHaved as $ruleHave)
+				{
+					$ruleIdHaved[] = $ruleHave['rule_id'];
+				}
+				foreach ($ruleList as &$rule)
+				{
+					if (in_array($rule['id'], $ruleIdHaved))
+					{
+						$rule['checked'] = TRUE;
+					}
+					else
+					{
+						$rule['checked'] = FALSE;
+					}
+				}
+			}
 // 			echo '<pre/>';
+// 			var_dump($ruleHaved);
 // 			var_dump($ruleList);exit;
 			$html = $this->render('addrule', array('ruleList' => $ruleList));
 			echo $html;
 		}
 		else
 		{
-			
+			if (!isset($_POST['role_id']) || !ctype_digit($_POST['role_id']))
+			{
+				echo json_encode(array('code' => -1, 'msg' => 'role_id非法'));exit;
+			}
+			if (empty($_POST['ruleIdList']))
+			{
+				echo json_encode(array('code' => 0, 'msg' => '没有分配任何权限'));exit;
+			}
+			else
+			{
+				$model = RoleModel::model();
+				//先清空之前数据
+				$sql = "DELETE FROM role_rule WHERE role_id=".$_POST['role_id'];
+				$delete = $model->execute($sql);
+				
+				$ruleIdArr = explode('_', $_POST['ruleIdList']);
+				$sql = "INSERT INTO role_rule (role_id, rule_id) VALUES ";
+				foreach ($ruleIdArr as $ruleId)
+				{
+					$sql .= "({$_POST['role_id']},$ruleId),";
+				}
+				$sql = rtrim($sql, ",");
+				
+				$result = $model->execute($sql);
+				if ($result === FALSE)
+				{
+					echo json_encode(array('code' => 0, 'msg' => '插入role_rule失败'));
+				}
+				elseif($result == 0)
+				{
+					echo json_encode(array('code' => 0, 'msg' => '没有变化'));
+				}
+				else
+				{
+					echo json_encode(array('code' => 1, 'msg' => '保成成功'));
+				}
+			}
 		}
 	}
 }

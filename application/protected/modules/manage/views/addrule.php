@@ -6,9 +6,11 @@
 	<div class="col-md-offset-2 col-md-8 role-add-rule">
 	<?php if (!empty($ruleList)):?>
 	<?php foreach ($ruleList as $rule):?>
-		<div><label><span><?php echo str_repeat('----', $rule['level']-1)?></span><input type="checkbox" data-id="<?php echo $rule['id']?>" data-path="<?php echo $rule['path']?>" data-level="<?php echo $rule['level']?>" data-parent="<?php echo $rule['parent_id']?>"><?php echo $rule['name']?></label></div>
+		<div><label><span><?php echo str_repeat('----', $rule['level']-1)?></span><input type="checkbox"<?php if ($rule['checked']) echo "checked"?> data-id="<?php echo $rule['id']?>" data-path="<?php echo $rule['path']?>" data-level="<?php echo $rule['level']?>" data-parent="<?php echo $rule['parent_id']?>"><?php echo $rule['name']?></label></div>
 	<?php endForeach?>
-		<div style="margin-top: 50px"><button class="btn btn-primary" id="submit">保存</button></div>
+		<div style="margin-top: 50px">
+			<button class="btn btn-primary" id="submit" data-container="body" data-toggle="popover" data-placement="right" data-content="">保存</button>
+		</div>
 	<?php endIf?>	
 	</div>
 </div>
@@ -40,7 +42,8 @@
 			
 	});
 
-	$("#submit").click(function(e){
+	var $submit = $("#submit");
+	$submit.click(function(e){
 		var checked = [];
 		$inputList.each(function(){
 			if ($(this).prop("checked")){
@@ -58,9 +61,12 @@
 			url: url,
 			type: "POST",
 			dataType: "json",
-			data: "ruleIdList="+checked.join("_"),
+			data: "role_id="+role_id+"&ruleIdList="+checked.join("_"),
 			success: function(data){
-				
+				//if (data.code == 1){
+					$submit.attr("data-content", data.msg).popover('show');
+					setTimeout(function(){$submit.popover('destroy')}, 2000);
+				//}
 			}
 		})
 	})
