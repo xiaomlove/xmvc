@@ -1,4 +1,4 @@
-<h1 class="page-header">欢迎来到管理首页，点击左边菜单开始</h1>
+<h1 class="page-header"><strong>欢迎来到管理首页，点击左边菜单开始</strong></h1>
 
 <div class="row">
 	<div class="col-md-12">
@@ -18,6 +18,10 @@
 			<tr>
 				<td>服务器软件信息：</td>
 				<td><?php echo $_SERVER['SERVER_SOFTWARE']?></td>
+			</tr>
+			<tr>
+				<td>PHP版本：</td>
+				<td><?php echo PHP_VERSION?></td>
 			</tr>
 			<tr>
 				<td>PHP运行方式：</td>
