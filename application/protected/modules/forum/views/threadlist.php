@@ -1,5 +1,5 @@
 <nav class="forum-thread-nav">
-		<a href="<?php echo $this->createUrl('forum/thread/add', array('section_id' => $sectionId))?>" class="btn btn-success pull-left"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发表主题</a>
+		<a href="<?php echo $this->createUrl('forum/thread/add', array('section_id' => $sectionId))?>" class="btn btn-info pull-left"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发表主题</a>
 		<a href="<?php echo $this->createUrl('forum/thread/list', array('section_id' => $sectionId, 'filter' => 'add_time'))?>" class="btn btn-sm pull-left <?php echo !empty($_GET['filter']) && $_GET['filter'] === 'add_time' ? "btn-primary" : "bg-light-gray"?>">最新发表</a>
 		<!--<a href="<?php echo $this->createUrl('forum/thread/list', array('section_id' => $sectionId, 'filter' => 'support_count'))?>" class="btn btn-sm pull-left <?php echo !empty($_GET['filter']) && $_GET['filter'] === 'support_count' ? "btn-primary" : "bg-light-gray"?>">最多支持</a>  -->
 	  <?php echo $navHtml?>
@@ -43,6 +43,6 @@
 	</tbody>
 </table>
 <nav class="forum-thread-nav">
-		<a href="<?php echo $this->createUrl('forum/thread/add', array('section_id' => $sectionId))?>" class="btn btn-success pull-left"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发表主题</a>
+		<a href="<?php echo $this->createUrl('forum/thread/add', array('section_id' => $sectionId))?>" class="btn btn-info pull-left"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发表主题</a>
 	  <?php echo $navHtml?>
 </nav>

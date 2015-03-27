@@ -1,6 +1,6 @@
 <nav class="forum-thread-nav" style="margin-bottom: 16px">
 	  	
-	  <a href="<?php echo $this->createUrl('forum/thread/add', array('section_id' => $section['id']))?>" class="btn btn-success pull-left"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发表主题</a>
+	  <a href="<?php echo $this->createUrl('forum/thread/add', array('section_id' => $section['id']))?>" class="btn btn-info pull-left"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发表主题</a>
 	  <?php echo $navHtml?>
 </nav>
 
@@ -301,7 +301,7 @@
 -->
 </div>
 <nav class="forum-thread-nav" style="margin: 20px 0">
-		<a href="<?php echo $this->createUrl('forum/thread/add', array('section_id' => $section['id']))?>" class="btn btn-success pull-left"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发表主题</a>
+		<a href="<?php echo $this->createUrl('forum/thread/add', array('section_id' => $section['id']))?>" class="btn btn-info pull-left"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发表主题</a>
 
 		<?php echo $navHtml?>
 </nav>
@@ -317,7 +317,7 @@
 
 		  <div class="form-group">
 		    <div class="col-sm-offset-5 col-sm-7">
-		      <button type="button" id="submit" class="btn btn-success">回复</button>
+		      <button type="button" id="submit" class="btn btn-primary">回复</button>
 		      <a href="<?php echo $this->createUrl('forum/reply/add', array('section_id' => $_GET['section_id'], 'thread_id' => $_GET['thread_id']))?>" type="button" class="btn btn-default btn-sm pull-right">高级模式</a>
 		    </div>
 		  </div>
