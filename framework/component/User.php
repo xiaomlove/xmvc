@@ -82,7 +82,7 @@ class User
 		}
 		else
 		{
-			$name = '';
+			$name = $this->guestName;
 		}
 		return $name;
 	}

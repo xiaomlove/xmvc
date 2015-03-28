@@ -1,6 +1,12 @@
 <?php
 class RoleModel extends Model
 {
+	const ROLE_GROUP_NORMAR = 1;//普通用户级
+	const ROLE_GROUP_MANAGE = 2;//管理组
+	const ROLE_GROUP_TECHNOLOGY = 3;//技术组
+	const ROLE_GROUP_DEVELOP = 4;//开发组
+	const ROLE_GROUP_VIP = 5;//VIP组
+	
 	public function tableName()
 	{
 		return 'role';	

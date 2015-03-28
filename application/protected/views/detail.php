@@ -21,7 +21,7 @@
           </tr>
           <tr>
             <td>行为</td>
-            <td><a href="#" class="text-danger">删除种子</a><a href="#" class="text-primary">编辑种子</a><a href="#" class="text-warning">举报种子</a></td>
+            <td><a href="javascript:;" class="text-danger">删除种子</a><a href="<?php echo $this->createUrl('torrent/edit', array('id' => $torrent['id']))?>" class="text-primary">编辑种子</a><a href="javascript:;" class="text-warning">举报种子</a></td>
           </tr>
           <tr>
             <td>简介</td>
@@ -31,15 +31,20 @@
           </tr>
           <tr>
             <td>种子信息</td>
-            <td>hash码：<span class="text-primary"><?php echo $torrent['info_hash']?></span></td>
+            <td>hash码：<span class="text-primary"><?php echo $torrent['info_hash']?></span><span id="torrent-file-list"><a href="javascript:;">[查看结构]</a></span></td>
           </tr>
           <tr>
             <td>热度表</td>
-            <td>查看：<span class="text-primary"><?php echo $torrent['view_times']?>次</span>下载：<span class="text-primary"><?php echo $torrent['download_times']?>次</span>完成：<span class="text-primary"><?php echo $torrent['finish_times']?>次</span></td>
+            <td>查看：<span class="text-primary"><?php echo $torrent['view_times']?>次</span>下载：<span class="text-primary"><?php echo $torrent['download_times']?>次</span>完成：<span class="text-primary"><?php echo $torrent['finish_times']?>次</span><span id="view-snatch"><a href="<?php echo $this->createUrl('torrent/snatch', array('id' => $torrent['id']))?>">[查看完成情况]</a></span></td>
           </tr>
           <tr>
             <td>同伴</td>
-            <td><button class="btn btn-xs btn-info">查看小伙伴们</button>做种者：<span class="text-primary"><?php echo $torrent['seeder_count']?>个</span>下载者：<span class="text-primary"><?php echo $torrent['leecher_count']?>个</span></td>
+            <td>
+            	<button class="btn btn-xs btn-info" id="partner"  data-haved="false">查看小伙伴们</button>做种者：<span class="text-primary"><em class="seeder-count"><?php echo $torrent['seeder_count']?></em>个</span>下载者：<span class="text-primary "><em class="leecher-count"><?php echo $torrent['leecher_count']?></em>个</span>
+            	<div id="seeder-leecher-list" style="display: none">
+            	
+            	</div>
+            </td>
           </tr>
           <tr>
             <td>感谢者</td>
@@ -124,7 +129,9 @@
     <input type="hidden" id="torrentId" value="<?php echo $torrent['id']?>">
     <input type="hidden" id="baseUrl" value="<?php echo App::ins()->request->getBaseUrl()?>">
     <input type="hidden" id="username" value="<?php echo App::ins()->user->getName()?>">
-    <div id="tpl" style="display:none">
+    <input type="hidden" id="getSeederLeecherUrl" value="<?php echo $this->createUrl('torrent/getSeederLeecher')?>">
+    <input type="hidden" id="user-profile-baseurl" value="">
+    <div id="tpl" style="display:none;">
    
     <div class="item" data-id="0">
         <h4 class="comment-head">#<span class="comment-floor">0</span><span class="text-primary comment-username">张三</span><small class="pull-right comment-add-time">2015-03-02</small></h4>
@@ -146,6 +153,30 @@
         </div>
       </div>
     </div>
+    
+<div id="seeder-leecher-list-tpl" style="display: none;">
+<table class="table table-hover">
+	<caption>做种者</caption>
+	<thead>
+		<tr>
+			<th>用户名</th>
+			<th>可连接</th>
+			<th>上传量</th>
+			<th>即时速度</th>
+			<th>下载量</th>
+			<th>即时速度</th>
+			<th>分享率</th>
+			<th>完成</th>
+			<th>连接时间</th>
+			<th>最近汇报</th>
+			<th>客户端</th>
+		</tr>
+	</thead>
+	<tbody>
+		
+	</tbody>
+</table>
+</div>
  <script src="<?php echo App::ins()->request->getBaseUrl()?>application/public/lib/ueditor/ueditor.parse.min.js"></script>
  <script>
  	uParse('#introduce', {
@@ -351,5 +382,96 @@
 			$reply.css("visibility", "hidden");
 		}
 		
-	})
+	});
+
+
+	//查看小伙伴
+	var $checkPartner = $("#partner");
+	$checkPartner.on("click", function(e){
+		var $parent = $(this).parent();
+		var $wrap = $("#seeder-leecher-list");
+		if (!$(this).hasClass("showed")){
+			//收起状态，要展开
+			console.log('ss');
+			if ($(this).attr("data-haved") == "false"){
+				//还没有数据
+				
+				var seederCount = $parent.find(".seeder-count").text();
+				var leecherCount = $parent.find(".leecher-count").text();
+				if (seederCount == 0 && leecherCount == 0){
+					return;
+				}
+				$.ajax({
+					url: $("#getSeederLeecherUrl").val(),
+					type: "GET",
+					dataType: "json",
+					data: "seederCount="+seederCount+"&leecherCount="+leecherCount+"&id="+$("#torrentId").val(),
+					beforeSend: function(){$checkPartner.text("正在呼唤小伙伴们...").attr("disabled", true)},
+					success: function(data){
+						console.log(data);
+						if (data.code == 1){
+							if (data.msg.seeder){
+								var seederTable = renderTable("做种者", data.msg.seeder);
+								$wrap.append(seederTable);					
+							}else if(data.msg.leecher){
+								var leecherTable = renderTable("下载者", data.msg.leecher);
+								$wrap.append(leecherTable);
+							}
+							$checkPartner.attr("data-haved", "true");
+							$wrap.slideDown();
+							$checkPartner.text("隐藏小伙伴们").removeAttr("disabled").addClass("showed");
+						}else{
+							$checkPartner.text(data.msg);
+							console.log(data);
+						}
+						if (data.updateSeederCount){
+							console.log("updateSeederCount");
+						}
+						if (data.updateLeecherCount){
+							console.log("updateLeecherCount");
+						}					
+					}
+				})
+			}else{
+				//已有数据
+				$wrap.slideDown();
+				$checkPartner.text("隐藏小伙伴们").addClass("showed");
+			}
+		}else{
+			$wrap.slideUp();
+			$checkPartner.text("查看小伙伴们").removeClass("showed");
+		}
+	});
+
+	function renderTable(caption, data){
+		$tpl = $("#seeder-leecher-list-tpl").children();
+		$tpl.find("caption").text(caption+"("+data.count+")");
+		var TRHTML = [];
+		$.each(data.data, function(index, item){
+			TRHTML.push("<tr>");
+			TRHTML.push("<td>"+item.username+"</td>");
+			TRHTML.push("<td>"+(item.connectable == 1 ? "是" : "<span style=\"color: red;font-weight: bold\">否</span>")+"</td>");
+			TRHTML.push("<td>"+item.uploaded_converted+"</td>");
+			TRHTML.push("<td>"+item.upload_speed+"</td>");
+			TRHTML.push("<td>"+item.downloaded_converted+"</td>");
+			TRHTML.push("<td>"+item.download_speed+"</td>");
+			if (item.downloaded == 0){
+				TRHTML.push("<td>---</td>");
+			}else{
+				var ratio = (item.uploaded/item.downloaded).toFixed(3);
+				if (ratio > 0.1){
+					TRHTML.push("<td>"+ratio+"</td>");
+				}else{
+					TRHTML.push("<td><span style=\"color: red;font-weight: bold\">"+ratio+"</span></td>");
+				}
+			}			
+			TRHTML.push("<td>"+((item.downloaded/item.torrent_size)*100).toFixed(2)+"%</td>");//完成百分比
+			TRHTML.push("<td>"+item.connect_time+"</td>");
+			TRHTML.push("<td>"+item.this_report_time+"</td>");
+			TRHTML.push("<td>"+item.agent+"</td>");
+			TRHTML.push("</tr>");
+		});
+		$tpl.find("tbody").append(TRHTML.join(""));
+		return $tpl.prop("outerHTML");
+	}
  </script>

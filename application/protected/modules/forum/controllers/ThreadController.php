@@ -1,6 +1,7 @@
 <?php
 class ThreadController extends CommonController
 {
+	public $admitActions = array('addview');
 	public $layout = 'tinypt';
 	private $section;//存起来所在版块，方便调用
 	

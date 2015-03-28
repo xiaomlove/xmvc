@@ -1,10 +1,12 @@
 <div class="row">
-      <form class="form-horizontal" role="form" id="upload-form" method="post" action="upload.html" enctype="multipart/form-data">
+      <form class="form-horizontal" role="form" id="upload-form" method="post" action="<?php echo $action?>" enctype="multipart/form-data">
         <div class="form-group">
           <div class="col-sm-12">
              <h3 class="text-danger tracker-address">服务器tracker地址是：<?php echo App::ins()->request->getbaseUrl().'announce.php'?></h3>
           </div>
         </div>
+        
+        <?php if (ACTION === 'Upload'):?>
         <div class="form-group <?php echo $model->getError('torrentFile') != NULL ? "has-error" : ""?>">
           <label for="torrent-file" class="col-sm-2 control-label">种子</label>
           <div class="col-sm-10">
@@ -14,6 +16,15 @@
             <?php endIf?>
           </div>
         </div>
+        <?php else:?>
+        <div class="form-group">
+          <label for="torrent-file" class="col-sm-2 control-label">种子</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" value="<?php echo $this->getTorrentName($model->getData('name'))?>" readonly> 
+          </div>
+        </div>
+        <?php endIf?>
+            
         <div class="form-group <?php echo $model->getError('main_title')!= NULL ? "has-error" : ""?>">
           <label for="mainTitle" class="col-sm-2 control-label">标题</label>
           <div class="col-sm-10">
@@ -45,9 +56,13 @@
         </div>
         <div class="form-group">
           <div class="col-sm-offset-2 col-sm-10 submit-btn">
-            <button type="submit" class="btn btn-primary" id="submit">发布</button>
+            <button type="submit" class="btn btn-primary" id="submit"><?php echo ACTION === 'Upload' ? '发布' : '编辑'?></button>
           </div>
         </div>
+        
+        <?php if(!empty($_GET['id'])):?>
+        <input type="hidden" name="id" value="<?php echo $_GET['id']?>">
+        <?php endIf?>
       </form>
     </div>
 

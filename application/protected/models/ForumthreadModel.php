@@ -6,6 +6,9 @@ class ForumthreadModel extends Model
 	const STATE_PUBLISH = 1;//发表
 	const STATE_LOCK = 2;//锁定
 	
+	const IS_TOP = 1;//置顶
+	const IS_NOT_TOP = 0;//非置顶
+	
 	public function tableName()
 	{
 		return 'forum_thread';
@@ -73,7 +76,7 @@ class ForumthreadModel extends Model
 	
 	
 	/**
-	 * 获得某主题的列表
+	 * 获得主题列表
 	 * @param array $condition
 	 * @return multitype:unknown
 	 */
@@ -104,15 +107,34 @@ class ForumthreadModel extends Model
 		$offset = ((int)$default['page'] - 1) * $per;
 		$sortField = $default['sort_field'];
 		$sortType = strtoupper($default['sort_type']);
-		$sql = "SELECT a.*,b.name as user_name FROM forum_thread a LEFT JOIN user b ON a.user_id=b.id WHERE section_id={$_GET['section_id']} AND state=".self::STATE_PUBLISH;
-		if (!empty($default['filter']) && ($default['filter'] === 'add_time' || $default['filter'] === 'support_count'))
+		if ($default['page'] == 1)
 		{
-			$sql .= " ORDER BY {$default['filter']} DESC,$sortField $sortType";
+			//第一页优先取置顶
+			$sql = "SELECT t.*,user.name as user_name FROM (SELECT top.* FROM (SELECT * FROM forum_thread WHERE section_id={$_GET['section_id']} AND is_top=".self::IS_TOP." AND state=".self::STATE_PUBLISH." ORDER BY top_sort ASC) top 
+					 UNION SELECT main.* FROM (SELECT * FROM forum_thread WHERE section_id={$_GET['section_id']} AND is_top=".self::IS_NOT_TOP." AND state=".self::STATE_PUBLISH;
+			if (!empty($default['filter']) && ($default['filter'] === 'add_time' || $default['filter'] === 'support_count'))
+			{
+				$sql .= " ORDER BY {$default['filter']} DESC,$sortField $sortType";
+			}
+			else
+			{
+				$sql .= " ORDER BY $sortField $sortType";
+			}
+			$sql .= ") main) t LEFT JOIN user ON t.user_id=user.id";
 		}
-		else
+		else 
 		{
-			$sql .= " ORDER BY $sortField $sortType";
+			$sql = "SELECT a.*,b.name as user_name FROM forum_thread a LEFT JOIN user b ON a.user_id=b.id WHERE section_id={$_GET['section_id']} AND state=".self::STATE_PUBLISH;
+			if (!empty($default['filter']) && ($default['filter'] === 'add_time' || $default['filter'] === 'support_count'))
+			{
+				$sql .= " ORDER BY {$default['filter']} DESC,$sortField $sortType";
+			}
+			else
+			{
+				$sql .= " ORDER BY $sortField $sortType";
+			}
 		}
+		
 		$sql .= " LIMIT $offset, $per";
 		$result = $this->findBySql($sql);
 		$sql = "SELECT count(*) as count FROM forum_thread WHERE section_id={$_GET['section_id']} AND state=".self::STATE_PUBLISH;

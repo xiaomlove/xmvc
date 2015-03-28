@@ -3,8 +3,8 @@
 	<div class="userbox">
 		<ul class="list-inline">
 			<li>用户名:<span id="user-name"><?php echo App::ins()->user->getName()?></span></li>
-			<li>上传量:<?php echo $this->getSize($userInfo['uploaded'])?></li>
-			<li>下载量:<?php echo $this->getSize($userInfo['downloaded'])?></li>
+			<li>上传量:<?php echo isset($userInfo['uploaded']) ? $this->getSize($userInfo['uploaded']) : 0?></li>
+			<li>下载量:<?php echo isset($userInfo['downloaded']) ? $this->getSize($userInfo['downloaded']) : 0?></li>
 			<li>登陆IP:<span id="ip"><?php echo App::ins()->request->getClientIP()?></span></li>
 		</ul>
 		
@@ -61,7 +61,7 @@
 				 -->
 			</div>
 			<div class="col-md-3 online-user">
-				<div  class="online-user-head"><h4>在线用户<em>(<span id="user-count">12</span>)</em></h4></div>
+				<div  class="online-user-head"><h4>在线用户<em>(<span id="user-count">0</span>)</em></h4></div>
 				<div class="online-user-list">
 					<ul class="list-unstyled" id="user-list">
 					<!-- 
@@ -112,7 +112,7 @@
   </div>
 </div>
 <input type="hidden" id="socket-url" value="<?php echo $this->createUrl('talk')?>">
-<input type="hidden" id="user-id" value="<?php echo $userInfo['id']?>">
+<input type="hidden" id="user-id" value="<?php echo isset($userInfo['id']) ? $userInfo['id'] : ''?>">
 
 <!-- 模板 -->
 <div style="display: none" id="tpl-join">
@@ -188,12 +188,18 @@
 		}
 
 		//开启websocker聊天
-		var port = 2222;
-		var host = "ws://"+location.host+":"+port;
-// 		var host = "ws://127.0.0.1:2222";
-		
 		var username = $("#user-name").text();
 		var userid = $("#user-id").val();
+		var port = CONFIG.WebSocketPort;
+		var host = "ws://"+location.host+":"+port;
+// 		var host = "ws://127.0.0.1:2222";
+		if (userid == ""){
+			username = getCustomUsername();
+			if(username === false || username.trim()== ""){
+				return;
+			}
+			userid = new Date().getTime();
+		}
 		var $talkContent = $("#talk-content");
 		var $join = $("#tpl-join");
 		var $leave = $("#tpl-leave");
@@ -309,6 +315,18 @@
 			$talkContent.scrollTop(function(){
 				return this.scrollHeight-$(this).height();
 			});
+		}
+
+		function getCustomUsername(){
+			var username = window.prompt("你没有登陆，请输入一个用于聊天时的名称");
+			if (username == null){
+				return false;
+			}else if(username.trim() == ""){
+				alert("无效！");
+				getCustomUsername();
+			}else{
+				return username;
+			}
 		}
 		
 	})

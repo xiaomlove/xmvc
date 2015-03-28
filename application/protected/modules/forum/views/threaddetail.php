@@ -617,6 +617,8 @@
 				if (data.code == 1){
 					$replyReplyList.append(data.data);
 					$row.find(".forum-thread-reply-reply-nav").html(data.nav);
+				}else{
+					console.log(data);
 				}
 			}
 		})
@@ -646,6 +648,8 @@
 				if (data.code == 1){
 					$replyReplyList.html(data.data);
 					$row.find(".forum-thread-reply-reply-nav").html(data.nav);
+				}else{
+					console.log(data);
 				}
 			}
 		})

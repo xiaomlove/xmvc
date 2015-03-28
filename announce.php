@@ -296,7 +296,7 @@ if (!$isFirstRequest)
 	$uploadThis = max(0, $_GET['uploaded'] - $peerSelf['uploaded']);
 	$downloadThis = max(0, $_GET['downloaded'] - $peerSelf['downloaded']);
 	$duration = TIMENOW - $peerSelf['this_report_time'];
-	$uploadSpeed = $uploadThis/$duration;//上传速度，单位MB/秒
+	$uploadSpeed = $uploadThis/$duration;//上传速度，存入时保留字节/S
 	$downloadSpeed = $downloadThis/$duration;
 	if ($uploadSpeed/1024/1024 > 100)
 	{

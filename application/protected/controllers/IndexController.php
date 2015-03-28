@@ -2,6 +2,8 @@
 class IndexController extends CommonController
 {
 	public $layout = 'main';
+	public $admitActions = array('CheckRegister', 'CheckLogin', 'Logout', 'GetIpInfo', 'Ueditor', 'Error');
+	
 	public function actionIndex()//action不接收参数运行，参数通过$_GET等获得
 	{	
 		echo 'this is IndexController, testAction<br/>';

@@ -1,7 +1,8 @@
 <?php
 class RuleModel extends Model
 {
-	private $_ruleList = array();
+	
+	private static $_ruleList = array();//权限列表
 	
 	public function tableName()
 	{
@@ -22,17 +23,57 @@ class RuleModel extends Model
 		);
 	}
 	
+	public function initRule($ruleMvc)
+	{
+		if (!is_string($ruleMvc) || empty($ruleMvc))
+		{
+			return FALSE;
+		}
+		if (in_array($ruleMvc, self::$_ruleList))
+		{
+			return TRUE;
+		}
+		if (!App::ins()->user->isLogin())
+		{
+			//取普通用户组级别为0的角色
+			$roleGroup = RoleModel::ROLE_GROUP_NORMAR;
+			$roleMin = $this->table('role')->where('role_group_id='.$roleGroup.',level=0')->limit(1)->select();
+			if (empty($roleMin))
+			{
+				return FALSE;
+			}
+			$roleId = $roleMin[0]['id'];
+			
+			$sql = "SELECT rule_key,rule_mvc FROM rule WHERE id IN (select rule_id FROM role_rule WHERE role_id=$roleId)";
+		}
+		else
+		{
+			//角色分组暂时不考虑
+			
+			$userId = App::ins()->user->getId();
+			$sql = "SELECT rule_key,rule_mvc FROM rule WHERE id IN (select rule_id FROM role_rule WHERE level = (select level FROM user WHERE id=$userId))";
+		}
+		$result = $this->findBySql($sql);
+		if (empty($result))
+		{
+			return FALSE;
+		}
+		foreach ($result as $rule)
+		{
+			self::$_ruleList[$rule['rule_key']] = $rule['rule_mvc'];
+		}
+// 		var_dump($ruleMvc);
+// 		var_dump(self::$_ruleList);
+		return in_array($ruleMvc, self::$_ruleList);
+	}
+	
 	public function hasRule($ruleKey)
 	{
 		if (!is_string($ruleKey) || empty($ruleKey))
 		{
 			return FALSE;
 		}
-		if (!App::ins()->user->isLogin())
-		{
-			$ruleList = $this->where('');
-		}
-		
+		return isset(self::$_ruleList[$ruleKey]);
 	}
 	
 	

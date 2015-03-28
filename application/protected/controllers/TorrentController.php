@@ -33,6 +33,7 @@ class TorrentController extends CommonController
 	{
 		$this->setPageTitle('发布种子');
 		$model = TorrentModel::model();
+		$action = $this->createUrl('torrent/upload');
 		if(App::ins()->request->isPost())
 		{
 //			echo '<pre/>';
@@ -58,11 +59,11 @@ class TorrentController extends CommonController
 //							$decode['announce'] .= '?passkey='.$passkey;//这里不需要，下载时才需要
 							if (isset($decode['comment']))
 							{
-								$decode['comment'] = $decode['comment'].'-[come from xiaomlove]';
+								$decode['comment'] = $decode['comment'].'-[come from TinyHD.net]';
 							}
 							else
 							{
-								$decode['comment'] = '[come from xiaomlove]';
+								$decode['comment'] = '[come from TinyHD.net]';
 							}
 							$encode = BEncode::encode($decode);
 							if(!empty($encode))
@@ -144,14 +145,56 @@ class TorrentController extends CommonController
 			else 
 			{
 				$model->setData($_POST);
-				echo $this->render('upload', array('model'=>$model));//将模型传递过去，获取错误信息、字段信息以及flash之类
+				echo $this->render('upload', array('model'=>$model, 'action' => $action));//将模型传递过去，获取错误信息、字段信息以及flash之类
 			}
 		}
 		else
 		{
-			echo $this->render('upload', array('model'=>$model));
+			echo $this->render('upload', array('model'=>$model, 'action' => $action));
 		}
 		
+	}
+	
+	public function actionEdit()
+	{
+		$model = TorrentModel::model();
+		$action = $this->createUrl('torrent/edit');
+		if (App::ins()->request->isGet())
+		{
+			if (empty($_GET['id']) || !ctype_digit($_GET['id']))
+			{
+				$this->goError();
+			}
+			$torrent = $model->findByPk($_GET['id'], 'name,main_title,slave_title,introduce');
+			$model->setData($torrent);
+			$html = $this->render('upload', array('model' => $model, 'action' => $action));
+			echo $html;
+		}
+		else 
+		{
+			if (empty($_POST['id']) || !ctype_digit($_POST['id']))
+			{
+				$this->goError();
+			}
+			$id = $_POST['id'];
+			unset($_POST['id']);
+			if ($model->validate($_POST))
+			{
+				$result = $model->updateByPk($id, $_POST);
+				if ($result === FALSE)
+				{
+					$model->setError('main_title', '更新出错！');
+				}
+				else
+				{
+					App::ins()->user->setFlash('upload_success', '编辑成功！');
+					$this->redirect('torrent/detail', array('id' => $id));
+				}
+			}
+			$model->setData($_POST);
+			$html = $this->render('upload', array('model' => $model));
+			echo $html;
+		}
 	}
 	
 	public function actionDownload()
@@ -196,5 +239,94 @@ class TorrentController extends CommonController
 		{
 			die('种子不存在！');
 		}
+	}
+	
+	public function actionGetSeederLeecher()
+	{
+		if (App::ins()->request->isAjax())
+		{
+			if (empty($_GET['id']) || !ctype_digit($_GET['id']) || 
+				!isset($_GET['seederCount']) || !ctype_digit($_GET['seederCount']) || 
+				!isset($_GET['leecherCount']) || !ctype_digit($_GET['leecherCount']))
+			{
+				echo json_encode(array('code' => -1, 'msg' => '参数错误'));exit;
+			}
+			$model = TorrentModel::model();
+			$return = array('code' => 1);
+			if ($_GET['seederCount'] > 0)
+			{
+				$sql = "SELECT peer.*,user.name as username FROM peer LEFT JOIN user ON peer.user_id=user.id WHERE peer.torrent_id={$_GET['id']} AND peer.is_seeder=1 ORDER BY peer.uploaded DESC";
+				$seederList = $model->findBySql($sql);
+				$seederCount = count($seederList);
+				if ($seederCount != $_GET['seederCount'])
+				{
+					//不同步了，更新一下？
+					$updateSeederCountSql = "UPDATE torrent SET seeder_count=$seederCount WHERE id=".$_GET['id'];
+					$model->execute($updateSeederCountSql);
+					$return['updateSeederCount'] = 1;
+				}
+				if ($seederCount > 0)
+				{
+					$this->_convert($seederList);
+					$return['msg']['seeder']['data'] = $seederList;
+					$return['msg']['seeder']['count'] = $seederCount;
+				}
+			}
+			if ($_GET['leecherCount'] > 0)
+			{
+				$sql = "SELECT peer.*,user.name as username FROM peer LEFT JOIN user ON peer.user_id=user.id WHERE peer.torrent_id={$_GET['id']} AND peer.is_seeder=0 ORDER BY peer.downloaded DESC";
+				$leecherList = $model->findBySql($sql);
+				$leecherCount = count($leecherList);
+				if ($leecherCount != $_GET['leecherCount'])
+				{
+					//不同步了，更新一下？
+					$updateLeecherCountSql = "UPDATE torrent SET leecher_count=$leecherCount WHERE id=".$_GET['id'];
+					$model->execute($updateLeecherCountSql);
+					$return['updateLeecherCount'] = 1;
+				}
+				if ($leecherCount > 0)
+				{
+					$this->_convert($leecherList);
+					$return['msg']['leecher']['data'] = $leecherList;
+					$return['msg']['leecher']['count'] = $leecherCount;
+				}
+			}
+			echo json_encode($return);
+		}		
+	}
+	/**
+	 * 转化一下数据
+	 * @param array $data
+	 */
+	private function _convert(array &$data)
+	{
+		foreach ($data as &$item)
+		{
+			$item['connect_time'] = $this->getTTL($item['connect_time'], '', $item['connect_time']);
+			$item['this_report_time'] = date('m-d H:i', $item['this_report_time']);
+			$item['downloaded_converted'] = $this->getSize($item['downloaded']);
+			$item['uploaded_converted'] = $this->getSize($item['uploaded']);
+			$item['download_speed'] = $this->getSpeed($item['download_speed']);
+			$item['upload_speed'] = $this->getSpeed($item['upload_speed']);
+			
+		}
+	}
+	
+	public function actionSnatch()
+	{
+		if (empty($_GET['id']) || !ctype_digit($_GET['id']))
+		{
+			$this->goError();
+		}
+		$model = TorrentModel::model();
+		$torrent = $model->findByPk($_GET['id'], 'id,name');
+		if (empty($torrent))
+		{
+			$this->goError();
+		}
+		$sql = "SELECT snatch.*,user.name as user_name FROM snatch LEFT JOIN user ON snatch.user_id=user.id WHERE snatch.torrent_id=".$_GET['id']." ORDER BY snatch.complete_time DESC";
+		$snatchList = $model->findBySql($sql);
+		$html = $this->render('snatch', array('torrentInfo' => $torrent, 'snatchList' => $snatchList));
+		echo $html;
 	}
 }

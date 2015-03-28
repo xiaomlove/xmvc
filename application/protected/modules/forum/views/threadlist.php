@@ -18,11 +18,14 @@
 	<?php if (!empty($threadList)):?>
 	<?php foreach ($threadList as $thread):?>
 		<tr>
-			<td><strong><a href="
-			<?php
-				echo $this->createUrl('forum/thread/detail', array('section_id' => $sectionId, 'thread_id' => $thread['id'])).$this->getExtraParam(array('section_id'));
-			?>
-			"><?php echo $thread['title']?></a></strong></td>
+			<td>
+				<strong><a href="<?php echo $this->createUrl('forum/thread/detail', array('section_id' => $sectionId, 'thread_id' => $thread['id'])).$this->getExtraParam(array('section_id'))?>">
+				<?php
+					if ($thread['is_top']) echo '<span class="glyphicon glyphicon-arrow-up" aria-hidden="true" title="置顶"></span>';
+					echo $thread['title'];
+				?>
+				</a></strong>
+			</td>
 			<td><?php echo $thread['user_name']."<br/><small>".date('Y-m-d H:i', $thread['add_time'])."</small>"?></td>
 			<td><?php echo $thread['reply_count']?></td>
 			<td><?php echo $thread['view_count']?></td>

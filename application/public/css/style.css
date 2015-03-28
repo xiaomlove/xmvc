@@ -55,8 +55,9 @@ body{background-image:url('../images/light_grey.png');-font-family: Tahoma,"Micr
 #detail-table td a {margin-right: 15px}
 #detail-table td button {margin-right: 15px}
 
-#detail-table td:nth-of-type(1) {width: 10% !important; text-align: right;padding-right: 10px}
-#detail-table td:nth-of-type(2) {width: 90% !important; text-align: left;padding-left: 10px;}
+#detail-table>tbody>tr>td:nth-of-type(1) {width: 10% !important; text-align: right;padding-right: 10px}
+#detail-table>tbody>tr>td:nth-of-type(2) {width: 90% !important; text-align: left;padding-left: 10px;}
+#upload-success-flash{margin: 10px}
 #upload-success-flash strong{box-shadow:0 0 10px red;}
 .comment-head {text-align: left; margin: 10px 0;}
 #comment-list .item {margin: 20px 0;border-bottom: 1px dotted #999;}

@@ -2,11 +2,13 @@
 class CommonController extends Controller
 {
 	public $breadcrumbs = array();//面包屑导航
+	public $admitActions = array();//免权限检查的action
 	
 	public function __construct()
 	{
+		//$this->checkLogin();
+		$this->checkHasRule();
 		parent::__construct();
-		$this->checkLogin();
 	}
 	/**
 	 * 这种限制要登陆才能访问一般怎么来？？
@@ -23,12 +25,72 @@ class CommonController extends Controller
 		}
 	}
 	
+	private function checkHasRule()
+	{
+		if (App::ins()->user->getId() == 11)
+		{
+			return TRUE;//超级管理员
+		}
+		if (!empty($this->admitActions))//查看是否为不用权限验证的action
+		{
+			$admit = array_flip($this->admitActions);
+			$admit = array_change_key_case($admit);
+			$admit = array_flip($admit);
+			if (in_array(strtolower(ACTION), $admit))
+			{
+				return TRUE;
+			}
+		}
+		if (MODULE == NULL)
+		{
+			$ruleMvc = strtolower('null/'.CONTROLLER.'/'.ACTION);
+		}
+		else
+		{
+			$ruleMvc = strtolower(MODULE.'/'.CONTROLLER.'/'.ACTION);
+		}
+		$hasRule = RuleModel::model()->initRule($ruleMvc);
+// 		return TRUE;
+		if (!$hasRule)
+		{
+			if (App::ins()->request->isAjax())
+			{
+				if (!App::ins()->user->isLogin())
+				{
+					echo json_encode(array('code' => -99, 'msg' => '请先登陆'));exit;
+				}
+				else
+				{
+					echo json_encode(array('code' => -100, 'msg' => '没有该权限'));exit;
+				}
+				
+			}
+			else
+			{
+				if (!App::ins()->user->isLogin())
+				{
+					$this->redirect('index/login');
+				}
+				else
+				{
+					die('没有该权限');
+				}
+			}
+		}
+	}
+	
 	protected function goError()
 	{
 		$this->redirect('index/error');exit;
 	}
-	
-	protected function getTTL($time, $delimiter = '<br/>')
+	/**
+	 * 返回过去某个时间点离现在时间过去了多久
+	 * @param string||int $time 过去某个时间点
+	 * @param string $delimiter 各个时间值之间的分割符，如小时与分钟中间用一个换行分割
+	 * @param string $d 已经过去了的时间，如果有提供只是转换该值，否则通过当前时间与参数一相减获得
+	 * @return NULL|string
+	 */
+	protected function getTTL($time, $delimiter = '<br/>', $d = '')
 	{
 		if(empty($time))
 		{
@@ -38,7 +100,10 @@ class CommonController extends Controller
 		{
 			trigger_error('getTTL()只接收时间戳', E_USER_NOTICE);
 		}
-		$d = time() - intval($time);//过去了这么多秒
+		if ($d === '')
+		{
+			$d = time() - intval($time);//过去了这么多秒
+		}
 		$out = '';
 		if($d <= 3600)//小于1小时
 		{
@@ -98,6 +163,22 @@ class CommonController extends Controller
 		elseif($size > 1024 * 1024 * 1024)//大于1GB
 		{
 			return number_format($size/1024/1024/1024, 2).'GB';
+		}
+	}
+	
+	protected function getSpeed($speed)
+	{
+		if (empty($speed))
+		{
+			return 0;
+		}
+		elseif ($speed/1024 < 1024)
+		{
+			return number_format($speed/1024, 0).'KB/S';
+		}
+		elseif ($speed/1024 >= 1024)
+		{
+			return number_format($speed/1024/1024, 2).'MB/S';
 		}
 	}
 	/**
