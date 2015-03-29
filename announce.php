@@ -338,6 +338,8 @@ if (isset($_GET['event']))
 		case 'stopped'://停止一个任务、删除一个任务或者退出客户端，会有stopped事件，暂停不会触发
 			$sql = 'DELETE FROM peer WHERE user_id='.$userInfo['id'].' AND torrent_id='.$torrent['id'].' AND peer_id=\''.$_GET['peer_id'].'\'';
 			execute($sql);//删除该peer
+			$sql = 'DELETE FROM snatch WHERE user_id='.$userInfo['id'].' AND torrent_id='.$torrent['id'].' AND peer_id=\''.$_GET['peer_id'].'\' AND complete_time=0';
+			execute($sql);//删除事先插入的未完成snatch
 			if ($isSeeder)
 			{
 				$updateTorrentSql .= "seeder_count=seeder_count-1";//种子的peer数量减1
@@ -406,27 +408,43 @@ $timenow = TIMENOW;
 
 if (!isset($_GET['event']) || $_GET['event'] !== 'stopped')
 {
-	//第一次请求，是插入peer，但有可能之前下载过，后面停止或者删除或者退出客户端时由于某种原因没有删除peer。那上边判断是看已存在peer最后活动时间，所以这里有就更新，没有就插入即可
-	$sql = 'INSERT INTO peer (torrent_id, torrent_size, peer_id, ip, port, uploaded, downloaded, `left`, is_seeder, start_time, last_report_time, this_report_time, user_id, connectable, agent, passkey, upload_speed, download_speed, connect_time) VALUES (';
-	$sql .= "{$torrent['id']}, {$torrent['size']}, '{$_GET['peer_id']}', '$ip', {$_GET['port']}, $uploadThis, $downloadThis, {$_GET['left']}, $isSeeder, $timenow, $timenow, $timenow, {$userInfo['id']}, $connectable, '$agent', '{$_GET['passkey']}', $uploadSpeed, $downloadSpeed, $duration) ";
-	$sql .= "ON DUPLICATE KEY UPDATE ip='$ip',port={$_GET['port']},uploaded=uploaded+$uploadThis,downloaded=downloaded+$downloadThis,`left`={$_GET['left']},is_seeder=$isSeeder,last_report_time=this_report_time,this_report_time=$timenow,connectable=$connectable,agent='$agent',upload_speed=$uploadSpeed,download_speed=$downloadSpeed,connect_time=connect_time+$duration";
-	execute($sql);
+	$checkSnatchSql = 'SELECT * FROM snatch WHERE user_id='.$userInfo['id'].' AND torrent_id='.$torrent['id'].' AND peer_id=\''.$_GET['peer_id'].'\' LIMIT 1';
+	$snatch = query($checkSnatchSql);
+	if (!empty($snatch))
+	{
+		$snatch = $snatch[0];
+		$sql = 'INSERT INTO peer (torrent_id, torrent_size, peer_id, ip, port, uploaded, downloaded, `left`, is_seeder, start_time, last_report_time, this_report_time, user_id, connectable, agent, passkey, upload_speed, download_speed, connect_time) VALUES (';
+		$sql .= "{$torrent['id']}, {$torrent['size']}, '{$_GET['peer_id']}', '$ip', {$_GET['port']}, {$snatch['uploaded']}, {$snatch['downloaded']}, {$_GET['left']}, $isSeeder, {$snatch['start_time']}, {$snatch['this_report_time']}, $timenow, {$userInfo['id']}, $connectable, '$agent', '{$_GET['passkey']}', $uploadSpeed, $downloadSpeed, {$snatch['connect_time']}) ";
+		$sql .= "ON DUPLICATE KEY UPDATE ip='$ip',port={$_GET['port']},uploaded=uploaded+$uploadThis,downloaded=downloaded+$downloadThis,`left`={$_GET['left']},is_seeder=$isSeeder,last_report_time=this_report_time,this_report_time=$timenow,connectable=$connectable,agent='$agent',upload_speed=$uploadSpeed,download_speed=$downloadSpeed,connect_time=connect_time+$duration";
+		execute($sql);
+	}
+	else
+	{
+		//第一次请求，是插入peer，但有可能之前下载过，后面停止或者删除或者退出客户端时由于某种原因没有删除peer。那上边判断是看已存在peer最后活动时间，所以这里有就更新，没有就插入即可
+		$sql = 'INSERT INTO peer (torrent_id, torrent_size, peer_id, ip, port, uploaded, downloaded, `left`, is_seeder, start_time, last_report_time, this_report_time, user_id, connectable, agent, passkey, upload_speed, download_speed, connect_time) VALUES (';
+		$sql .= "{$torrent['id']}, {$torrent['size']}, '{$_GET['peer_id']}', '$ip', {$_GET['port']}, $uploadThis, $downloadThis, {$_GET['left']}, $isSeeder, $timenow, $timenow, $timenow, {$userInfo['id']}, $connectable, '$agent', '{$_GET['passkey']}', $uploadSpeed, $downloadSpeed, $duration) ";
+		$sql .= "ON DUPLICATE KEY UPDATE ip='$ip',port={$_GET['port']},uploaded=uploaded+$uploadThis,downloaded=downloaded+$downloadThis,`left`={$_GET['left']},is_seeder=$isSeeder,last_report_time=this_report_time,this_report_time=$timenow,connectable=$connectable,agent='$agent',upload_speed=$uploadSpeed,download_speed=$downloadSpeed,connect_time=connect_time+$duration";
+		execute($sql);
+	}
 }		
 
 //更新snatch
-$sql = 'INSERT INTO snatch (torrent_id, torrent_size, peer_id, ip, port, uploaded, downloaded, `left`, is_seeder, start_time, last_report_time, this_report_time, user_id, connectable, agent, passkey, upload_speed, download_speed, connect_time) VALUES (';
-$sql .= "{$torrent['id']}, {$torrent['size']}, '{$_GET['peer_id']}', '$ip', {$_GET['port']}, $uploadThis, $downloadThis, {$_GET['left']}, $isSeeder, $timenow, $timenow, $timenow, {$userInfo['id']}, $connectable, '$agent', '{$_GET['passkey']}', $uploadSpeed, $downloadSpeed, $duration) ";
-$sql .= "ON DUPLICATE KEY UPDATE ip='$ip',port={$_GET['port']},uploaded=uploaded+$uploadThis,downloaded=downloaded+$downloadThis,`left`={$_GET['left']},is_seeder=$isSeeder,last_report_time=this_report_time,this_report_time=$timenow,connectable=$connectable,agent='$agent',upload_speed=$uploadSpeed,download_speed=$downloadSpeed,connect_time=connect_time+$duration";
-if ((isset($isCompleted) && $isCompleted))
+if (!$isSeeder || ($isSeeder && isset($isCompleted) && $isCompleted))
 {
-	$sql .= ",complete_time=$timenow";//完成时间
+	//不是做种者，或者是做种者(最后完成事件那次)且有完成事件
+	$sql = 'INSERT INTO snatch (torrent_id, torrent_size, peer_id, ip, port, uploaded, downloaded, `left`, is_seeder, start_time, last_report_time, this_report_time, user_id, connectable, agent, passkey, upload_speed, download_speed, connect_time) VALUES (';
+	$sql .= "{$torrent['id']}, {$torrent['size']}, '{$_GET['peer_id']}', '$ip', {$_GET['port']}, $uploadThis, $downloadThis, {$_GET['left']}, $isSeeder, $timenow, $timenow, $timenow, {$userInfo['id']}, $connectable, '$agent', '{$_GET['passkey']}', $uploadSpeed, $downloadSpeed, $duration) ";
+	$sql .= "ON DUPLICATE KEY UPDATE ip='$ip',port={$_GET['port']},uploaded=uploaded+$uploadThis,downloaded=downloaded+$downloadThis,`left`={$_GET['left']},is_seeder=$isSeeder,last_report_time=this_report_time,this_report_time=$timenow,connectable=$connectable,agent='$agent',upload_speed=$uploadSpeed,download_speed=$downloadSpeed,connect_time=connect_time+$duration";
+	if ((isset($isCompleted) && $isCompleted))
+	{
+		$sql .= ",complete_time=$timenow";//完成时间
+	}
+	else 
+	{
+		$sql .= ",complete_time=0";
+	}
+	execute($sql);
 }
-else 
-{
-	$sql .= ",complete_time=0";
-}
-execute($sql);
-
 $fopen = fopen('sql_log', 'a');
 fwrite($fopen, '**************************END****'.microtime(true).'--'.(microtime(true)-START).'*******************************'."\r\n");
 fclose($fopen);

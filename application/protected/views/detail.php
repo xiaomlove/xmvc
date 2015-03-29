@@ -413,7 +413,8 @@
 							if (data.msg.seeder){
 								var seederTable = renderTable("做种者", data.msg.seeder);
 								$wrap.append(seederTable);					
-							}else if(data.msg.leecher){
+							}
+							if(data.msg.leecher){
 								var leecherTable = renderTable("下载者", data.msg.leecher);
 								$wrap.append(leecherTable);
 							}
@@ -472,6 +473,8 @@
 			TRHTML.push("</tr>");
 		});
 		$tpl.find("tbody").append(TRHTML.join(""));
-		return $tpl.prop("outerHTML");
+		var toReturn = $tpl.prop("outerHTML");
+		$tpl.find("tbody").empty();
+		return toReturn;
 	}
  </script>
