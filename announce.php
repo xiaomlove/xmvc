@@ -24,6 +24,7 @@ fwrite($fopen, 'begin******************************'.START.'********************
 fclose($fopen);
 unset($fopen);
 
+
 define('TIMENOW', $_SERVER['REQUEST_TIME']);
 require 'framework/lib/announce_functions.php';
 
