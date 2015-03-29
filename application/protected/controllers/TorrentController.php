@@ -324,7 +324,7 @@ class TorrentController extends CommonController
 		{
 			$this->goError();
 		}
-		$sql = "SELECT snatch.*,user.name as user_name FROM snatch LEFT JOIN user ON snatch.user_id=user.id WHERE snatch.torrent_id=".$_GET['id']." ORDER BY snatch.complete_time DESC";
+		$sql = "SELECT snatch.*,user.name as user_name FROM snatch LEFT JOIN user ON snatch.user_id=user.id WHERE snatch.torrent_id=".$_GET['id']." AND complete_time > 0 ORDER BY snatch.complete_time DESC";
 		$snatchList = $model->findBySql($sql);
 		$html = $this->render('snatch', array('torrentInfo' => $torrent, 'snatchList' => $snatchList));
 		echo $html;
