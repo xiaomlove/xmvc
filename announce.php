@@ -17,10 +17,10 @@ if (defined('DEBUG') && DEBUG)
 	ini_set('error_log', 'announce_error_log');
 }
 //0、引入必须的辅助函数文件，里边引入了必须的BEncode类
-define('TIMENOW', $_SERVER['REQUEST_TIME']);
 //记录一个tracker请求需要的时间
+define('START', microtime(true));
 $fopen = fopen('sql_log', 'a');
-fwrite($fopen, 'begin******************************'.TIMENOW.'*******************************'."\r\n");
+fwrite($fopen, 'begin******************************'.START.'*******************************'."\r\n");
 fclose($fopen);
 unset($fopen);
 
@@ -426,7 +426,7 @@ else
 execute($sql);
 
 $fopen = fopen('sql_log', 'a');
-fwrite($fopen, 'end******************************'.time().'--'.(time()-TIMENOW).'*******************************'."\r\n");
+fwrite($fopen, 'end******************************'.microtime(true).'--'.(microtime(true)-START).'*******************************'."\r\n");
 fclose($fopen);
 unset($fopen);
 //the last step，返回peer信息！
