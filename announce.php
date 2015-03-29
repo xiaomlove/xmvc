@@ -24,6 +24,7 @@ fwrite($fopen, 'begin******************************'.START.'********************
 fclose($fopen);
 unset($fopen);
 
+define('TIMENOW', $_SERVER['REQUEST_TIME']);
 require 'framework/lib/announce_functions.php';
 
 //1、检查参数是否齐全以及合法，$_GET传递过来的都是字符串类型
