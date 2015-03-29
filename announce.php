@@ -6,6 +6,7 @@
 //var_dump(strlen($_GET['peer_id']));
 //var_dump($_SERVER);exit;
 
+
 //-1，如果测试模式，输出错误
 define('DEBUG', TRUE);
 if (defined('DEBUG') && DEBUG)
@@ -17,6 +18,12 @@ if (defined('DEBUG') && DEBUG)
 }
 //0、引入必须的辅助函数文件，里边引入了必须的BEncode类
 define('TIMENOW', $_SERVER['REQUEST_TIME']);
+//记录一个tracker请求需要的时间
+$fopen = fopen('sql_log', 'a');
+fwrite($fopen, 'begin******************************'.TIMENOW.'*******************************'."\r\n");
+fclose($fopen);
+unset($fopen);
+
 require 'framework/lib/announce_functions.php';
 
 //1、检查参数是否齐全以及合法，$_GET传递过来的都是字符串类型
@@ -418,6 +425,10 @@ else
 }
 execute($sql);
 
+$fopen = fopen('sql_log', 'a');
+fwrite($fopen, 'end******************************'.time().'--'.(time()-TIMENOW).'*******************************'."\r\n");
+fclose($fopen);
+unset($fopen);
 //the last step，返回peer信息！
 error($returnDict, TRUE);
 
