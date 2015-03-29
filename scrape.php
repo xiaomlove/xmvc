@@ -35,7 +35,7 @@ else
 	$sql .= "WHERE 1";
 	$option = array();
 }
-
+$pdo = connectDB();
 $result = query($sql, $option);
 if (empty($result))
 {
