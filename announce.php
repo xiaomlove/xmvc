@@ -20,7 +20,7 @@ if (defined('DEBUG') && DEBUG)
 //记录一个tracker请求需要的时间
 define('START', microtime(true));
 $fopen = fopen('sql_log', 'a');
-fwrite($fopen, 'begin******************************'.START.'*******************************'."\r\n");
+fwrite($fopen, '***************************BEGIN***'.START.'*******************************'."\r\n");
 fclose($fopen);
 unset($fopen);
 
@@ -348,7 +348,7 @@ if (isset($_GET['event']))
 			}
 			break;
 		case 'completed'://下载完成会友触发
-// 			$sql = 'UPDATE snatch SET complete_time='.TIMENOW.',is_completed=1 WHERE user_id='.$userInfo['id'].' AND torrent_id='.$torrent['id'].' AND peer_id='.$peerSelf['peer_id'];
+// 			$sql = 'UPDATE snatch SET complete_time='.TIMENOW.',is_completed=1 WHERE user_id='.$userInfo['id'].' AND torrent_id='.$torrent['id'].' AND peer_id=\''.$peerSelf['peer_id'].'\'';
 // 			execute($sql);//更新完成记录的完成时间与完成标记
 			$isCompleted = TRUE;//完成标记，后面连接到更新的字段中
 			$updateTorrentSql .= "finish_times=finish_times+1,seeder_count=seeder_count+1,leecher_count=leecher_count-1";//种子完成数加，做种数加1，下载数减1
@@ -362,7 +362,7 @@ if (isset($_GET['event']))
 			{
 				$updateTorrentSql .= "leecher_count=leecher_count+1";
 			}			
-			break;
+			break;//插入peer和snatch在下边
 	}
 	$updateTorrentSql .= " WHERE id=".$torrent['id'];
 	execute($updateTorrentSql);
@@ -428,7 +428,7 @@ else
 execute($sql);
 
 $fopen = fopen('sql_log', 'a');
-fwrite($fopen, 'end******************************'.microtime(true).'--'.(microtime(true)-START).'*******************************'."\r\n");
+fwrite($fopen, '**************************END****'.microtime(true).'--'.(microtime(true)-START).'*******************************'."\r\n");
 fclose($fopen);
 unset($fopen);
 //the last step，返回peer信息！
