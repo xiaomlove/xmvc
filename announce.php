@@ -440,7 +440,7 @@ if (isset($start) && $start && empty($snatch))
 }
 
 //更新snatch，没下载完，任何事件或者没有事件，都更
-if (!$isSeeder || ($isSeeder && isset($isCompleted) && $isCompleted))
+if ((!$isSeeder || ($isSeeder && isset($isCompleted) && $isCompleted)) && !empty($snatch))
 {
 	//不是做种者，或者是做种者(最后完成事件那次)且有完成事件
 // 	$sql = 'INSERT INTO snatch (torrent_id, torrent_size, peer_id, ip, port, uploaded, downloaded, `left`, is_seeder, start_time, last_report_time, this_report_time, user_id, connectable, agent, passkey, upload_speed, download_speed, connect_time) VALUES (';
