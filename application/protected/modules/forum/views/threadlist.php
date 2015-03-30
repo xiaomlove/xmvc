@@ -13,6 +13,7 @@
 			<th><?php echo $this->getSortHref('reply_count', '回复')?></th>
 			<th><?php echo $this->getSortHref('view_count', '查看')?></th>
 			<th><?php echo $this->getSortHref('last_reply_time', '最近回复')?></th>
+		</tr>
 	</thead>
 	<tbody>
 	<?php if (!empty($threadList)):?>

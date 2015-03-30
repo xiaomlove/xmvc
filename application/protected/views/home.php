@@ -1,18 +1,18 @@
-<div class="row page-header" style="margin-top: 20px">
+<div class="row page-header" style="margin-top: 20px;text-align: center">
 	<div class="welcome"><h2>欢迎光临TinyHD</h2></div>
 	<div class="userbox">
 		<ul class="list-inline">
 			<li>用户名:<span id="user-name"><?php echo App::ins()->user->getName()?></span></li>
-			<li>上传量:<?php echo isset($userInfo['uploaded']) ? $this->getSize($userInfo['uploaded']) : 0?></li>
+			<!--<li>上传量:<?php echo isset($userInfo['uploaded']) ? $this->getSize($userInfo['uploaded']) : 0?></li>
 			<li>下载量:<?php echo isset($userInfo['downloaded']) ? $this->getSize($userInfo['downloaded']) : 0?></li>
+			-->
 			<li>登陆IP:<span id="ip"><?php echo App::ins()->request->getClientIP()?></span></li>
 		</ul>
 		
 	</div>
-	<a class="btn btn-danger btn-xs pull-right" data-toggle="modal" data-target=".bs-example-modal-sm" style="margin-top: 30px">退出</a>
 </div>
 
-<h3 style="text-align: center">Tiny Talk</h3>
+<!--<h3 style="text-align: center">Tiny Talk</h3>-->
 <div class="row">
 	<div class="col-md-offset-2 col-md-8">
 		<div class="row talk-wrap">
@@ -97,20 +97,7 @@
 	</div>
 </div>
 
-<div id="checkout-logout-modal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      
-      <div class="modal-body">
-        	<strong>确定退出吗？</strong>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-        <button type="button" class="btn btn-primary" id="logout">确定</button>
-      </div>
-    </div>
-  </div>
-</div>
+
 <input type="hidden" id="socket-url" value="<?php echo $this->createUrl('talk')?>">
 <input type="hidden" id="user-id" value="<?php echo isset($userInfo['id']) ? $userInfo['id'] : ''?>">
 
@@ -140,22 +127,6 @@
 </div>
 
 <script>
-	var $logout = $("#logout");
-	$logout.on("click", function(e){
-		$.ajax({
-			url: "logout",
-			dataType: "json",
-			type: "POST",
-			beforeSend: function(){$logout.attr("disabled", "disabled").text("退出中...")},
-			success: function(data){
-				if(data.code === 1){
-					window.location.href="login.html";
-				}else{
-					$logout.text(data.msg);
-				}
-			}
-		})
-	});
 
 	$(document).ready(function(){
 		//获取IP信息

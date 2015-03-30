@@ -34,7 +34,7 @@ return array(
 			'comment/add'=>'comment/add',
 			'comment/list'=>'comment/list',
 			'addbookmark'=>'bookmark/add',
-				
+			'profile'=>'user/profile',
 			'user/name/<name:.+>/age/<age:\d+>'=>'user/filter',
 			'user/sex/<sex:.+>'=>'user/filter',
 			'user/year/<year>'=>array('user/filter', 'urlSuffix'=>'.shtml'),
@@ -73,7 +73,7 @@ return array(
 	),
 	
 	'defaultController'=>'index',
-	'defaultAction'=>'register',
+	'defaultAction'=>'home',
 	'defaultModule'=>'',
 	
 	

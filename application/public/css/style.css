@@ -3,8 +3,10 @@
 #result-msg {margin-right: 10px}
 
 #main-nav {margin-top: 3%}
-#main-nav li{width: 19%;text-align: center}
-body{background-image:url('../images/light_grey.png');-font-family: Tahoma,"Microsoft Yahei", sans-serif;}
+#main-nav li{width: 16.5%;text-align: center}
+#main-nav li.user-box a{display: inline-block;padding-left: 0;cursor: pointer}
+#main-nav li.user-box a:focus{outline: 0}
+body{-background-image:url('../images/light_grey.png');-font-family: Tahoma,"Microsoft Yahei", sans-serif;}
 
 /*Ê×Ò³*/
 .welcome{display: inline-block;}
@@ -86,7 +88,7 @@ body{background-image:url('../images/light_grey.png');-font-family: Tahoma,"Micr
 #checkout-logout-modal .modal-footer button{margin:0 30px}
 
 #profile td:nth-of-type(1){width: 20%}
-
+.profile-main .page-header{font-weight: bold}
 /*ÂÛÌ³*/
 .bg-light-gray{background-color: #eee}
 .forum-section-table thead{background-color: #ddd}

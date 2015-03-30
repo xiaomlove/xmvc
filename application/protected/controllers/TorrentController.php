@@ -65,6 +65,7 @@ class TorrentController extends CommonController
 							{
 								$decode['comment'] = '[come from TinyHD.net]';
 							}
+							$decode['announce'] = App::ins()->request->getBaseUrl().'announce.php';//自动添加正确的地址
 							$encode = BEncode::encode($decode);
 							if(!empty($encode))
 							{
