@@ -302,7 +302,7 @@ if (empty($returnDict))
 //10、返回的数据拼凑完毕。检查是否作弊
 if (!$isFirstRequest)
 {
-	$uploadThis = max(0, $_GET['uploaded'] - $peerSelf['uploaded']);
+	$uploadThis = max(0, $_GET['uploaded'] - $peerSelf['uploaded']);//这里判断有问题？？？停止再开始uploaded是否为0？
 	$downloadThis = max(0, $_GET['downloaded'] - $peerSelf['downloaded']);
 	$duration = TIMENOW - $peerSelf['this_report_time'];
 	$uploadSpeed = $uploadThis/$duration;//上传速度，存入时保留字节/S

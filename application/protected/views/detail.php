@@ -466,8 +466,8 @@
 					TRHTML.push("<td><span style=\"color: red;font-weight: bold\">"+ratio+"</span></td>");
 				}
 			}			
-			TRHTML.push("<td>"+((item.downloaded/item.torrent_size)*100).toFixed(2)+"%</td>");//完成百分比
-			TRHTML.push("<td>"+item.connect_time+"</td>");
+			TRHTML.push("<td>"+(item.is_seeder ? 100 : (item.downloaded/item.torrent_size)*100).toFixed(2)+"%</td>");//完成百分比
+			TRHTML.push("<td>"+(item.connect_time ? item.connect_time : 0)+"</td>");
 			TRHTML.push("<td>"+item.this_report_time+"</td>");
 			TRHTML.push("<td>"+item.agent+"</td>");
 			TRHTML.push("</tr>");

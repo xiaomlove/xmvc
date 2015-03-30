@@ -20,6 +20,25 @@
 					<td><?php echo $userInfo['role_name']?></td>
 				</tr>
 				<tr>
+					<td>可连接</td>
+					<td>
+						<?php
+							if ($userInfo['connectable'] == 0)
+							{
+								echo "否";
+							}
+							elseif ($userInfo['connectable'] == 1)
+							{
+								echo "是";
+							}
+							else
+							{
+								echo "未知";
+							}
+						?>
+					</td>
+				</tr>
+				<tr>
 					<td>上次登陆</td>
 					<td><?php echo date('Y-m-d H:i:s', $userInfo['last_login_time'])?></td>
 				</tr>
