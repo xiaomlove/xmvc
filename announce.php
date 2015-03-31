@@ -434,7 +434,7 @@ if (!isset($_GET['event']) || $_GET['event'] !== 'stopped')
 }
 
 //只有开始且没有时需要插入snatch
-if (isset($start) && $start && isset($hasSnatch) && $hasSnatch && ($_GET['left'] == $torrent['size']))
+if (isset($start) && $start && !isset($hasSnatch) && ($_GET['left'] == $torrent['size']))
 {
 	$sql = 'INSERT INTO snatch (torrent_id, torrent_size, peer_id, ip, port, uploaded, downloaded, `left`, is_seeder, start_time, last_report_time, this_report_time, user_id, connectable, agent, passkey, upload_speed, download_speed, connect_time, complete_time) VALUES (';
 	$sql .= "{$torrent['id']}, {$torrent['size']}, '{$_GET['peer_id']}', '$ip', {$_GET['port']}, $uploadThis, $downloadThis, {$_GET['left']}, $isSeeder, $timenow, $timenow, $timenow, {$userInfo['id']}, $connectable, '$agent', '{$_GET['passkey']}', $uploadSpeed, $downloadSpeed, $duration, 0)";
