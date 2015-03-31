@@ -442,7 +442,7 @@ if (isset($start) && $start && !isset($hasSnatch) && ($_GET['left'] == $torrent[
 	execute($sql);
 }
 
-//更新snatch，没下载完，任何事件或者没有事件，都更
+//更新snatch，没下载完，任何事件或者没有事件，都更,包括停止
 if ((!$isSeeder || ($isSeeder && isset($isCompleted) && $isCompleted)) && !empty($snatch) && ($_GET['left'] < $torrent['size']))
 {
 	//不是做种者，或者是做种者(最后完成事件那次)且有完成事件
