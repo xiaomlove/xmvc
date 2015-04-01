@@ -488,7 +488,7 @@ if (!$isSeeder || ($isSeeder && isset($isCompleted)))//未完成下载前的一�
 		if (isset($isCompleted) && $isCompleted)
 		{
 			$checkCompleteSnatchSql = "SELECT * FROM snatch $snatchWhere AND completed_time > 0 LIMIT 1";
-			$completeSnatch = query($sql);
+			$completeSnatch = query($checkCompleteSnatchSql);
 			if (empty($completeSnatch))
 			{
 				//没有已经完成的,第一次完成

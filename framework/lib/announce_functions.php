@@ -92,8 +92,11 @@ function query($sql, $options = array())
 {
 	$fopen = fopen('sql_log', 'a');
 	$time = date('Y-m-d H:i:s');
-	fwrite($fopen, $time.'--'.serialize($sql)."\r\n");
-	fwrite($fopen, '--options:'.serialize($options)."\r\n");
+	fwrite($fopen, $time.'--'.$sql."\r\n");
+	if (!empty($options))
+	{
+		fwrite($fopen, '--options:'.serialize($options)."\r\n");
+	}
 	fwrite($fopen, '----------------------------------------------------'."\r\n");
 	fclose($fopen);
 	global $pdo;
@@ -124,7 +127,7 @@ function execute($sql)
 	global $pdo;
 	$fopen = fopen('sql_log', 'a');
 	$time = date('Y-m-d H:i:s');
-	fwrite($fopen, $time.'--'.serialize($sql)."\r\n");
+	fwrite($fopen, $time.'--'.$sql."\r\n");
 //	fwrite($fopen, '--options:'.serialize($options)."\r\n");
 	fwrite($fopen, '----------------------------------------------------'."\r\n");
 	fclose($fopen);
