@@ -210,7 +210,11 @@ else
 	//不是第一次请求，看一下时间间隔是否太小
 	if (TIMENOW - $peerSelf['this_report_time'] < 30)
 	{
-		error('min interval 30s');
+		if (!isset($_GET['event']) || $_GET['event'] === 'started')//stopped和completed不应该限制
+		{
+			error('min interval 30s');
+		}
+		
 	}
 	//再看是否重复下载：peer_id跟数据库不相同又不是做种者。感觉有时任务删除没能同步过来把peer删除，会有点问题。所以加上时间，如果已有
 	//peer 24小时不活动，就不算重复了。下边插入时直接更新原有peer。没法考虑如此多，peer_id停止再开始会变
@@ -360,7 +364,7 @@ if (isset($_GET['event']))
 			}
 			break;
 		case 'completed'://下载完成会友触发
- 			//$sql = 'UPDATE snatch SET complete_time='.TIMENOW.',is_seeder=1 WHERE user_id='.$userInfo['id'].' AND torrent_id='.$torrent['id'].' AND is_completed=0';
+ 			//$sql = 'UPDATE snatch SET complete_time='.TIMENOW.',is_seeder=1 WHERE user_id='.$userInfo['id'].' AND torrent_id='.$torrent['id'].' AND complete_time=0';
 			//execute($sql);
  			$isCompleted = TRUE;//完成标记，后面连接到更新的字段中
 			$updateTorrentSql .= "finish_times=finish_times+1,seeder_count=seeder_count+1,leecher_count=leecher_count-1";//种子完成数加，做种数加1，下载数减1
