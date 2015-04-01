@@ -216,7 +216,15 @@ else
 	//peer 24小时不活动，就不算重复了。下边插入时直接更新原有peer。没法考虑如此多，peer_id停止再开始会变
 	if ($peerSelf['peer_id'] != $_GET['peer_id'] && !$isSeeder)
 	{
-		error('already downloading this torrent');
+		if ($peerSelf['left'] == 0)
+		{
+			error('already seeding this torrent');
+		}
+		else 
+		{
+			error('already downloading this torrent');
+		}
+		
 	}
 	if ($isSeeder)
 	{
@@ -245,7 +253,7 @@ else
 //9、拼凑返回信息
 $return = array('isDict' => TRUE);
 
-$interval = 1800;//默认常规请求间隔，30分钟
+$interval = 300;//1800;//默认常规请求间隔，30分钟
 if (TIMENOW - $torrent['add_time'] > 3600*24*7)
 {
 	$interval = 3600;//发布7天后的种子，1小时请求一次。不分那么多了
