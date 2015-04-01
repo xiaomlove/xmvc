@@ -360,8 +360,8 @@ if (isset($_GET['event']))
 			}
 			break;
 		case 'completed'://下载完成会友触发
- 			$sql = 'UPDATE snatch SET complete_time='.TIMENOW.',is_seeder=1 WHERE user_id='.$userInfo['id'].' AND torrent_id='.$torrent['id'].' AND is_completed=0';
-			execute($sql);
+ 			//$sql = 'UPDATE snatch SET complete_time='.TIMENOW.',is_seeder=1 WHERE user_id='.$userInfo['id'].' AND torrent_id='.$torrent['id'].' AND is_completed=0';
+			//execute($sql);
  			$isCompleted = TRUE;//完成标记，后面连接到更新的字段中
 			$updateTorrentSql .= "finish_times=finish_times+1,seeder_count=seeder_count+1,leecher_count=leecher_count-1";//种子完成数加，做种数加1，下载数减1
 			break;
@@ -457,12 +457,14 @@ if (!isset($_GET['event']) || $_GET['event'] !== 'stopped')
 	execute($sql);
 }
 
-//处理snatch数据。每个peer都有一个snatch与之对应。事件为started要插入，其他都要更新。completed上边做了
-if (!isset($_GET['event']) || $_GET['event'] !== 'completed')
+
+//处理snatch数据。一个peer对应一个snatch，一个snatch可对应多个peer。下载中的peer对应一个complete_time=0的snatch，完成的peer对应同一个complete_time>0的snatch。做种可以有多处。多处做种时更新同一个snatch
+$snatchWhere = "WHERE torrent_id={$torrent['id']} AND user_id={$userInfo['id']}";
+if (!$isSeeder || ($isSeeder && isset($isCompleted)))//未完成下载前的一次交互（含最后完成那一次）
 {
 	if (isset($isStarted))
 	{
-		//开始事件时候，没有则插入
+		//未完成，任务未运行过，新建任务开始
 		if (!isset($hasSnatch))
 		{
 			$sql = 'INSERT INTO snatch (torrent_id, torrent_size, peer_id, ip, port, uploaded, downloaded, `left`, is_seeder, start_time, last_report_time, this_report_time, user_id, connectable, agent, passkey, upload_speed, download_speed, connect_time, complete_time) VALUES (';
@@ -470,19 +472,54 @@ if (!isset($_GET['event']) || $_GET['event'] !== 'completed')
 		}
 		else 
 		{
-			//有了，更新一下
+			//未完成，任务已经运行，中间停止后开始
 			$sql = "UPDATE snatch SET peer_id='{$_GET['peer_id']}',ip='$ip',port={$_GET['port']},uploaded=uploaded+$uploadThis,downloaded=downloaded+$downloadThis,`left`={$_GET['left']},is_seeder=$isSeeder,last_report_time=this_report_time,this_report_time=$timenow,connectable=$connectable,agent='$agent',upload_speed=$uploadSpeed,download_speed=$downloadSpeed,connect_time=connect_time+$duration";
-			$sql .= " WHERE torrent_id={$torrent['id']} AND user_id={$userInfo['id']} AND complete_time=0";
-		}	
+			$sql .= " $snatchWhere AND complete_time=0";
+		}
+		execute($sql);	
 	}
 	else
 	{
-		//不是开始，一样更新
-		$sql = "UPDATE snatch SET peer_id='{$_GET['peer_id']}',ip='$ip',port={$_GET['port']},uploaded=uploaded+$uploadThis,downloaded=downloaded+$downloadThis,`left`={$_GET['left']},is_seeder=$isSeeder,last_report_time=this_report_time,this_report_time=$timenow,connectable=$connectable,agent='$agent',upload_speed=$uploadSpeed,download_speed=$downloadSpeed,connect_time=connect_time+$duration";
-		$sql .= " WHERE torrent_id={$torrent['id']} AND user_id={$userInfo['id']} AND complete_time=0";
+		//未完成，这次过后就完成了
+		if (isset($isCompleted) && $isCompleted)
+		{
+			$checkCompleteSnatchSql = "SELECT * FROM snatch $snatchWhere AND completed_time > 0 LIMIT 1";
+			$completeSnatch = query($sql);
+			if (empty($completeSnatch))
+			{
+				//没有已经完成的,第一次完成
+				$sql = "UPDATE snatch SET peer_id='{$_GET['peer_id']}',ip='$ip',port={$_GET['port']},uploaded=uploaded+$uploadThis,downloaded=downloaded+$downloadThis,`left`={$_GET['left']},is_seeder=$isSeeder,last_report_time=this_report_time,this_report_time=$timenow,connectable=$connectable,agent='$agent',upload_speed=$uploadSpeed,download_speed=$downloadSpeed";
+				$sql .= ",connect_time=0,complete_time=$timenow $snatchWhere AND complete_time=0";
+				execute($sql);
+			}
+			else
+			{
+				//已有完成过的记录，将旧记录拿到即将完成的记录上并删除旧记录
+				$completeSnatch = $completeSnatch[0];
+				$sql = "DELETE FROM snatch WHERE id=".$completeSnatch['id'];
+				execute($sql);//删除旧记录
+				$sql = "UPDATE snatch SET peer_id='{$_GET['peer_id']}',ip='$ip',port={$_GET['port']},uploaded=uploaded+$uploadThis+{$completeSnatch['uploaded']},downloaded=downloaded+$downloadThis+{$completeSnatch['downloaded']},`left`={$_GET['left']},is_seeder=$isSeeder,last_report_time=this_report_time,this_report_time=$timenow,connectable=$connectable,agent='$agent',upload_speed=$uploadSpeed,download_speed=$downloadSpeed,connect_time={$completeSnatch['connect_time']},complete_time={$completeSnatch['complete_time']}";
+				$sql .= " $snatchWhere AND complete_time=0";
+				execute($sql);
+			}
+		}
+		else//未完成，这次过后还没完成
+		{
+			$sql = "UPDATE snatch SET peer_id='{$_GET['peer_id']}',ip='$ip',port={$_GET['port']},uploaded=uploaded+$uploadThis,downloaded=downloaded+$downloadThis,`left`={$_GET['left']},is_seeder=$isSeeder,last_report_time=this_report_time,this_report_time=$timenow,connectable=$connectable,agent='$agent',upload_speed=$uploadSpeed,download_speed=$downloadSpeed,connect_time=connect_time+$duration";
+			$sql .= " $snatchWhere AND complete_time = 0";
+			execute($sql);
+		}
 	}
+}
+elseif ($isSeeder && !isset($isCompleted))//完成下载后的交互
+{
+	$sql = "UPDATE snatch SET peer_id='{$_GET['peer_id']}',ip='$ip',port={$_GET['port']},uploaded=uploaded+$uploadThis,last_report_time=this_report_time,this_report_time=$timenow,connectable=$connectable,agent='$agent',connect_time=connect_time+$duration";
+	$sql .= " $snatchWhere AND complete_time > 0";
 	execute($sql);
 }
+
+
+
 
 $fopen = fopen('sql_log', 'a');
 fwrite($fopen, '**************************END****'.microtime(true).'----'.(microtime(true)-START).'*******************************'."\r\n");
