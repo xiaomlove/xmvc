@@ -36,10 +36,14 @@ body{-background-image:url('../images/light_grey.png');-font-family: Tahoma,"Mic
 .online-user-list li{height: 20px;line-height: 20px;margin:5px 0;cursor: pointer}
 .online-user-list li:hover{background-color: #ddd}
 .submit-wrap{text-align: center}
-.submit-form{height: 50px;border: 1px solid #e69;margin: 10px;padding: 5px;text-align: left;border-radius: 5px}
+.submit-form{min-height: 50px;height: auto;border: 1px solid #e69;margin: 10px;padding: 5px;text-align: left;border-radius: 5px}
+.submit-form img{max-width: 32px}
 .submit-btn{}
-
-
+.hotkey-launch li span{margin-left: -14px;display: none}
+.hotkey-launch li.active span{display: inline-block}
+.paopao-action img, #paopao-expression img{max-width:32px;cursor: pointer}
+.paopao-action img{margin-top: 30px}
+#paopao-expression{width: 430px;position: absolute;display: none}
 #torrent-list-table {margin-top: 50px;}
 
 #torrent-list-table tr th:nth-of-type(1){width:50%;text-align:left}

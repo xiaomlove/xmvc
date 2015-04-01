@@ -91,12 +91,72 @@
 		
 		<div class="col-md-offset-2 col-md-6 submit-wrap">
 			<div contenteditable="true" class="submit-form" id="submit-form"></div>
-			<button class="btn btn-primary btn-sm submit-btn" id="launch">发射</button>
+			<div class="btn-group">
+			  <button type="button" class="btn btn-primary" id="launch">发射</button>
+			  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+			    <span class="caret"></span>
+			    <span class="sr-only">Toggle Dropdown</span>
+			  </button>
+			  <ul class="dropdown-menu hotkey-launch" role="menu">
+			  	<li class="active"><a href="javascript:;"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>不用快捷键</a></li>
+			    <li><a href="javascript:;"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>Enter&nbsp;键发射</a></li>
+			    <li><a href="javascript:;"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>Ctrl+Enter&nbsp;发射</a></li>
+			  </ul>
+			</div>
 <!-- 			<button class="btn btn-primary btn-sm submit-btn" id="close">关闭</button> -->
+		</div>
+		<div class="col-md-4 paopao-action">
+			<img src="application/public/images/paopao/35.png" class="img-responsive"/>
 		</div>
 	</div>
 </div>
-
+<div id="paopao-expression">
+	<img src="application/public/images/paopao/1.png">
+	<img src="application/public/images/paopao/2.png">
+	<img src="application/public/images/paopao/3.png">
+	<img src="application/public/images/paopao/4.png">
+	<img src="application/public/images/paopao/5.png">
+	<img src="application/public/images/paopao/6.png">
+	<img src="application/public/images/paopao/7.png">
+	<img src="application/public/images/paopao/8.png">
+	<img src="application/public/images/paopao/9.png">
+	<img src="application/public/images/paopao/10.png">
+	<img src="application/public/images/paopao/11.png">
+	<img src="application/public/images/paopao/12.png">
+	<img src="application/public/images/paopao/13.png">
+	<img src="application/public/images/paopao/14.png">
+	<img src="application/public/images/paopao/15.png">
+	<img src="application/public/images/paopao/16.png">
+	<img src="application/public/images/paopao/17.png">
+	<img src="application/public/images/paopao/18.png">
+	<img src="application/public/images/paopao/19.png">
+	<img src="application/public/images/paopao/20.png">
+	<img src="application/public/images/paopao/21.png">
+	<img src="application/public/images/paopao/22.png">
+	<img src="application/public/images/paopao/23.png">
+	<img src="application/public/images/paopao/24.png">
+	<img src="application/public/images/paopao/25.png">
+	<img src="application/public/images/paopao/26.png">
+	<img src="application/public/images/paopao/27.png">
+	<img src="application/public/images/paopao/28.png">
+	<img src="application/public/images/paopao/29.png">
+	<img src="application/public/images/paopao/30.png">
+	<img src="application/public/images/paopao/31.png">
+	<img src="application/public/images/paopao/32.png">
+	<img src="application/public/images/paopao/33.png">
+	<img src="application/public/images/paopao/34.png">
+	<img src="application/public/images/paopao/35.png">
+	<img src="application/public/images/paopao/36.png">
+	<img src="application/public/images/paopao/37.png">
+	<img src="application/public/images/paopao/38.jpg">
+	<img src="application/public/images/paopao/39.png">
+	<img src="application/public/images/paopao/40.png">
+	<img src="application/public/images/paopao/41.png">
+	<img src="application/public/images/paopao/42.png">
+	<img src="application/public/images/paopao/43.png">
+	<img src="application/public/images/paopao/44.png">
+	<img src="application/public/images/paopao/45.png">
+</div>
 
 <input type="hidden" id="socket-url" value="<?php echo $this->createUrl('talk')?>">
 <input type="hidden" id="user-id" value="<?php echo isset($userInfo['id']) ? $userInfo['id'] : ''?>">
@@ -299,6 +359,39 @@
 				return username;
 			}
 		}
+
+		$(".hotkey-launch").children("li").on("click", function(){
+			$(this).parent().children().removeClass("active");
+			$(this).addClass("active");
+		});
+
+		$(window).on("keydown", function(e){
+			if (document.activeElement.id == "submit-form" && e.keyCode == 13){
+				alert('ss');
+				e.stopPropagation();
+			}
+		});
+
+		var $paopaoAction = $(".paopao-action"),$paopaoWrap = $("#paopao-expression");
+		$paopaoAction.children(":first").on("mouseover", function(e){
+			var offset = $(this).offset();
+			var one = 32;
+			$paopaoWrap.css({
+				left: offset.left + one + 4,
+				top: offset.top,
+			}).fadeIn();
+		});
+
+		$paopaoWrap.on("mouseleave", function(){
+			console.log(this);
+			console.log("mouseleave");
+			$(this).fadeOut();
+		});
+
+		$paopaoWrap.on("click", "img", function(){
+			var imgHtml = $(this).prop("outerHTML");
+			$submitForm.append(imgHtml);
+		})
 		
 	})
 </script>
