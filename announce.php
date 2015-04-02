@@ -343,7 +343,11 @@ else
 
 
 //12、处理event事件，更新user，torrent，peer，snatch数据
-
+$debug = array();
+$debug['agent'] = $_GET['agent'];
+$debug['uploaded'] = $_GET['uploaded'];
+$debug['downloaded'] = $_GET['downloaded'];
+$debug['left'] = $_GET['left'];
 if (isset($_GET['event']))
 {
 	$updateTorrentSql = "UPDATE torrent SET ";//更新torrent数据
@@ -352,6 +356,8 @@ if (isset($_GET['event']))
 		case 'stopped'://停止一个任务、删除一个任务或者退出客户端，会有stopped事件，暂停不会触发
 			$sql = 'DELETE FROM peer WHERE user_id='.$userInfo['id'].' AND torrent_id='.$torrent['id'];//peer_id会变
 			execute($sql);//删除该peer
+			$debug['event'] = 'stopped';
+			$debug['sql'][] = $sql;
 // 			$sql = 'DELETE FROM snatch WHERE user_id='.$userInfo['id'].' AND torrent_id='.$torrent['id'].' AND complete_time=0';
 // 			execute($sql);//删除事先插入的未完成snatch
 			if ($isSeeder)
@@ -366,6 +372,7 @@ if (isset($_GET['event']))
 		case 'completed'://下载完成会友触发
  			//$sql = 'UPDATE snatch SET complete_time='.TIMENOW.',is_seeder=1 WHERE user_id='.$userInfo['id'].' AND torrent_id='.$torrent['id'].' AND complete_time=0';
 			//execute($sql);
+			$debug['event'] = 'completed';
  			$isCompleted = TRUE;//完成标记，后面连接到更新的字段中
 			$updateTorrentSql .= "finish_times=finish_times+1,seeder_count=seeder_count+1,leecher_count=leecher_count-1";//种子完成数加，做种数加1，下载数减1
 			break;
@@ -378,11 +385,16 @@ if (isset($_GET['event']))
 			{
 				$updateTorrentSql .= "leecher_count=leecher_count+1";
 			}
+			$debug['event'] = 'started';
 			$isStarted = TRUE;
 			break;//插入peer和snatch在下边
+		default:
+			$debug['event'] = '';
+			break;
 	}
 	$updateTorrentSql .= " WHERE id=".$torrent['id'];
 	execute($updateTorrentSql);
+	$debug['sql'][] = $updateTorrentSql;
 }
 //判断用户是否可连接
 $connectable = fsockopen($ip, $_GET['port'], $errno, $errstr, 1);
@@ -416,13 +428,14 @@ else
 }
 $updateUserSql .= ", connectable=$connectable WHERE id=".$userInfo['id'];
 execute($updateUserSql);
-
+$debug['sql'][] = $updateUserSql;
 //只要不是stopped（会删除peer）,都要更新peer。peer表和snatch表基本一致，peer多了passkey、is_seeder两个字段而已。UPDATE：保持一致吧，是否完成通过is_seeder判断，对了，多一个complete_time（完成时间）
 $isSeeder = (int)$isSeeder;
 $timenow = TIMENOW;
 //检查是否已经存在 
 $checkSnatchSql = 'SELECT * FROM snatch WHERE user_id='.$userInfo['id'].' AND torrent_id='.$torrent['id'].' AND complete_time=0';
 $snatch = query($checkSnatchSql);
+$debug['sql'][] = $checkSnatchSql;
 if (!empty($snatch))
 {
 	$hasSnatch = TRUE;
@@ -459,6 +472,7 @@ if (!isset($_GET['event']) || $_GET['event'] !== 'stopped')
 		$sql .= " WHERE torrent_id={$torrent['id']} AND user_id={$userInfo['id']}";
 	}
 	execute($sql);
+	$debug['sql'][] = $sql;
 }
 
 
@@ -480,7 +494,8 @@ if (!$isSeeder || ($isSeeder && isset($isCompleted)))//未完成下载前的一�
 			$sql = "UPDATE snatch SET peer_id='{$_GET['peer_id']}',ip='$ip',port={$_GET['port']},uploaded=uploaded+$uploadThis,downloaded=downloaded+$downloadThis,`left`={$_GET['left']},is_seeder=$isSeeder,last_report_time=this_report_time,this_report_time=$timenow,connectable=$connectable,agent='$agent',upload_speed=$uploadSpeed,download_speed=$downloadSpeed,connect_time=connect_time+$duration";
 			$sql .= " $snatchWhere AND complete_time=0";
 		}
-		execute($sql);	
+		execute($sql);
+		$debug['sql'][] = $sql;
 	}
 	else
 	{
@@ -495,6 +510,7 @@ if (!$isSeeder || ($isSeeder && isset($isCompleted)))//未完成下载前的一�
 				$sql = "UPDATE snatch SET peer_id='{$_GET['peer_id']}',ip='$ip',port={$_GET['port']},uploaded=uploaded+$uploadThis,downloaded=downloaded+$downloadThis,`left`={$_GET['left']},is_seeder=$isSeeder,last_report_time=this_report_time,this_report_time=$timenow,connectable=$connectable,agent='$agent',upload_speed=$uploadSpeed,download_speed=$downloadSpeed";
 				$sql .= ",connect_time=0,complete_time=$timenow $snatchWhere AND complete_time=0";
 				execute($sql);
+				$debug['sql'][] = $sql;
 			}
 			else
 			{
@@ -502,9 +518,11 @@ if (!$isSeeder || ($isSeeder && isset($isCompleted)))//未完成下载前的一�
 				$completeSnatch = $completeSnatch[0];
 				$sql = "DELETE FROM snatch WHERE id=".$completeSnatch['id'];
 				execute($sql);//删除旧记录
+				$debug['sql'][] = $sql;
 				$sql = "UPDATE snatch SET peer_id='{$_GET['peer_id']}',ip='$ip',port={$_GET['port']},uploaded=uploaded+$uploadThis+{$completeSnatch['uploaded']},downloaded=downloaded+$downloadThis+{$completeSnatch['downloaded']},`left`={$_GET['left']},is_seeder=$isSeeder,last_report_time=this_report_time,this_report_time=$timenow,connectable=$connectable,agent='$agent',upload_speed=$uploadSpeed,download_speed=$downloadSpeed,connect_time={$completeSnatch['connect_time']},complete_time={$completeSnatch['complete_time']}";
 				$sql .= " $snatchWhere AND complete_time=0";
 				execute($sql);
+				$debug['sql'][] = $sql;
 			}
 		}
 		else//未完成，这次过后还没完成
@@ -512,6 +530,7 @@ if (!$isSeeder || ($isSeeder && isset($isCompleted)))//未完成下载前的一�
 			$sql = "UPDATE snatch SET peer_id='{$_GET['peer_id']}',ip='$ip',port={$_GET['port']},uploaded=uploaded+$uploadThis,downloaded=downloaded+$downloadThis,`left`={$_GET['left']},is_seeder=$isSeeder,last_report_time=this_report_time,this_report_time=$timenow,connectable=$connectable,agent='$agent',upload_speed=$uploadSpeed,download_speed=$downloadSpeed,connect_time=connect_time+$duration";
 			$sql .= " $snatchWhere AND complete_time = 0";
 			execute($sql);
+			$debug['sql'][] = $sql;
 		}
 	}
 }
@@ -520,10 +539,15 @@ elseif ($isSeeder && !isset($isCompleted))//完成下载后的交互
 	$sql = "UPDATE snatch SET peer_id='{$_GET['peer_id']}',ip='$ip',port={$_GET['port']},uploaded=uploaded+$uploadThis,last_report_time=this_report_time,this_report_time=$timenow,connectable=$connectable,agent='$agent',connect_time=connect_time+$duration";
 	$sql .= " $snatchWhere AND complete_time > 0";
 	execute($sql);
+	$debug['sql'][] = $sql;
 }
 
 
-
+$fopen = fopen('debug_log', 'a');
+fwrite($fopen, '**************************END****'.microtime(true).'----'.(microtime(true)-START).'*******************************'."\r\n");
+fwrite($fopen, serialize($debug));
+fclose($fopen);
+unset($fopen);
 
 $fopen = fopen('sql_log', 'a');
 fwrite($fopen, '**************************END****'.microtime(true).'----'.(microtime(true)-START).'*******************************'."\r\n");
