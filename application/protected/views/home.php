@@ -477,9 +477,19 @@
 		});
 
 		$paopaoWrap.on("click", "img", function(){
-			var imgHtml = $(this).prop("outerHTML");
+// 			var imgHtml = $(this).prop("outerHTML");
+// 			var sel = window.getSelection(), range = document.createRange();
+// 			var focusNode = sel.focusNode, focusOffset = sel.focusOffset;
+// 			console.log(focusOffset);
 			$submitForm.append(imgHtml).focus();
-		})
+			//range.setStart(focusNode, focusOffset+1);
+// 			console.log(focusNode.length);
+		});
+
+// 		$submitForm.on("click", function(){
+// 			var sel = document.selection.createRange();
+// 			sel.setStart()
+// 		})
 		
 	})
 </script>
