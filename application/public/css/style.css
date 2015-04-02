@@ -43,7 +43,7 @@ body{-background-image:url('../images/light_grey.png');-font-family: Tahoma,"Mic
 .hotkey-launch li.active span{display: inline-block}
 .paopao-action img, #paopao-expression img{max-width:32px;cursor: pointer}
 .paopao-action img{margin-top: 30px}
-#paopao-expression{width: 430px;position: absolute;display: none}
+#paopao-expression{width: 430px;position: absolute;display: none; padding: 50px; -border: 1px solid #e69}
 #torrent-list-table {margin-top: 50px;}
 
 #torrent-list-table tr th:nth-of-type(1){width:50%;text-align:left}

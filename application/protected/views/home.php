@@ -327,14 +327,25 @@
 		}
 
 		$("#launch").click(function(e){
-			var text = $("#submit-form").text().trim();
-			if (text == ""){
+			var html = $submitForm.html().trim();
+			if (html == ""){
 				alert("请输入内容");
 				return;
-			};
-			var send = JSON.stringify({type: TYPE_MESSAGE, msg: text, username: username});
+			}
+			var checkIt = '<img src="application/public/images/paopao/"';
+			if (checkIt.indexOf(html) == -1){
+				html = html.replace(/<div><br><\/div>/gi, "");
+				if (html.trim() == ""){
+					alert("请输入内容");
+					return;
+				}
+			}
+			html = html.replace(/<div><br><\/div>/gi, "");
+			console.log(html);
+			var send = JSON.stringify({type: TYPE_MESSAGE, msg: html, username: username});
 			socket.send(send);
-			$submitForm.html("");
+			$submitForm.empty();
+			e.stopPropagation();
 		});
 
 		$("#close").click(function(e){
@@ -360,15 +371,23 @@
 			}
 		}
 
-		$(".hotkey-launch").children("li").on("click", function(){
+		var $hotkeyLaunch = $(".hotkey-launch");
+		$hotkeyLaunch.children("li").on("click", function(){
 			$(this).parent().children().removeClass("active");
 			$(this).addClass("active");
 		});
 
 		$(window).on("keydown", function(e){
 			if (document.activeElement.id == "submit-form" && e.keyCode == 13){
-				alert('ss');
-				e.stopPropagation();
+				var hotType = $hotkeyLaunch.children(".active").index();
+				if (hotType == 0){
+					return;
+				}else if(hotType == 1){
+					//Enter发射
+					$("#launch").click();
+				}else if(hotType == 2 && e.ctrlKey){
+					$("#launch").click();
+				}
 			}
 		});
 
@@ -377,20 +396,19 @@
 			var offset = $(this).offset();
 			var one = 32;
 			$paopaoWrap.css({
-				left: offset.left + one + 4,
-				top: offset.top,
+				left: offset.left + one - 50,
+				top: offset.top - 50,
 			}).fadeIn();
 		});
 
-		$paopaoWrap.on("mouseleave", function(){
-			console.log(this);
-			console.log("mouseleave");
-			$(this).fadeOut();
+		$paopaoWrap.on("mouseleave", function(e){
+			e.stopPropagation();
+			$paopaoWrap.fadeOut();
 		});
 
 		$paopaoWrap.on("click", "img", function(){
 			var imgHtml = $(this).prop("outerHTML");
-			$submitForm.append(imgHtml);
+			$submitForm.append(imgHtml).focus();
 		})
 		
 	})
