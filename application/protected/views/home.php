@@ -111,6 +111,75 @@
 	</div>
 </div>
 <div id="paopao-expression">
+ <div role="tabpanel">
+
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#tieba" aria-controls="tieba" role="tab" data-toggle="tab">百度贴吧</a></li>
+    <li role="presentation"><a href="#qq" aria-controls="qq" role="tab" data-toggle="tab">QQ表情</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="tieba">
+    	<img src="application/public/images/paopao/1.png">
+		<img src="application/public/images/paopao/2.png">
+		<img src="application/public/images/paopao/3.png">
+		<img src="application/public/images/paopao/4.png">
+		<img src="application/public/images/paopao/5.png">
+		<img src="application/public/images/paopao/6.png">
+		<img src="application/public/images/paopao/7.png">
+		<img src="application/public/images/paopao/8.png">
+		<img src="application/public/images/paopao/9.png">
+		<img src="application/public/images/paopao/10.png">
+		<img src="application/public/images/paopao/11.png">
+		<img src="application/public/images/paopao/12.png">
+		<img src="application/public/images/paopao/13.png">
+		<img src="application/public/images/paopao/14.png">
+		<img src="application/public/images/paopao/15.png">
+		<img src="application/public/images/paopao/16.png">
+		<img src="application/public/images/paopao/17.png">
+		<img src="application/public/images/paopao/18.png">
+		<img src="application/public/images/paopao/19.png">
+		<img src="application/public/images/paopao/20.png">
+		<img src="application/public/images/paopao/21.png">
+		<img src="application/public/images/paopao/22.png">
+		<img src="application/public/images/paopao/23.png">
+		<img src="application/public/images/paopao/24.png">
+		<img src="application/public/images/paopao/25.png">
+		<img src="application/public/images/paopao/26.png">
+		<img src="application/public/images/paopao/27.png">
+		<img src="application/public/images/paopao/28.png">
+		<img src="application/public/images/paopao/29.png">
+		<img src="application/public/images/paopao/30.png">
+		<img src="application/public/images/paopao/31.png">
+		<img src="application/public/images/paopao/32.png">
+		<img src="application/public/images/paopao/33.png">
+		<img src="application/public/images/paopao/34.png">
+		<img src="application/public/images/paopao/35.png">
+		<img src="application/public/images/paopao/36.png">
+		<img src="application/public/images/paopao/37.png">
+		<img src="application/public/images/paopao/38.jpg">
+		<img src="application/public/images/paopao/39.png">
+		<img src="application/public/images/paopao/40.png">
+		<img src="application/public/images/paopao/41.png">
+		<img src="application/public/images/paopao/42.png">
+		<img src="application/public/images/paopao/43.png">
+		<img src="application/public/images/paopao/44.png">
+		<img src="application/public/images/paopao/45.png">
+    </div>
+    <div role="tabpanel" class="tab-pane" id="qq">
+    	<?php 
+    		for ($i = 1; $i <= 112; $i++)
+    		{
+    			echo '<img src="application/public/images/qqbig/'.$i.'.gif">';
+    		}
+    	?>
+    </div>
+  </div>
+
+</div>
+<!-- 
 	<img src="application/public/images/paopao/1.png">
 	<img src="application/public/images/paopao/2.png">
 	<img src="application/public/images/paopao/3.png">
@@ -156,6 +225,7 @@
 	<img src="application/public/images/paopao/43.png">
 	<img src="application/public/images/paopao/44.png">
 	<img src="application/public/images/paopao/45.png">
+ -->
 </div>
 
 <input type="hidden" id="socket-url" value="<?php echo $this->createUrl('talk')?>">
