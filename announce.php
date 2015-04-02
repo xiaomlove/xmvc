@@ -344,7 +344,7 @@ else
 
 //12、处理event事件，更新user，torrent，peer，snatch数据
 $debug = array();
-$debug['agent'] = $_GET['agent'];
+$debug['agent'] = $agent;
 $debug['uploaded'] = $_GET['uploaded'];
 $debug['downloaded'] = $_GET['downloaded'];
 $debug['left'] = $_GET['left'];
