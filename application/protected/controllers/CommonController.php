@@ -67,14 +67,14 @@ class CommonController extends Controller
 			}
 			else
 			{
-				if (!App::ins()->user->isLogin())
-				{
-					$this->redirect('index/login');
-				}
-				else
-				{
+//				if (!App::ins()->user->isLogin())
+//				{
+//					$this->redirect('index/login');
+//				}
+//				else
+//				{
 					die('没有该权限');
-				}
+//				}
 			}
 		}
 	}
