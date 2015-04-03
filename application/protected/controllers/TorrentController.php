@@ -256,7 +256,13 @@ class TorrentController extends CommonController
 			$return = array('code' => 1);
 			if ($_GET['seederCount'] > 0)
 			{
-				$sql = "SELECT peer.*,user.name as username FROM peer LEFT JOIN user ON peer.user_id=user.id WHERE peer.torrent_id={$_GET['id']} AND peer.is_seeder=1 ORDER BY peer.uploaded DESC";
+				//找seeder，做种者，是要下载完成了的
+				$sql = "SELECT peer.id as in_peer_id,snatch.*,user.name as username FROM peer 
+						LEFT JOIN snatch ON peer.torrent_id=snatch.torrent_id AND peer.user_id=snatch.user_id 
+						LEFT JOIN user ON peer.user_id=user.id 
+						WHERE peer.torrent_id={$_GET['id']} AND peer.is_seeder=1 AND snatch.complete_time > 0 
+						ORDER BY peer.uploaded DESC";
+				
 				$seederList = $model->findBySql($sql);
 				$seederCount = count($seederList);
 				if ($seederCount != $_GET['seederCount'])
@@ -275,7 +281,13 @@ class TorrentController extends CommonController
 			}
 			if ($_GET['leecherCount'] > 0)
 			{
-				$sql = "SELECT peer.*,user.name as username FROM peer LEFT JOIN user ON peer.user_id=user.id WHERE peer.torrent_id={$_GET['id']} AND peer.is_seeder=0 ORDER BY peer.downloaded DESC";
+				//找leecher，下载者，没下载完成的
+				$sql = "SELECT peer.id as in_peer_id,snatch.*,user.name as username FROM peer 
+						LEFT JOIN snatch ON peer.torrent_id=snatch.torrent_id AND peer.user_id=snatch.user_id 
+						LEFT JOIN user ON peer.user_id=user.id 
+						WHERE peer.torrent_id={$_GET['id']} AND peer.is_seeder=0 AND snatch.complete_time = 0 
+						ORDER BY peer.uploaded DESC";
+				
 				$leecherList = $model->findBySql($sql);
 				$leecherCount = count($leecherList);
 				if ($leecherCount != $_GET['leecherCount'])
