@@ -549,8 +549,8 @@ if (!$isSeeder || ($isSeeder && isset($isCompleted)))//未完成下载前的一�
 }
 elseif ($isSeeder && !isset($isCompleted))//完成下载后的交互
 {
-	//先看有没有，做种者第一次交互是没有数据的。complete_time也为0，以此区分取完成情况
-	$checkSeederSnatchSql = "SELECT id FROM snatch $snatchWhere AND is_seeder=1 AND complete_time=0 LIMIT 1";
+	//先看有没有，做种者第一次交互是没有数据的。发种者complete_time为0，以此区分取完成情况
+	$checkSeederSnatchSql = "SELECT id FROM snatch $snatchWhere AND is_seeder=1 LIMIT 1";
 	$seederSnatch = query($checkSeederSnatchSql);
 	if (empty($seederSnatch))
 	{
