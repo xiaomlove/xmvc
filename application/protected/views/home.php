@@ -1,3 +1,6 @@
+<style>
+body{margin-bottom: 280px}
+</style>
 <div class="row page-header" style="margin-top: 20px;text-align: center">
 	<div class="welcome"><h2>欢迎光临TinyHD</h2></div>
 	<div class="userbox">

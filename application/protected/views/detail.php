@@ -21,7 +21,7 @@
           </tr>
           <tr>
             <td>行为</td>
-            <td><a href="javascript:;" class="text-danger">删除种子</a><a href="<?php echo $this->createUrl('torrent/edit', array('id' => $torrent['id']))?>" class="text-primary">编辑种子</a><a href="javascript:;" class="text-warning">举报种子</a></td>
+            <td><a href="javascript:;" class="text-danger">删除种子</a><a href="<?php echo App::ins()->user->getId() == $torrent['user_id'] ? $this->createUrl('torrent/edit', array('id' => $torrent['id'])) : '#'?>" class="text-primary">编辑种子</a><a href="javascript:;" class="text-warning">举报种子</a></td>
           </tr>
           <tr>
             <td>简介</td>
