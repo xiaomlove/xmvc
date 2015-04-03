@@ -83,6 +83,8 @@ class UserModel extends Model
 			$user->$field = $value;
 		}
 		$user->add_time = time();
+		$user->role_level = 1;
+		$user->role_name = '幼儿园';
 		$result = $user->save();
 		return $result;
 		
