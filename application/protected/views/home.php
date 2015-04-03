@@ -324,7 +324,7 @@ body{margin-bottom: 280px}
 		}
 		
 		socket.onopen = function(e){
-			console.log("socket open.");
+			//console.log("socket open.");
 			$connect.find(".info").html("socket open，正在连接...");
 			$connect.find(".time").html((new Date()).toLocaleString());
 			$talkContent.append($connect.html());
@@ -338,12 +338,12 @@ body{margin-bottom: 280px}
 				$connect.find(".time").html(data.time);
 				$talkContent.append($connect.html());
 				//发送请求登陆信息
-				console.log("handshake success ask for join in"+username);
+				//console.log("handshake success ask for join in"+username);
 				var send = {type: TYPE_JOIN, userinfo: {userid: userid, username: username}};
 				socket.send(JSON.stringify(send));
 			}else if (data.type == TYPE_JOIN){
 // 				//加入成功，返回在线用户列表
-				console.log("在线用户列表已返回："+data.msg);
+				//console.log("在线用户列表已返回："+data.msg);
 				var userList = JSON.parse(data.msg);
 				var HTML = [];
 				for( var i in userList){
@@ -352,26 +352,26 @@ body{margin-bottom: 280px}
 				$userList.append(HTML.join(""));
 				$userCount.html(data.count);
 			}else if(data.type == TYPE_MESSAGE){
-				console.log("正常消息："+data.msg);
+				//console.log("正常消息："+data.msg);
 				$message.find(".username").html(data.username);
 				$message.find(".time").html(data.time);
 				$message.find(".message-content").html(data.msg);
 				append($message.html());
 				
 			}else if(data.type == TYPE_DISCONNECT){
-				console.log("用户退出："+data.msg.username);
+				//console.log("用户退出："+data.msg.username);
 				$leave.find(".username").html(data.msg.username);
 				$leave.find(".time").html(data.time);
 				append($leave.html());
 				$userList.find("li[data-id="+data.msg.userid+"]").remove();
 				$userCount.html(function(index, text){
-					console.log(text);
+					//console.log(text);
 					return parseInt(text)-1;
 				})
 				
 			}else if(data.type == TYPE_LOGIN){
 				//用户登陆成功
-				console.log(data.msg);
+				//console.log(data.msg);
 				$join.find(".username").html(data.msg.username);
 				$join.find(".time").html(data.time);
 				append($join.html());
@@ -393,7 +393,7 @@ body{margin-bottom: 280px}
 		}
 
 		socket.onclose = function(e){
-			console.log("close:"+e.data);
+			//console.log("close:"+e.data);
 			$connect.find(".info").html("已断开服务器连接...");
 			$connect.find(".time").html((new Date()).toLocaleString());
 			append($connect.html());
@@ -414,7 +414,7 @@ body{margin-bottom: 280px}
 				}
 			}
 			html = html.replace(/<div><br><\/div>/gi, "");
-			console.log(html);
+			//console.log(html);
 			var send = JSON.stringify({type: TYPE_MESSAGE, msg: html, username: username});
 			socket.send(send);
 			$submitForm.empty();
