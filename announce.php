@@ -478,6 +478,7 @@ if (!isset($_GET['event']) || $_GET['event'] !== 'stopped')
 
 //处理snatch数据。一个peer对应一个snatch，一个snatch可对应多个peer。下载中的peer对应一个complete_time=0的snatch，完成的peer对应同一个complete_time>0的snatch。做种可以有多处。多处做种时更新同一个snatch
 $snatchWhere = "WHERE torrent_id={$torrent['id']} AND user_id={$userInfo['id']}";
+
 if (!$isSeeder || ($isSeeder && isset($isCompleted)))//未完成下载前的一次交互（含最后完成那一次）
 {
 	if (isset($isStarted))
@@ -514,7 +515,7 @@ if (!$isSeeder || ($isSeeder && isset($isCompleted)))//未完成下载前的一�
 		//未完成，这次过后就完成了
 		if (isset($isCompleted) && $isCompleted)
 		{
-			$checkCompleteSnatchSql = "SELECT * FROM snatch $snatchWhere AND complete_time > 0 LIMIT 1";
+			$checkCompleteSnatchSql = "SELECT * FROM snatch $snatchWhere AND is_seeder=1 AND complete_time > 0 LIMIT 1";
 			$completeSnatch = query($checkCompleteSnatchSql);
 			if (empty($completeSnatch))
 			{
@@ -548,8 +549,18 @@ if (!$isSeeder || ($isSeeder && isset($isCompleted)))//未完成下载前的一�
 }
 elseif ($isSeeder && !isset($isCompleted))//完成下载后的交互
 {
-	$sql = "UPDATE snatch SET peer_id='{$_GET['peer_id']}',ip='$ip',port={$_GET['port']},uploaded=uploaded+$uploadThis,last_report_time=this_report_time,this_report_time=$timenow,connectable=$connectable,agent='$agent',connect_time=connect_time+$duration";
-	$sql .= " $snatchWhere AND complete_time > 0";
+	//先看有没有，做种者第一次交互是没有数据的。complete_time也为0，以此区分取完成情况
+	$checkSeederSnatchSql = "SELECT id FROM snatch $snatchWhere AND is_seeder=1 AND complete_time=0 LIMIT 1";
+	$seederSnatch = query($checkSeederSnatchSql);
+	if (empty($seederSnatch))
+	{
+		$sql = 'INSERT INTO snatch (torrent_id, torrent_size, peer_id, ip, port, uploaded, downloaded, `left`, is_seeder, start_time, last_report_time, this_report_time, user_id, connectable, agent, passkey, upload_speed, download_speed, connect_time, complete_time) VALUES (';
+		$sql .= "{$torrent['id']}, {$torrent['size']}, '{$_GET['peer_id']}', '$ip', {$_GET['port']}, $uploadThis, $downloadThis, {$_GET['left']}, $isSeeder, $timenow, $timenow, $timenow, {$userInfo['id']}, $connectable, '$agent', '{$_GET['passkey']}', $uploadSpeed, $downloadSpeed, $duration, 0)";
+	}
+	else
+	{
+		$sql = "UPDATE snatch SET peer_id='{$_GET['peer_id']}',ip='$ip',port={$_GET['port']},uploaded=uploaded+$uploadThis,last_report_time=this_report_time,this_report_time=$timenow,connectable=$connectable,agent='$agent',connect_time=connect_time+$duration WHERE id=".$seederSnatch[0]['id'];
+	}
 	execute($sql);
 	$debug['sql'][] = $sql;
 }

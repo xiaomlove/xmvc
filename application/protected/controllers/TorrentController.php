@@ -260,8 +260,8 @@ class TorrentController extends CommonController
 				$sql = "SELECT peer.id as in_peer_id,snatch.*,user.name as username FROM peer 
 						LEFT JOIN snatch ON peer.torrent_id=snatch.torrent_id AND peer.user_id=snatch.user_id 
 						LEFT JOIN user ON peer.user_id=user.id 
-						WHERE peer.torrent_id={$_GET['id']} AND peer.is_seeder=1 AND snatch.complete_time > 0 
-						ORDER BY peer.uploaded DESC";
+						WHERE peer.torrent_id={$_GET['id']} AND snatch.torrent_id={$_GET['id']} AND peer.is_seeder=1 AND snatch.is_seeder=1  
+						ORDER BY snatch.uploaded DESC";
 				
 				$seederList = $model->findBySql($sql);
 				$seederCount = count($seederList);
@@ -285,7 +285,7 @@ class TorrentController extends CommonController
 				$sql = "SELECT peer.id as in_peer_id,snatch.*,user.name as username FROM peer 
 						LEFT JOIN snatch ON peer.torrent_id=snatch.torrent_id AND peer.user_id=snatch.user_id 
 						LEFT JOIN user ON peer.user_id=user.id 
-						WHERE peer.torrent_id={$_GET['id']} AND peer.is_seeder=0 AND snatch.complete_time = 0 
+						WHERE peer.torrent_id={$_GET['id']} AND snatch.torrent_id={$_GET['id']} AND peer.is_seeder=0 AND snatch.is_seeder=0 AND snatch.complete_time=0  
 						ORDER BY peer.uploaded DESC";
 				
 				$leecherList = $model->findBySql($sql);
