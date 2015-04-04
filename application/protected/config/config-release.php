@@ -35,6 +35,7 @@ return array(
 			'comment/list'=>'comment/list',
 			'addbookmark'=>'bookmark/add',
 			'profile'=>'user/profile',
+			'about'=>'index/about',
 			'user/name/<name:.+>/age/<age:\d+>'=>'user/filter',
 			'user/sex/<sex:.+>'=>'user/filter',
 			'user/year/<year>'=>array('user/filter', 'urlSuffix'=>'.shtml'),
