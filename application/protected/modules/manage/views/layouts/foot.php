@@ -16,13 +16,13 @@
 var $logout = $("#logout");
 $logout.on("click", function(e){
 	$.ajax({
-		url: "logout",
+		url: "<?php echo $this->createUrl('index/logout')?>",
 		dataType: "json",
 		type: "POST",
 		beforeSend: function(){$logout.attr("disabled", "disabled").text("退出中...")},
 		success: function(data){
 			if(data.code === 1){
-				window.location.href="login.html";
+				window.location.href="<?php echo $this->createUrl('index/login')?>";
 			}else{
 				$logout.text(data.msg);
 			}

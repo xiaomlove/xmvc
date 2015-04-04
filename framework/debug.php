@@ -1,6 +1,4 @@
 <?php
 
-$arr = array('Df', 'YY');
-shuffle($arr);
-
-var_dump($arr);
+$a = 'aa.relase-min.js';
+var_dump(pathinfo($a));

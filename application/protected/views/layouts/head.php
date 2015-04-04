@@ -9,7 +9,7 @@
 
   <link rel="stylesheet" href="<?php echo App::ins()->request->getBaseUrl()?>application/public/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="<?php echo App::ins()->request->getBaseUrl()?>application/public/css/style.css">
-  <script type="text/javascript" src="<?php echo App::ins()->request->getBaseUrl()?>application/public/js/config.js"></script>
+  <?php echo $this->getScript('application/public/js/config.js', FALSE)?>
   <!--[if lt IE 9]>
   <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
   <script src="<?php echo App::ins()->request->getBaseUrl()?>application/public/js/respond.js"></script>

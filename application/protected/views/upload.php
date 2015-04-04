@@ -66,7 +66,7 @@
       </form>
     </div>
 
-  <script src="<?php echo App::ins()->request->getBaseUrl()?>application/public/lib/ueditor/ueditor.config2.js"></script>
+  <?php echo $this->getScript('application/public/lib/ueditor/ueditor.config2.js')?>
   <script src="<?php echo App::ins()->request->getBaseUrl()?>application/public/lib/ueditor/ueditor.all.min.js"></script>
   <script type="text/javascript">
   var ue = UE.getEditor('uecontainer');

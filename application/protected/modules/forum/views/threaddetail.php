@@ -405,7 +405,7 @@
 <input type="hidden" id="add-reply-reply" value="<?php echo $this->createUrl('forum/replyreply/add')?>">
 <input type="hidden" id="view-more" value="<?php echo $this->createUrl('forum/replyreply/list')?>">
 
-  <script src="<?php echo App::ins()->request->getBaseUrl()?>application/public/lib/ueditor/ueditor.config.thread-detail.js"></script>
+<?php echo $this->getScript('application/public/lib/ueditor/ueditor.config.thread-detail.js')?>
   <script src="<?php echo App::ins()->request->getBaseUrl()?>application/public/lib/ueditor/ueditor.all.min.js"></script>
   <script type="text/javascript">
   var ue = UE.getEditor('uecontainer');

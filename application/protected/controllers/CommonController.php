@@ -67,14 +67,14 @@ class CommonController extends Controller
 			}
 			else
 			{
-//				if (!App::ins()->user->isLogin())
-//				{
-//					$this->redirect('index/login');
-//				}
-//				else
-//				{
+				if (!App::ins()->user->isLogin())
+				{
+					$this->redirect('index/login');
+				}
+				else
+				{
 					die('没有该权限');
-//				}
+				}
 			}
 		}
 	}
@@ -463,5 +463,25 @@ class CommonController extends Controller
 			}
 		}
 		return $out;
+	}
+	
+	protected function getScript($file, $release = TRUE)
+	{
+		if (!is_string($file) || empty($file))
+		{
+			return '';
+		}
+		$baseUrl = App::ins()->request->getBaseUrl();
+		$file = trim($file, '/');
+		$pathinfo = pathinfo($file);
+		if (defined('MODE') && MODE == 'RELEASE' && $release)
+		{
+			$src = $baseUrl.$pathinfo['filename'].'-release.'.$pathinfo['extension'];
+		}
+		else
+		{
+			$src = $baseUrl.$file;
+		}
+		echo '<script src="'.$src.'"></script>';
 	}
 }
