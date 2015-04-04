@@ -65,9 +65,16 @@ function denyBrowser()
  * 创建pdo对象，连接数据库
  * Enter description here ...
  */
-function connectDB($config)
+function connectDB()
 {
-	//$config = require 'application/protected/config/config.php';
+	if (defined('MODE') && MODE === 'RELEASE')
+	{
+		$config = require 'application/protected/config/config-release.php';
+	}
+	else
+	{
+		$config = require 'application/protected/config/config.php';
+	}
 	$dbConfig = $config['database'];
 	try
 	{

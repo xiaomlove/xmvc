@@ -125,15 +125,8 @@ if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === FALSE)
 }
 
 //4、常规检测完毕，引入配置文件，连接数据库，定义增删改、查函数
-if (defined('MODE') && MODE === 'RELEASE')
-{
-	$config = require 'application/protected/config/config-release.php';
-}
-else
-{
-	$config = require 'application/protected/config/config.php';
-}
-$pdo = connectDB($config);
+
+$pdo = connectDB();
 
 //5、验证passkey，获得个人信息
 $sql = 'SELECT id, downloaded, uploaded, seed_time, leech_time, is_banned, is_hang_up, use_banned_client FROM user WHERE passkey=:passkey LIMIT 1';

@@ -1,5 +1,8 @@
 <?php
 define('DEBUG', TRUE);
+//define('MODE', 'RELEASE');
+
+
 if (defined('DEBUG') && DEBUG)
 {
 	error_reporting(E_ALL | E_STRICT);
