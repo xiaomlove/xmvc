@@ -30,10 +30,10 @@ define('TIMENOW', $_SERVER['REQUEST_TIME']);
 require 'framework/lib/announce_functions.php';
 
 //1、检查参数是否齐全以及合法，$_GET传递过来的都是字符串类型
-$fo = fopen('get', 'a');
-fwrite($fo, serialize($_GET));
-fclose($fo);
-unset($fo);
+// $fo = fopen('get', 'a');
+// fwrite($fo, serialize($_GET));
+// fclose($fo);
+// unset($fo);
 if (!isset($_GET['passkey']) || strlen($_GET['passkey']) !== 32)
 {
 	error('error passkey');
@@ -402,6 +402,10 @@ if (isset($_GET['event']))
 $connectable = fsockopen($ip, $_GET['port'], $errno, $errstr, 1);
 if ($connectable === FALSE)
 {
+	$fopen = fopen('debug_log', 'a');
+	fwrite($fopen, 'fsockopen '.$ip.'--'.$_GET['port']."  not connectable\r\n");
+	fclose($fopen);
+	unset($fopen);
 	$connectable = 0;
 }
 else 
@@ -568,10 +572,10 @@ elseif ($isSeeder && !isset($isCompleted))//完成下载后的交互
 }
 
 
-$fopen = fopen('debug_log', 'a');
-fwrite($fopen, serialize($debug)."\r\n");
-fclose($fopen);
-unset($fopen);
+// $fopen = fopen('debug_log', 'a');
+// fwrite($fopen, serialize($debug)."\r\n");
+// fclose($fopen);
+// unset($fopen);
 
 $fopen = fopen('sql_log', 'a');
 fwrite($fopen, '**************************END****'.microtime(true).'----'.(microtime(true)-START).'*******************************'."\r\n");
