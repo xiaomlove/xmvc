@@ -3,7 +3,7 @@
 #result-msg {margin-right: 10px}
 
 #main-nav {margin-top: 3%}
-#main-nav li{width: 16.5%;text-align: center}
+#main-nav li{width: 14%;text-align: center}
 #main-nav li.user-box a{display: inline-block;padding-left: 0;cursor: pointer}
 #main-nav li.user-box a:focus{outline: 0}
 body{-background-image:url('../images/light_grey.png');-font-family: Tahoma,"Microsoft Yahei", sans-serif;}

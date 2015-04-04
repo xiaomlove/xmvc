@@ -14,6 +14,7 @@
         <?php else:?>
         <li class="user-box"><a href=""><?php echo App::ins()->user->getName()?></a><a href="<?php echo $this->createUrl('index/login')?>">(登陆)</a></li>
         <?php endIf?>
+        <li role="presentation" <?php if(CONTROLLER === 'Index' && ACTION === 'About') echo "class=\"active\""?>><a href="<?php echo $this->createUrl('index/about')?>">关于</a></li>
       </ul>
     </div>
 	<h3 class="page-header" id="forum-nav" style="text-align: center">

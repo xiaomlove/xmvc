@@ -2,7 +2,7 @@
 class IndexController extends CommonController
 {
 	public $layout = 'main';
-	public $admitActions = array('CheckRegister', 'CheckLogin', 'Logout', 'GetIpInfo', 'Ueditor', 'Error');
+	public $admitActions = array('CheckRegister', 'CheckLogin', 'Logout', 'GetIpInfo', 'Ueditor', 'Error', 'About');
 	
 	public function actionIndex()//action不接收参数运行，参数通过$_GET等获得
 	{	
@@ -166,6 +166,12 @@ class IndexController extends CommonController
 	public function actionTalk()
 	{
 		
+	}
+	
+	public function actionAbout()
+	{
+		$this->layout = 'tinypt';
+		echo $this->render('about');
 	}
 	
 	
