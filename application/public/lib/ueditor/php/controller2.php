@@ -4,8 +4,15 @@
 //date_default_timezone_set("Asia/chongqing");
 //error_reporting(E_ERROR);
 //header("Content-Type: text/html; charset=utf-8");
+if (defined('MODE') && MODE === 'RELEASE')
+{
+	$CONFIG = json_decode(preg_replace("/\/\*[\s\S]+?\*\//", "", file_get_contents($path."config2-release.json")), true);
+}
+else 
+{
+	$CONFIG = json_decode(preg_replace("/\/\*[\s\S]+?\*\//", "", file_get_contents($path."config2.json")), true);
+}
 
-$CONFIG = json_decode(preg_replace("/\/\*[\s\S]+?\*\//", "", file_get_contents($path."config2.json")), true);
 $action = $_GET['action'];
 
 switch ($action) {

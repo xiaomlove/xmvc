@@ -85,6 +85,7 @@ class UserModel extends Model
 		$user->add_time = time();
 		$user->role_level = 1;
 		$user->role_name = '幼儿园';
+		$user->avatar_url = 'application/public/images/avatar.jpg';
 		$result = $user->save();
 		return $result;
 		

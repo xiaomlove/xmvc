@@ -474,14 +474,14 @@ class CommonController extends Controller
 		$baseUrl = App::ins()->request->getBaseUrl();
 		$file = trim($file, '/');
 		$pathinfo = pathinfo($file);
-		//if (defined('MODE') && MODE == 'RELEASE' && $release)
-		//{
+		if (defined('MODE') && MODE == 'RELEASE' && $release)
+		{
 			$src = $baseUrl.ltrim($pathinfo['dirname'], '/').'/'.$pathinfo['filename'].'-release.'.$pathinfo['extension'];
-// 		}
-// 		else
-// 		{
-// 			$src = $baseUrl.$file;
-// 		}
+		}
+		else
+		{
+			$src = $baseUrl.$file;
+		}
 		return '<script src="'.$src.'"></script>';
 	}
 }
