@@ -69,11 +69,11 @@ function connectDB()
 {
 	if (defined('MODE') && MODE === 'RELEASE')
 	{
-		$config = require 'application/protected/config/config-release.php';
+		$config = require 'application/protect/config/config-release.php';
 	}
 	else
 	{
-		$config = require 'application/protected/config/config.php';
+		$config = require 'application/protect/config/config.php';
 	}
 	$dbConfig = $config['database'];
 	try

@@ -1,4 +1,8 @@
 <?php
+namespace framework\core;
+
+use framework\App;
+
 final class Router
 {
 	private static $_config = NULL;
@@ -562,8 +566,7 @@ final class Router
 		}
 		else 
 		{
-			self::_defineMVC('Module');
-			
+			self::_defineMVC('Module');			
 		}
 		
 		if(isset($keyArr[1]) && $keyArr[1] === 'c')

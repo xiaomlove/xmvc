@@ -1,4 +1,9 @@
 <?php
+namespace framework\core;
+
+use framework\helper\ArrayHelper;
+use framework\component\Db;
+
 abstract class Model
 {
 	private static $_db = NULL;
@@ -104,11 +109,11 @@ abstract class Model
 		$activeList = array('delete', 'save');
 		if(($this->chained === TRUE) && (in_array($funcName, $chainedList)))
 		{
-			return call_user_func_array(array('Model', $funcName), $params);
+			return call_user_func_array(array('framework\\core\\Model', $funcName), $params);
 		}
 		elseif(($this->chained === FALSE) && (in_array($funcName, $activeList)))
 		{
-			return call_user_func_array(array('Model', $funcName), $params);
+			return call_user_func_array(array('framework\\core\\Model', $funcName), $params);
 		}
 		else
 		{
@@ -417,7 +422,7 @@ abstract class Model
 				$this->doCache = TRUE;
 			}
 		}
-		$result = self::$_db->getOneBySql($sql, $options, PDO::FETCH_ASSOC);
+		$result = self::$_db->getOneBySql($sql, $options, \PDO::FETCH_ASSOC);
 		if($this->active)
 		{
 			$result = $this->_addActiveObject($result);
@@ -465,7 +470,7 @@ abstract class Model
 			}
 		}
 		
-		$result = self::$_db->getAllBySql($sql, $options, PDO::FETCH_ASSOC);
+		$result = self::$_db->getAllBySql($sql, $options, \PDO::FETCH_ASSOC);
 		if($this->active)
 		{
 			$result = $this->_addActiveObject($result);
@@ -526,7 +531,7 @@ abstract class Model
 			}
 		}
 		
-		$result = self::$_db->getAllBySql($sql, $options, PDO::FETCH_ASSOC);
+		$result = self::$_db->getAllBySql($sql, $options, \PDO::FETCH_ASSOC);
 		if($this->active)
 		{
 			$result = $this->_addActiveObject($result);
@@ -898,7 +903,7 @@ abstract class Model
 							//当前场景跟规则指定的应用场景不一致，不应用此验证
 							continue 2;
 						}
-						if(method_exists('Validator', $validator))
+						if(method_exists('framework\core\Validator', $validator))//这类都得将命名空间也写上
 						{
 							$result = Validator::$validator($field, $rule);
 						}
@@ -1010,7 +1015,7 @@ abstract class Model
 	 */
 	private function _unique($field, $data)
 	{
-		$value = $data[$field];
+		$value = trim($data[$field]);
 		if(!$this->chained || !isset($data[$this->_pk]))
 		{
 			//是新增操作，或者数据中没有主键的值也是新增操作。编辑操作传递过来的数组有主键的值

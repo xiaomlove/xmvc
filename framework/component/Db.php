@@ -1,4 +1,9 @@
 <?php
+namespace framework\component;
+
+use framework\App as App;
+use framework\core\Log as Log;
+
 class Db
 {
 	private static $_link = NULL;
@@ -40,19 +45,19 @@ class Db
 		self::$_config = $config;
 		try
 		{
-			$pdo = self::$_link = new PDO($config['connectionString'], $config['username'], $config['password']);
+			$pdo = self::$_link = new \PDO($config['connectionString'], $config['username'], $config['password']);
 		}
-		catch(PDOException $e)
+		catch(\PDOException $e)
 		{
 			trigger_error('数据库连接错误：'.$e->getMessage());
 		}
 		$pdo->exec('SET NAMES '.$config['charset']);
-		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);//设置错误处理模式，抛异常
-		$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);//禁用防真效果，有效防sql注入
-// 		$pdo->setAttribute(PDO::ATTR_ORACLE_NULLS, true);//设置数据库中的NULL对应php中的NULL，还有不变或空字符串。
-		$this->serverVersion = $pdo->getAttribute(PDO::ATTR_SERVER_VERSION);
-		$this->serverInfo = $pdo->getAttribute(PDO::ATTR_SERVER_INFO);
-		$this->clientVersion = $pdo->getAttribute(PDO::ATTR_CLIENT_VERSION);
+		$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);//设置错误处理模式，抛异常
+		$pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, FALSE);//禁用防真效果，有效防sql注入
+// 		$pdo->setAttribute(\PDO::ATTR_ORACLE_NULLS, true);//设置数据库中的NULL对应php中的NULL，还有不变或空字符串。
+		$this->serverVersion = $pdo->getAttribute(\PDO::ATTR_SERVER_VERSION);
+		$this->serverInfo = $pdo->getAttribute(\PDO::ATTR_SERVER_INFO);
+		$this->clientVersion = $pdo->getAttribute(\PDO::ATTR_CLIENT_VERSION);
 		unset($config, $pdo);
 		
 	}
@@ -121,7 +126,7 @@ class Db
 		{
 			self::$_PDOStat->execute($options);
 		}
-		catch(PDOException $e)
+		catch(\PDOException $e)
 		{
 			trigger_error($e->getMessage());
 			exit();
@@ -143,7 +148,7 @@ class Db
 		{
 			return self::$_link->exec($sql);
 		}
-		catch(PDOException $e)
+		catch(\PDOException $e)
 		{
 			trigger_error($e->getMessage());
 			exit();
@@ -161,7 +166,7 @@ class Db
 	 * @param unknown $fetchStyle
 	 * @return multitype:
 	 */
-	public function getAllBySql($sql = '', $options = array(), $fetchStyle = PDO::FETCH_ASSOC)
+	public function getAllBySql($sql = '', $options = array(), $fetchStyle = \PDO::FETCH_ASSOC)
 	{
 		if(empty($sql) || !is_array($options))
 		{
@@ -178,7 +183,7 @@ class Db
 	 * @param unknown $fetchStyle
 	 * @return multitype:
 	 */
-	public function getOneBySql($sql = '', $options = array(), $fetchStyle = PDO::FETCH_ASSOC)
+	public function getOneBySql($sql = '', $options = array(), $fetchStyle = \PDO::FETCH_ASSOC)
 	{
 		if(empty($sql) || !is_array($options))
 		{

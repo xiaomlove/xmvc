@@ -1,4 +1,6 @@
 <?php
+namespace framework\helper;
+
 class StringHelper
 {
 	/**

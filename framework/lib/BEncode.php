@@ -1,4 +1,6 @@
 <?php
+namespace framework\lib;
+
 class BEncode
 {
 	public static function decode($string)

@@ -1,4 +1,6 @@
 <?php
+namespace framework\component;
+
 class Session
 {
 	public function __construct()

@@ -1,4 +1,8 @@
 <?php
+namespace framework\component;
+
+use framework\core\Router as Router;
+
 class Request
 {
 	public function isAjax()

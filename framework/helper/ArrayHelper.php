@@ -1,4 +1,5 @@
 <?php
+namespace framework\helper;
 
 class ArrayHelper
 {

@@ -1,4 +1,10 @@
 <?php
+namespace framework\core;
+
+use framework\App as App;
+use framework\core\Log as Log;
+use framework\core\Router as Router;
+
 class Controller
 {
 	protected $layout;
@@ -57,11 +63,11 @@ class Controller
 	{
 		if(MODULE === NULL)
 		{
-			return APP_PATH.'protected'.DS.'views'.DS;
+			return APP_PATH.'protect'.DS.'views'.DS;
 		}
 		else
 		{
-			return APP_PATH.'protected'.DS.'modules'.DS.strtolower(MODULE).DS.'views'.DS;
+			return APP_PATH.'protect'.DS.'modules'.DS.strtolower(MODULE).DS.'views'.DS;
 		}
 	}
 	

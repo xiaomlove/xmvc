@@ -1,4 +1,8 @@
 <?php
+namespace framework\component;
+
+use framework\App as App;
+
 class User
 {
 	public $guestName = 'Guest';

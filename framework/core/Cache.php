@@ -1,4 +1,8 @@
 <?php
+namespace framework\core;
+
+use framework\App;
+
 class Cache
 {
 	public static $_doPageCache = FALSE;//是否需要生成页面缓存，在Controller的render中

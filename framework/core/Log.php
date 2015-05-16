@@ -1,4 +1,8 @@
 <?php
+namespace framework\core;
+
+use framework\App;
+
 final class Log
 {
 	private static $_startTime = NULL;
@@ -73,11 +77,7 @@ final class Log
 		{
 			self::$_errors[] = array('level'=>self::$_error_constant[1], 'msg'=>$lastError['message'], 'file'=>$lastError['file'], 'line'=>$lastError['line']);
 		}
-		echo '<style>
-				#wrap{margin-top: 100px}
-				
-				</style>';
-		echo '<div id="wrap" class="container"><h3 class="page-header">引入文件：</h3>';
+		echo '<div id="wrap" class="container" style="margin-top: 100px"><h3 class="page-header">引入文件：</h3>';
 		$files = self::getRequireFiles();
 		if(count($files))
 		{

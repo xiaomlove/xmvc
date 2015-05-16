@@ -1,4 +1,8 @@
 <?php
+namespace framework\core;
+
+use framework\helper\StringHelper as StringHelper;
+
 class Validator
 {
 	public static $_validators = array();
