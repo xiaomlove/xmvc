@@ -6,11 +6,11 @@
       <div id="comment-item">
       <?php foreach($comments as $comment):?>
       
-      <div class="item" data-id="<?php echo $comment['id']?>">
-        <h4 class="comment-head">#<span class="comment-floor"><?php echo $comment['floor']?></span><span class="text-primary comment-username"><?php echo $comment['name']?></span><small class="pull-right comment-add-time"><?php echo date('Y-m-d H:i:s', $comment['add_time'])?></small></h4>
+      <div class="item" data-id="<?php echo $comment['id']?>" data-userid="<?php echo $comment['user_id']?>">
+        <h4 class="comment-head">#<span class="comment-floor"><?php echo $comment['floor']?></span><span class="text-primary comment-username"><?php echo $comment['user_name']?></span><small class="pull-right comment-add-time"><?php echo date('Y-m-d H:i:s', $comment['add_time'])?></small></h4>
         <div class="clearfix">
           <div class="col-xs-2 avatar">
-            <img src="application/public/images/avatar.jpg" class="img-responsive"/>
+            <img src="<?php echo $comment['user_avatar']?>" class="img-responsive"/>
           </div>
           <div class="col-xs-10 comment-box">
           	

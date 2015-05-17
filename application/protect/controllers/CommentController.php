@@ -86,7 +86,7 @@ class CommentController extends CommonController
 			$navHtml = $this->getAjaxNavHtml($per, $total);
 			
 			
-			$sql = "SELECT a.*, b.name FROM comment as a LEFT JOIN user as b ON a.user_id = b.id WHERE a.torrent_id = :torrentId ORDER BY a.floor ASC LIMIT $offset, $per";
+			$sql = "SELECT a.*, b.name as user_name, b.avatar_url as user_avatar, b.id as user_id FROM comment as a LEFT JOIN user as b ON a.user_id = b.id WHERE a.torrent_id = :torrentId ORDER BY a.floor ASC LIMIT $offset, $per";
 			$comments = $model->findBySql($sql, array(':torrentId' => $_GET['torrentId']));
 			
 			$html = $this->renderPartial('comment', array('comments' => $comments, 'navHtml' => $navHtml, 'floor' => $count, 'page' => $total));

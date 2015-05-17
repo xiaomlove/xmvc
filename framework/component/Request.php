@@ -49,6 +49,7 @@ class Request
 	{
 		$url = self::getHttpType().'://'.$_SERVER['HTTP_HOST'].'/';
 		$offset = Router::getOffsetUri();
+// 		$offset = NULL;//不需要
 		if(!empty($offset))
 		{
 			$url .= $offset.'/';

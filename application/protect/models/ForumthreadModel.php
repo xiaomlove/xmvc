@@ -63,7 +63,7 @@ class ForumthreadModel extends \framework\core\Model
 		$offset = ((int)$default['page'] - 1) * $per;
 		$sortField = $default['sort_field'];
 		$sortType = strtoupper($default['sort_type']);
-		$sql = "select aa.*,bb.name,bb.role_name,bb.uploaded,bb.downloaded,bb.thread_count,bb.reply_count as user_info_reply_count,bb.comment_count FROM forum_reply aa LEFT JOIN user bb ON aa.user_id=bb.id WHERE aa.thread_id=".$_GET['thread_id'];
+		$sql = "select aa.*,bb.name,bb.role_name,bb.uploaded,bb.downloaded,bb.thread_count,bb.reply_count as user_info_reply_count,bb.comment_count,bb.avatar_url FROM forum_reply aa LEFT JOIN user bb ON aa.user_id=bb.id WHERE aa.thread_id=".$_GET['thread_id'];
 		$sql .= " ORDER BY $sortField $sortType";
 		
 		$sql .= " LIMIT $offset, $per";
