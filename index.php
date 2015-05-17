@@ -5,7 +5,7 @@ define('APP_PATH', ROOT_PATH.'/application/');
 
 define('DEBUG', false);
 define('NO_LOG_AJAX', true);
-define('STOP_REDIRECT', true);
+define('STOP_REDIRECT', false);
 
 define('MODE', 'RELEASE');//线上环境定义该常量，引入不同的配置和js
 

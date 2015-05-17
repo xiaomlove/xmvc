@@ -274,7 +274,7 @@ final class App
 		}
 		else 
 		{
-			$controllerName = 'application\protect\modules\\'.MODULE.'\\controllers\\'.CONTROLLER.'Controller';
+			$controllerName = 'application\protect\modules\\'.strtolower(MODULE).'\\controllers\\'.CONTROLLER.'Controller';
 		}
 		
 		$controller = new $controllerName;
