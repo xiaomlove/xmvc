@@ -1,3 +1,6 @@
+<style>
+body{padding-bottom: 100px}
+</style>
 <div class="row">
 	<div class="col-md-offset-2 col-md-8">
 		<h1 class="page-header" style="text-align: center"><strong>关于本站</strong></h1>
