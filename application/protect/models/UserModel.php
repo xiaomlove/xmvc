@@ -96,6 +96,19 @@ class UserModel extends framework\core\Model
 		
 	}
 	
+	public function addUserRole($userId, $roleId)
+	{
+		$roleInfo = $this->table('role')->findByPk($roleId);
+		if (empty($roleInfo))
+		{
+			return FALSE;
+		}
+		$delSql = "DELETE FROM user_role WHERE user_id=$userId AND role_group_id=".$roleInfo['role_group_id'];
+		$del = $this->execute($delSql);
+		$insertSql = "INSERT INTO user_role (user_id, role_id, role_group_id) VALUES ($userId, $roleId, {$roleInfo['role_group_id']})";
+		return $this->execute($insertSql);
+	}
+	
 	public function hashPassword($password)
 	{
 		if(empty($password) || !is_string($password))

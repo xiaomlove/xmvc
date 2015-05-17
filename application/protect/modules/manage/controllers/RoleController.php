@@ -15,12 +15,29 @@ class RoleController extends \application\protect\controllers\CommonController
 	
 	private function _getRoleGroup()
 	{
-		if (empty($_GET['group_id']) || !ctype_digit($_GET['group_id']))
+		if (App::ins()->request->isGet())
+		{
+			if (empty($_GET['group_id']) || !ctype_digit($_GET['group_id']))
+			{
+				$this->goError();exit;
+			}
+			$groupId = $_GET['group_id'];
+		}
+		elseif (App::ins()->request->isPost())
+		{
+			if (empty($_POST['group_id']) || !ctype_digit($_POST['group_id']))
+			{
+				$this->goError();exit;
+			}
+			$groupId = $_POST['group_id'];
+		}
+		else 
 		{
 			$this->goError();exit;
 		}
+		
 		$roleGroupModel = RolegroupModel::model();
-		$group = $roleGroupModel->findByPk($_GET['group_id']);
+		$group = $roleGroupModel->findByPk($groupId);
 		if (empty($group))
 		{
 			$this->goError();exit;
@@ -40,23 +57,24 @@ class RoleController extends \application\protect\controllers\CommonController
 	
 	public function actionRoleadd()
 	{
+		$roleGroup = $this->_getRoleGroup();
 		$model = RoleModel::model();
-		$action = $this->createUrl('manage/role/roleadd');
 		if (App::ins()->request->isGet())
 		{
-			$html = $this->render('roleform', array('model' => $model, 'action' => $action));
+			$html = $this->render('roleform', array('model' => $model, 'roleGroup' => $roleGroup));
 			echo $html;
 		}
 		elseif (App::ins()->request->isPost())
 		{
 			$model->scene = 'add';
-			self::submit($model, $action);
+			self::submit($model, $roleGroup);
 		}
 	}
 	
 	public function actionRoleedit()
 	{
 		$model = RoleModel::model();
+		$roleGroup = $this->_getRoleGroup();
 		if (App::ins()->request->isGet())
 		{
 			if (empty($_GET['id']) || !ctype_digit(strval($_GET['id'])))
@@ -66,19 +84,18 @@ class RoleController extends \application\protect\controllers\CommonController
 			$action = $this->createUrl('manage/role/roleedit', array('id' => $_GET['id']));
 			$role = $model->findByPk($_GET['id']);
 			$model->setData($role);//直接赋值，通过getData取出来，重用roleform。
-			$html = $this->render('roleform', array('model' => $model, 'action' => $action));
+			$html = $this->render('roleform', array('model' => $model, 'roleGroup' => $roleGroup));
 			echo $html;
 		}
 		else
 		{
 			//提交更改操作
-			$action = $this->createUrl('manage/role/roleedit', array('id' => $_POST['id']));
-			self::submit($model, $action);
+			self::submit($model, $roleGroup);
 		}
 		
 	}
 	
-	public function submit(&$model, $action)
+	public function submit(&$model, $roleGroup)
 	{
 		if ($model->validate($_POST))
 		{
@@ -96,11 +113,15 @@ class RoleController extends \application\protect\controllers\CommonController
 			}
 			
 			//分享率不能小于上传量/下载量
-			if ($_POST['uploaded_limit']/$_POST['downloaded_limit'] > $_POST['ratio_limit'])
+			if ($_POST['downloaded_limit'] > 0)
 			{
-				$model->setError('ratio_limit', '分享率不能小于上传/下载');
-				goto A;
+				if ($_POST['uploaded_limit']/$_POST['downloaded_limit'] > $_POST['ratio_limit'])
+				{
+					$model->setError('ratio_limit', '分享率不能小于上传/下载');
+					goto A;
+				}
 			}
+			
 			//检验等级数值是否跟其他数值相对应，也就是一个更高的等级不能有更低的其他数值
 			
 			$noError = TRUE;
@@ -179,6 +200,9 @@ class RoleController extends \application\protect\controllers\CommonController
 			{
 				goto A;
 			}
+			$groupId = $_POST['group_id'];
+			unset($_POST['group_id']);
+			$_POST['role_group_id'] = $groupId;//还是起个相同的名字省事点
 			if (isset($_POST['id']))
 			{
 				$result = $model->updateByPk($_POST['id'], $_POST);
@@ -194,12 +218,12 @@ class RoleController extends \application\protect\controllers\CommonController
 			}
 			else 
 			{
-				$this->redirect('manage/role/rolelist');
+				$this->redirect('manage/role/rolelist', array('group_id' => $roleGroup['id']));
 			}
 		}
 		A:
 		$model->setData($_POST);
-		$html = $this->render('roleform', array('model' => $model, 'action' => $action));
+		$html = $this->render('roleform', array('model' => $model, 'roleGroup' => $roleGroup));
 		echo $html;
 	}
 	
@@ -230,6 +254,12 @@ class RoleController extends \application\protect\controllers\CommonController
 			{
 				$this->goError();
 			}
+			$roleInfo = RoleModel::model()->findByPk($_GET['id']);
+			if (empty($roleInfo))
+			{
+				$this->goError();
+			}
+			
 			$ruleModel = RuleModel::model();
 			$ruleList = $ruleModel->order('sort ASC,path ASC')->select();
 			$ruleHaved = $ruleModel->table('role_rule')->where('role_id='.$_GET['id'])->select();
@@ -255,7 +285,7 @@ class RoleController extends \application\protect\controllers\CommonController
 // 			echo '<pre/>';
 // 			var_dump($ruleHaved);
 // 			var_dump($ruleList);exit;
-			$html = $this->render('addrule', array('ruleList' => $ruleList));
+			$html = $this->render('addrule', array('ruleList' => $ruleList, 'roleInfo' => $roleInfo));
 			echo $html;
 		}
 		else

@@ -4,7 +4,7 @@ namespace application\protect\models;
 //用户组模型
 class RolegroupModel extends \framework\core\Model
 {
-	const ROLE_GROUP_NORMAR = 1;//普通用户级
+	const ROLE_GROUP_NORMAR = 1;//普通用户组的ID
 	
 	public function tableName()
 	{

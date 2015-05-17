@@ -78,10 +78,18 @@ class IndexController extends CommonController
 			'password'=>$_POST['password'], 
 			'email'=>$_POST['email'],
 		);
-		$register = $userModel->addUser($userInfo);
-		if($register)
+		$userId = $userModel->addUser($userInfo);
+		if($userId)
 		{
-			echo json_encode(array('code'=>1, 'msg'=>'注册成功，用户名是：'.$userInfo['name']));
+			$addRole = $userModel->addUserRole($userId, \application\protect\models\RolegroupModel::ROLE_GROUP_NORMAR);
+			if (addRole)
+			{
+				echo json_encode(array('code'=>1, 'msg'=>'注册成功，用户名是：'.$userInfo['name']));
+			}
+			else 
+			{
+				echo json_encode(array('code'=>-1, 'msg'=>'注册成功，用户名是：'.$userInfo['name'].'，但添加默认角色失败'));
+			}
 		}
 		else
 		{

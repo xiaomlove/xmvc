@@ -32,7 +32,7 @@ class PasswordHash {
 	var $portable_hashes;
 	var $random_state;
 
-	function PasswordHash($iteration_count_log2, $portable_hashes)
+	function __construct($iteration_count_log2, $portable_hashes)
 	{
 		$this->itoa64 = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
@@ -216,7 +216,10 @@ class PasswordHash {
 			$hash =
 			    crypt($password, $this->gensalt_blowfish($random));
 			if (strlen($hash) == 60)
+			{
 				return $hash;
+			}
+				
 		}
 
 		if (CRYPT_EXT_DES == 1 && !$this->portable_hashes) {
@@ -225,7 +228,10 @@ class PasswordHash {
 			$hash =
 			    crypt($password, $this->gensalt_extended($random));
 			if (strlen($hash) == 20)
+			{
 				return $hash;
+			}
+				
 		}
 
 		if (strlen($random) < 6)
@@ -234,7 +240,10 @@ class PasswordHash {
 		    $this->crypt_private($password,
 		    $this->gensalt_private($random));
 		if (strlen($hash) == 34)
+		{
 			return $hash;
+		}
+			
 
 		# Returning '*' on error is safe here, but would _not_ be safe
 		# in a crypt(3)-like function used _both_ for generating new

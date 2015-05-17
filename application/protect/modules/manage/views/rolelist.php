@@ -1,7 +1,7 @@
 <h3 class="main-title">
 	<strong>【<?php echo $roleGroup['name']?>】下的&nbsp;[角色列表]</strong>
 	<a class="btn btn-primary pull-right" href="<?php echo $this->createUrl('manage/rolegroup/list')?>"><span class="glyphicon glyphicon-arrow-left"></span>返回列表</a>
-	<a class="btn btn-primary pull-right" href="<?php echo $this->createUrl('manage/role/roleadd')?>"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加角色</a>
+	<a class="btn btn-primary pull-right" href="<?php echo $this->createUrl('manage/role/roleadd', array('group_id' => $roleGroup['id']))?>"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加角色</a>
 </h3>
 <table class="table table-bordered section-list-table">
 	<thead>
@@ -33,7 +33,7 @@
 			?>
 		</td>
 		<td>
-			<a href="<?php echo $this->createUrl('manage/role/roleedit', array('id' => $role['id']))?>">编辑</a>
+			<a href="<?php echo $this->createUrl('manage/role/roleedit', array('group_id' => $roleGroup['id'], 'id' => $role['id']))?>">编辑</a>
 			<a href="<?php echo $this->createUrl('manage/role/addrule', array('id' => $role['id']))?>">权限</a>
 			<a href="#">删除</a>
 		</td>

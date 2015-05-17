@@ -1,6 +1,6 @@
 <h3 class="main-title">
-	<strong>为角色分配权限</strong>
-	<a class="btn btn-primary pull-right" href="<?php echo $this->createUrl('manage/role/rolelist')?>"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>返回列表</a>
+	<strong>为角色【<?php echo $roleInfo['name']?>】分配权限</strong>
+	<a class="btn btn-primary pull-right" href="<?php echo $this->createUrl('manage/role/rolelist', array('group_id' => $roleInfo['role_group_id']))?>"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>返回列表</a>
 </h3>
 <div class="row">
 	<div class="col-md-offset-2 col-md-8 role-add-rule">

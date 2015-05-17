@@ -8,7 +8,7 @@
 </h3>
 
 <form class="form-horizontal" action="" method="post">
-  
+  <?php if (isset($_GET['id'])):?>
   <div class="form-group <?php echo $model->hasError('id') ? "has-error" : ""?>">
     <label for="id" class="col-sm-2 control-label">用户组ID</label>
     <div class="col-sm-10">
@@ -18,6 +18,7 @@
       <?php endIf?>
     </div>
   </div>
+  <?php endIf?>
   
   <div class="form-group <?php echo $model->hasError('name') ? "has-error" : ""?>">
     <label for="name" class="col-sm-2 control-label">名称</label>

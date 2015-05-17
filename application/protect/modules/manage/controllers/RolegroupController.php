@@ -66,6 +66,33 @@ class RolegroupController extends \application\protect\controllers\CommonControl
 		
 	}
 	
+	public function actionAdd()
+	{
+		$model = RolegroupModel::model();
+		if (App::ins()->request->isGet())
+		{
+			$html = $this->render('rolegroupform', array('model' => $model));
+			echo $html;
+		}
+		elseif (App::ins()->request->isPost())
+		{
+			if ($model->validate($_POST))
+			{
+				$roleGroup = new RolegroupModel();
+				$roleGroup->name = $_POST['name'];
+				$result = $roleGroup->save();
+				if ($result)
+				{
+					$this->redirect('manage/rolegroup/list');
+				}
+				$model->setError('name', '未知原因，保存失败');
+			}
+			$model->setData($_POST);
+			$html = $this->render('rolegroupform', array('model' => $model));
+			echo $html;
+		}
+	}
+	
 	private function _submit($model, $data)
 	{
 		if ($model->validate($data))
