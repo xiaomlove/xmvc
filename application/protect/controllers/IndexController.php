@@ -81,7 +81,7 @@ class IndexController extends CommonController
 		$userId = $userModel->addUser($userInfo);
 		if($userId)
 		{
-			$addRole = $userModel->addUserRole($userId, \application\protect\models\RolegroupModel::ROLE_GROUP_NORMAR);
+			$addRole = $userModel->addUserRole($userId);
 			if (addRole)
 			{
 				echo json_encode(array('code'=>1, 'msg'=>'注册成功，用户名是：'.$userInfo['name']));

@@ -13,7 +13,7 @@
 		<span class="text-danger"><?php echo $thread['reply_count']?></span>
 	</div>
 	<div class="col-md-10">
-		<a href="#" class="forum-thread-title"><?php echo $thread['state'] == ForumthreadModel::STATE_DRAFT ? "【草稿】".$thread['title'] : $thread['title']?></a>
+		<a href="#" class="forum-thread-title"><?php echo $thread['state'] == \application\protect\models\ForumthreadModel::STATE_DRAFT ? "【草稿】".$thread['title'] : $thread['title']?></a>
 		<div class="pull-right">
 			<a href="#" class="glyphicon glyphicon-arrow-left" aria-hidden="true" title="上一主题" style="cursor: pointer"></a>
 			<a href="#" class="glyphicon glyphicon-arrow-right" aria-hidden="true" title="下一主题" style="cursor: pointer"></a>
@@ -40,7 +40,7 @@
 	</div>
 	
 	<div class="col-md-2 forum-reply-user">
-		<div><a href="#"><img src="<?php echo App::ins()->request->getBaseUrl()?>application/public/images/avatar.jpg" class="img-responsive"></a></div>
+		<div><a href="#"><img src="<?php echo \framework\App::ins()->request->getBaseUrl()?>application/assets/images/avatar.jpg" class="img-responsive"></a></div>
 		<div>
 			<table class="table user-info-table">
 				<tbody>
@@ -79,7 +79,7 @@
 					<?php
 						$sum = 0;
 						$supported = FALSE;
-						$userId = App::ins()->user->getId();
+						$userId = \framework\App::ins()->user->getId();
 						foreach ($appraiseList as $appraise)
 						{
 							if (!$supported && $appraise['user_id'] == $userId)
@@ -141,7 +141,7 @@
 	</div>
 	
 	<div class="col-md-2 forum-reply-user">
-		<div><a href="#"><img src="<?php echo App::ins()->request->getBaseUrl()?>application/public/images/avatar.jpg" class="img-responsive"></a></div>
+		<div><a href="#"><img src="<?php echo \framework\App::ins()->request->getBaseUrl()?>application/assets/images/avatar.jpg" class="img-responsive"></a></div>
 		<div>
 			<table class="table user-info-table">
 				<tbody>
@@ -219,7 +219,7 @@
 	</div>
 	
 	<div class="col-md-2">
-		<div><a href="#"><img src="<?php echo App::ins()->request->getBaseUrl()?>application/public/images/avatar.jpg" class="img-responsive"></a></div>
+		<div><a href="#"><img src="<?php echo \framework\App::ins()->request->getBaseUrl()?>application/assets/images/avatar.jpg" class="img-responsive"></a></div>
 		<div>
 			<table class="table user-info-table">
 				<tbody>
@@ -243,7 +243,7 @@
 	</div>
 	<div class="col-md-10">
 		好像很屌的样子！好像很屌的样子！好像很屌的样子！好像很屌的样子！好像很屌的样子！好像很屌的样子！好像很屌的样子！好像很屌的样子！好像很屌的样子！好像很屌的样子！好像很屌的样子！好像很屌的样子！好像很屌的样子！好像很屌的样子！好像很屌的样子！好像很屌的样子！好像很屌的样子！好像很屌的样子！好像很屌的样子！好像很屌的样子！好像很屌的样子！好像很屌的样子！好像很屌的样子！好像很屌的样子！
-		<img src="<?php echo App::ins()->request->getBaseUrl()?>application/public/images/1.jpg" class="img-responsive" style="width: 600px">
+		<img src="<?php echo \framework\App::ins()->request->getBaseUrl()?>application/assets/images/1.jpg" class="img-responsive" style="width: 600px">
 	</div>
 	
 	<div class="col-md-offset-2 col-md-10 forum-thread-reply-action" style="margin-top: 20px;margin-bottom: 20px">
@@ -257,7 +257,7 @@
 	<div class="col-md-offset-2 col-md-10 forum-thread-reply-reply">
 		<div class="row">
 			<div class="col-md-1">
-				<img src="<?php echo App::ins()->request->getBaseUrl()?>application/public/images/avatar.jpg" class="img-responsive">
+				<img src="<?php echo \framework\App::ins()->request->getBaseUrl()?>application/assets/images/avatar.jpg" class="img-responsive">
 			</div>
 			<div class="col-md-11">
 				<a href="#">xiaomiao</a>：据说旧版固件7天左右。目前新版刚出，加了点功能，官方说4天。我现在用了2天掉了一个电，还行。先马克，还是有点贵，我对时间无所谓，反正有手表
@@ -266,7 +266,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-1">
-				<img src="<?php echo App::ins()->request->getBaseUrl()?>application/public/images/avatar.jpg" class="img-responsive">
+				<img src="<?php echo \framework\App::ins()->request->getBaseUrl()?>application/assets/images/avatar.jpg" class="img-responsive">
 			</div>
 			<div class="col-md-11">
 				<a href="#">xiaomiao</a>&nbsp;&nbsp;回复&nbsp;&nbsp;<a href="#" class="left">xiaomlove</a>：据说旧版固件7天左右。目前新版刚出，加了点功能，官方说4天。我现在用了2天掉了一个电，还行。先马克，还是有点贵，我对时间无所谓，反正有手表
@@ -405,8 +405,8 @@
 <input type="hidden" id="add-reply-reply" value="<?php echo $this->createUrl('forum/replyreply/add')?>">
 <input type="hidden" id="view-more" value="<?php echo $this->createUrl('forum/replyreply/list')?>">
 
-<?php echo $this->getScript('application/public/lib/ueditor/ueditor.config.thread-detail.js')?>
-  <script src="<?php echo App::ins()->request->getBaseUrl()?>application/public/lib/ueditor/ueditor.all.min.js"></script>
+<?php echo $this->getScript('application/assets/lib/ueditor/ueditor.config.thread-detail.js')?>
+  <script src="<?php echo \framework\App::ins()->request->getBaseUrl()?>application/assets/lib/ueditor/ueditor.all.min.js"></script>
   <script type="text/javascript">
   var ue = UE.getEditor('uecontainer');
   ue.ready(function() {

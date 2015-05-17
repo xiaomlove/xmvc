@@ -4,6 +4,8 @@ namespace application\protect\models;
 //角色   模型
 class RoleModel extends \framework\core\Model
 {
+	const ROLE_GUEST_ID = 25;//两个特殊的角色ID，游客ID为25。数据库中有变需要更改之
+	const ROLE_DEFAULT_ID = 22;//默认角色ID，幼儿园ID为22
 	
 	public function tableName()
 	{

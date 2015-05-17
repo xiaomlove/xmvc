@@ -30,8 +30,8 @@
   <?php endIf?>
 </form>
 
-  <script src="<?php echo framework\App::ins()->request->getBaseUrl()?>application//lib/ueditor/ueditor.config2.js"></script>
-  <script src="<?php echo framework\App::ins()->request->getBaseUrl()?>application//lib/ueditor/ueditor.all.min.js"></script>
+  <script src="<?php echo framework\App::ins()->request->getBaseUrl()?>application/lib/ueditor/ueditor.config2.js"></script>
+  <script src="<?php echo framework\App::ins()->request->getBaseUrl()?>application/lib/ueditor/ueditor.all.min.js"></script>
   <script type="text/javascript">
   var ue = UE.getEditor('uecontainer');
   ue.ready(function() {

@@ -87,11 +87,7 @@ class RuleController extends \application\protect\controllers\CommonController
 			
 			if ($result !== FALSE)
 			{
-				if ($result == 0)
-				{
-					//没有变化，不用更新
-					goto G;
-				}
+				
 				if (isset($isParent) && $isParent)
 				{
 					//更新path及level，一级权限path为其自身id
@@ -114,14 +110,13 @@ class RuleController extends \application\protect\controllers\CommonController
 				{
 					//非一级权限，sort不会被改变，只需要更新path及level
 					$updatePathLevel = $model->updateByPk($id, array('path' => $parent['path'].','.$id, 'level' => $parent['level']+1));
+					
 					if ($updatePathLevel === FALSE)
 					{
 						$model->setError('parent_id', '更新非一级权限path&level失败');
 						goto A;
 					}
 				}
-				G:
-//				exit('stop redirect');
 				
 				$this->redirect('manage/rule/list');
 			}

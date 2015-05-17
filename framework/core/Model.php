@@ -196,6 +196,10 @@ abstract class Model
 	
 	private function table($table)
 	{
+//		if ($table == 'role')
+//		{
+//			var_dump($this->table);
+//		}
 		if(is_string($table) && !empty($table) && empty($this->table))
 		{
 			$this->table = $table;
@@ -405,6 +409,11 @@ abstract class Model
 			trigger_error('没有主键！', E_USER_ERROR);
 			return '';
 		}
+		if (!empty($this->table))
+		{
+			trigger_error(get_class($this).'--findByPk()不支持跨表操作！', E_USER_ERROR);
+			return NULL;
+		}
 		$field = $field === '*'? '*': $this->_parseParam($field);
 		$sql = 'SELECT '.$field.' FROM '.$this->_tableName.' WHERE '.$this->_pk.'=:pk LIMIT 1';
 		$options = array(':pk'=>$pk);
@@ -497,7 +506,7 @@ abstract class Model
 		}
 		if(!is_string($sql) || !is_array($options))
 		{
-			trigger_error('findBySql()参数必须是sql语句和绑定数据的数组', E_USER_NOTICE);
+			trigger_error(get_class($this).'--findBySql()参数必须是sql语句和绑定数据的数组', E_USER_NOTICE);
 			return '';
 		}
 		//如何分析sql语句是否含了主键与否？？？
@@ -570,6 +579,11 @@ abstract class Model
 		{
 			trigger_error('没有主键！', E_USER_ERROR);
 			return false;
+		}
+		if (!empty($this->table))
+		{
+			trigger_error(get_class($this).'--updateByPk()不支持跨表操作！', E_USER_ERROR);
+			return FALSE;
 		}
 // 		$field = $this->_parseParam($field);
 		$field = '';
@@ -842,6 +856,7 @@ abstract class Model
 				$this->_pv = $result;
 				$this->isNew = FALSE;
 			}
+			$this->reset();
 			return $result;
 		}
 		else
@@ -858,6 +873,7 @@ abstract class Model
 				$this->data = array_merge($this->data, $this->changeProperties);
 				$this->changeProperties = array();
 			}
+			$this->reset();
 			return $result;
 		}
 	}
