@@ -19,6 +19,7 @@
           <button type=button class="btn btn-success" id="login-submit">Sign in</button>
           <span class="text-success go-register">没有账号？<a href="<?php echo $this->createUrl('index/register')?>">去注册</a></span>
           &nbsp;&nbsp;<span class="text-warning">测试账号：111111，密码：111111</span>
+          &nbsp;<strong class="text-info"><a href="/about">【关于】</a></strong>
         </div>
       </div>
     </form>
