@@ -101,7 +101,7 @@ class CommonController extends \framework\core\Controller
 		{
 			return NULL;
 		}
-		if(!ctype_digit($time))
+		if(!ctype_digit(strval($time)))
 		{
 			trigger_error('getTTL()只接收时间戳', E_USER_NOTICE);
 		}
@@ -371,32 +371,83 @@ class CommonController extends \framework\core\Controller
 			readfile($file);
 		}
 	}
-	
-	protected function getAjaxNavHtml($per, $total)
+	/**
+	 * 获得用于ajax的颁布页码。也就是不需要href的。
+	 * @param unknown $page 当前页
+	 * @param unknown $total  总页数
+	 * @return string
+	 */
+	protected function getAjaxNavHtml($page, $total)
 	{
-		$HTML = '<ul class="pagination">';
-		$HTML .= '<li class="disabled"><a class="prev"><span aria-hidden="true">&laquo;</span></a></li>';
-		for ($i = 1; $i <= $total; $i++)
+		if ($total <= 1)
 		{
-			if ($i === 1)
-			{
-				$class = ' class="active"';
-			}
-			else
-			{
-				$class = '';
-			}
-			$HTML .= '<li'.$class.'><a><span aria-hidden="true">'.$i.'</span></a></li>';
+			return '';
 		}
-		if ($total == 1)
+		$HTML = '<ul class="pagination">';
+		$prevClass = $firstClass = $nextClass = $endClass = "";
+		$startDot = $endDot = "";
+		if ($page == '1')
 		{
-			$class = ' class="disabled"';
+			$prevClass = ' class="disabled"';
+			$firstClass = ' class="active"';
+		}
+		$HTML .= '<li'.$prevClass.'><a class="prev"><span aria-hidden="true">&laquo;</span></a></li>';
+		$HTML .= '<li'.$firstClass.'><a><span aria-hidden="true">1</span></a></li>';
+		if ($total <= 11)
+		{
+			$start = 2;
+			$end = $total-1;
 		}
 		else 
 		{
-			$class = '';
+			if ($page - 4 <= 0)
+			{
+				$start = 2;
+				$end = 10;
+				$endDot = "...";
+			}
+			else 
+			{
+				if ($page + 5 >= $total)
+				{
+					$start = $page - 5;
+					$end = $total - 1 ;
+					$startDot = "...";
+				}
+				else 
+				{
+					$startDot = "...";
+					$start = $page - 5;
+					$end = $page + 4;
+					$endDot = "...";
+				}
+			}
 		}
-		$HTML.= '<li'.$class.'><a class="next"><span aria-hidden="true">&raquo;</span></a></li>';
+
+		for ($i = $start; $i <= $end; $i++)
+		{
+			if ($i == $start)
+			{
+				$HTML .= '<li><a><span aria-hidden="true">'.$startDot.$i.'</span></a></li>';
+				continue;
+			}
+			if ($i == $page)
+			{
+				$currClass = ' class="active"';
+			}
+			else
+			{
+				$currClass = "";
+			}
+			$HTML .= '<li'.$currClass.'><a><span aria-hidden="true">'.$i.'</span></a></li>';
+		}
+		if ($page == $total)
+		{
+			$nextClass = ' class="disabled"';
+			$endClass = ' class="active"';
+		}
+		$HTML .= '<li'.$endClass.'><a><span aria-hidden="true">'.$endDot.$total.'</span></a></li>';
+		$HTML.= '<li'.$nextClass.'><a class="next"><span aria-hidden="true">&raquo;</span></a></li>';
 		$HTML .= '</ul>';
 		return $HTML;
 	}

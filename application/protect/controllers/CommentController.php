@@ -83,7 +83,7 @@ class CommentController extends CommonController
 				echo json_encode(array('code' => 0, 'msg' => '暂无评论'));exit;
 			}
 			$total = ceil($count/$per);
-			$navHtml = $this->getAjaxNavHtml($per, $total);
+			$navHtml = $this->getAjaxNavHtml($page, $total);
 			
 			
 			$sql = "SELECT a.*, b.name as user_name, b.avatar_url as user_avatar, b.id as user_id FROM comment as a LEFT JOIN user as b ON a.user_id = b.id WHERE a.torrent_id = :torrentId ORDER BY a.floor ASC LIMIT $offset, $per";
