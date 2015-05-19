@@ -393,44 +393,42 @@ class CommonController extends \framework\core\Controller
 		}
 		$HTML .= '<li'.$prevClass.'><a class="prev"><span aria-hidden="true">&laquo;</span></a></li>';
 		$HTML .= '<li'.$firstClass.'><a><span aria-hidden="true">1</span></a></li>';
-		if ($total <= 11)
+		if ($total <= 10)
 		{
 			$start = 2;
-			$end = $total-1;
+			$end = $total-1;//上一页，第一页，最末页，下一页，这4个是固定的
 		}
 		else 
 		{
-			if ($page - 4 <= 0)
+			if ($page - 3 <= 2)//当前页前后保持3页。这是当前页不大于5页的时候
 			{
 				$start = 2;
 				$end = 10;
-				$endDot = "...";
+				$endDot = "...";//这是多于10页了，需要...
 			}
 			else 
 			{
-				if ($page + 5 >= $total)
+				if ($page + 4 >= $total -1 )//最末页已固定保留
 				{
-					$start = $page - 5;
+					$start = $total - 9;//快到末尾了，要保持总数11，开始得往前
 					$end = $total - 1 ;
-					$startDot = "...";
+					
 				}
 				else 
 				{
-					$startDot = "...";
-					$start = $page - 5;
+					$start = $page - 4;
 					$end = $page + 4;
 					$endDot = "...";
 				}
+				if  ($start >= 3)
+				{
+					$startDot = "...";
+				}
 			}
 		}
-
+//		return "start:$start,end:$end,--total:$total";
 		for ($i = $start; $i <= $end; $i++)
 		{
-			if ($i == $start)
-			{
-				$HTML .= '<li><a><span aria-hidden="true">'.$startDot.$i.'</span></a></li>';
-				continue;
-			}
 			if ($i == $page)
 			{
 				$currClass = ' class="active"';
@@ -439,14 +437,24 @@ class CommonController extends \framework\core\Controller
 			{
 				$currClass = "";
 			}
-			$HTML .= '<li'.$currClass.'><a><span aria-hidden="true">'.$i.'</span></a></li>';
+			$showText = $i;//用于循环判断的$i不能被改变，否则跳不出循环死掉了
+			if ($i == $start)
+			{
+				$showText = $startDot.$showText;
+			}
+			if ($i == $end)
+			{
+				$showText = $showText.$endDot;
+				
+			}
+			$HTML .= '<li'.$currClass.'><a><span aria-hidden="true">'.$showText.'</span></a></li>';
 		}
 		if ($page == $total)
 		{
 			$nextClass = ' class="disabled"';
 			$endClass = ' class="active"';
 		}
-		$HTML .= '<li'.$endClass.'><a><span aria-hidden="true">'.$endDot.$total.'</span></a></li>';
+		$HTML .= '<li'.$endClass.'><a><span aria-hidden="true">'.$total.'</span></a></li>';
 		$HTML.= '<li'.$nextClass.'><a class="next"><span aria-hidden="true">&raquo;</span></a></li>';
 		$HTML .= '</ul>';
 		return $HTML;

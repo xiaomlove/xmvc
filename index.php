@@ -1,9 +1,9 @@
 <?php
 
 define('ROOT_PATH', __DIR__.'/');
-define('APP_PATH', ROOT_PATH.'/application/');
+define('APP_PATH', ROOT_PATH.'application/');
 
-define('DEBUG', true);
+define('DEBUG', false);
 define('NO_LOG_AJAX', true);
 define('STOP_REDIRECT', false);
 

@@ -9,6 +9,9 @@
 <script>
 	var $userTable = $("#user-table");
 	$userTable.on("click", ".pagination li", function(e){
+		if ($(this).hasClass("disabled")) {
+			return;
+		}
 		var activePage = $(this).parent().find(".active").find("span").text();
 		var page;
 		var $clickA = $(this).find("a");

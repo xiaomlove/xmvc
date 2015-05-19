@@ -14,7 +14,7 @@ class UserController extends \application\protect\controllers\CommonController
 		$model = UserModel::model();
 		$per = OptionModel::model()->get('manage_user_pagination');
 		$per = $per ? $per : 10;
-		$per = 2;//测试
+//		$per = 2;//测试
 		$page = !empty($_GET['page']) ? $_GET['page'] : 1;
 		$page = ctype_digit(strval($page)) ? $page : 1;
 		$limit = ($page - 1)*$per.','.$per;
@@ -22,6 +22,7 @@ class UserController extends \application\protect\controllers\CommonController
 // 		var_dump($userList);exit;
 		$count = $model->count();
 		$pagination = $this->getAjaxNavHtml($page, ceil($count/$per));
+//		var_dump($pagination);exit;
 		if (isset($_GET['ajax']) && $_GET['ajax'] === 'true')
 		{
 			$html = $this->renderPartial('usertable', array('userList' => $userList, 'pagination' => $pagination));
