@@ -13,6 +13,7 @@
 			return;
 		}
 		var activePage = $(this).parent().find(".active").find("span").text();
+
 		var page;
 		var $clickA = $(this).find("a");
 		if ($clickA.hasClass("prev")) {
@@ -20,7 +21,7 @@
 		} else if ($clickA.hasClass("next")) {
 			page = parseInt(activePage) + 1;
 		} else {
-			page = $clickA.find("span").text();
+			page = $clickA.find("span").text().replace(/\./gi, "");//去掉...
 		}
 // 		console.log(page);return;
 		$.ajax({
