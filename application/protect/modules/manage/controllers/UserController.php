@@ -18,15 +18,25 @@ class UserController extends \application\protect\controllers\CommonController
 		$page = !empty($_GET['page']) ? $_GET['page'] : 1;
 		$page = ctype_digit(strval($page)) ? $page : 1;
 		$limit = ($page - 1)*$per.','.$per;
-		$userList = $model->field('id, name, email, role_name, uploaded, downloaded, last_login_time')->order('add_time ASC')->limit($limit)->select();
+		$orderField = !empty($_GET['field']) ? $_GET['field'] : "id";
+		$orderType = !empty($_GET['type']) ? $_GET['type'] : "ASC";
+		if (!empty($_GET['keyword']))
+		{
+			$where = "name LIKE '%".$_GET['keyword']."%' OR email LIKE '%".$_GET['keyword']."%'";
+		}
+		else 
+		{
+			$where = "1";
+		}
+		$userList = $model->where($where)->field('id, name, email, role_name, uploaded, downloaded, last_login_time')->order("$orderField $orderType")->limit($limit)->select();
 // 		var_dump($userList);exit;
-		$count = $model->count();
+		$count = $model->where($where)->count();
 		$pagination = $this->getAjaxNavHtml($page, ceil($count/$per));
 //		var_dump($pagination);exit;
 		if (isset($_GET['ajax']) && $_GET['ajax'] === 'true')
 		{
-			$html = $this->renderPartial('usertable', array('userList' => $userList, 'pagination' => $pagination));
-			echo json_encode(array('code' => 1, 'msg' => '请求数据成功', 'data' => $html));
+			$html = $this->renderPartial('usertable', array('userList' => $userList));
+			echo json_encode(array('code' => 1, 'msg' => '请求数据成功', 'data' => array('tbody' => $html, 'pagination' => $pagination)));
 		}
 		else
 		{

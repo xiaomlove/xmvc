@@ -152,3 +152,18 @@ body{-background-image:url('../images/light_grey.png');-font-family: Tahoma,"Mic
 .manage .role-group-table tbody tr td:last-of-type a{
 	margin-right: 10px;
 }
+
+/*用户列表*/
+.manage .user-list-table thead th[data-field]{
+	cursor: pointer;
+}
+.manage .user-list-table thead th[data-sorted=true]{
+	color: blue
+}
+.manage .user-list-table thead th[data-field]:hover{
+	text-decoration: underline;
+	color: blue
+}
+.manage .clear-keyword{
+	margin: 0 40px;
+}
