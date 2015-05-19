@@ -1,7 +1,7 @@
 ﻿<?php
 ob_implicit_flush();
 $host = '127.0.0.1';
-$port = 2222;
+$port = 3333;
 $maxClient = 1000;
 const MSG_TYPE_HANDSHAKE = 0;//握住信息
 const MSG_TYPE_MESSAGE = 1;//正常聊天信息
