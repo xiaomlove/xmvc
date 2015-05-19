@@ -295,7 +295,7 @@ body{margin-bottom: 280px}
 		var username = $("#user-name").text();
 		var userid = $("#user-id").val();
 		var port = CONFIG.WebSocketPort;
-		var host = "ws://"+location.host+":"+port;
+		var host = "ws://"+CONFIG.WebSocketHost+":"+CONFIG.WebSocketPort;
 // 		var host = "ws://127.0.0.1:2222";
 		if (userid == ""){
 			username = getCustomUsername();
