@@ -4,7 +4,7 @@
 	<a class="btn btn-primary pull-right" href="<?php echo $this->createUrl('manage/user/useradd')?>"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加用户</a>
 </h3>
 
-<table class="table table-bordered user-list-table">
+<table class="table table-bordered table-hover user-list-table">
 	<thead id="user-thead">
 	<tr>
 		<th data-field="id">用户ID</th>

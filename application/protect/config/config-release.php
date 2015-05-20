@@ -61,6 +61,7 @@ return array(
 			'admin/forum/section/edit'=>'manage/forum/sectionedit',
 			'admin/user'=>'manage/user/userlist',
 			'admin/user/add'=>'manage/user/useradd',
+			'admin/user/detail'=>'manage/user/detail',
 				
 			'admin/role'=>'manage/role/rolelist',
 			'admin/role/add'=>'manage/role/roleadd',

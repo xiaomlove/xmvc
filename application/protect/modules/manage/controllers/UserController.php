@@ -59,4 +59,18 @@ class UserController extends \application\protect\controllers\CommonController
 			echo '提交添加section';
 		}
 	}
+	
+	public function actionDetail()
+	{
+		if (empty($_GET['id']) || !ctype_digit($_GET['id']))
+		{
+			$this->goError();
+		}
+		$model = UserModel::model();
+		$userInfo = $model->findByPk($_GET['id']);
+		$roles = $model->getRoles($_GET['id']);
+		$extraRules = $model->getExtraRules($_GET['id']);
+		$html = $this->render('userdetail', array('userInfo' => $userInfo, 'roles' => $roles, 'extraRules' => $extraRules));
+		echo $html;
+	}
 }

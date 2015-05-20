@@ -4,7 +4,7 @@ namespace application\protect\models;
 use framework;
 use framework\App;
 
-class UserModel extends framework\core\Model
+class UserModel extends \framework\core\Model
 {
 
 	public function tableName()
@@ -135,7 +135,7 @@ class UserModel extends framework\core\Model
 		else
 		{
 			//App::addRequirePath(LIB_PATH.'phpass-0.3'.DS);
-			$hasher = new framework\lib\phpass\PasswordHash(8, false);
+			$hasher = new \framework\lib\phpass\PasswordHash(8, false);
 			$hashPassword = $hasher->HashPassword($password);
 			return $hashPassword;
 		}
@@ -150,22 +150,25 @@ class UserModel extends framework\core\Model
 		}
 		else
 		{
-			$hasher = new framework\lib\phpass\PasswordHash(8, false);
+			$hasher = new \framework\lib\phpass\PasswordHash(8, false);
 			return $hasher->CheckPassword($inputPassword, $password);
 			
 		}
 	}
 	
 	/**
-	 * 获得当前用户拥有的角色
+	 * 获得用户拥有的角色
 	 * @param return array 二维数组，每个角色为一个元素
 	 */
-	public function getRoles()
+	public function getRoles($userId = '')
 	{
 		$isLogin = App::ins()->user->isLogin();
 		if ($isLogin)
 		{
-			$userId = App::ins()->user->getId();
+			if (empty($userId))
+			{
+				$userId = App::ins()->user->getId();
+			}
 			$sql = "SELECT a.*,b.name as role_group_name FROM role a LEFT JOIN role_group b 
 					ON a.role_group_id=b.id WHERE a.id IN 
 					(SELECT role_id FROM user_role WHERE user_id=$userId)";
@@ -178,14 +181,38 @@ class UserModel extends framework\core\Model
 		}
 		
 	}
+	/**
+	 * 获得额外的权限，除角色外的权限
+	 * Enter description here ...
+	 * @param unknown_type $userId
+	 * @param return array
+	 */
+	public function getExtraRules($userId = '')
+	{
+		$isLogin = App::ins()->user->isLogin();
+		if ($isLogin)
+		{
+			if (empty($userId))
+			{
+				$userId = App::ins()->user->getId();
+			}
+			$sql = "SELECT * FROM rule WHERE id IN (SELECT rule_id FROM user_rule WHERE user_id=$userId)";
+			$result = $this->findBySql($sql);
+			return $result;
+		}
+		else
+		{
+			return NULL;
+		}
+	}
 	
 	/**
-	 * 获得用户所拥有的权限
+	 * 获得当前用户的所有权限，角色上的+额外的。不登陆为游客的
 	 */
 	public function getRules()
 	{
 		$roles = self::getRoles();//角色
-// 		var_dump($roles);exit;
+ 	
 		if (empty($roles))
 		{
 			return NULL;
@@ -197,9 +224,16 @@ class UserModel extends framework\core\Model
 			$roleId[] = $role['id'];
 		}
 		$rules = RuleModel::model()->getRulesByRole($roleId);
-		return $rules;
+//		var_dump($rules);
+//		echo '<hr/>';
+		$extraRules = self::getExtraRules();
+//		echo '<hr/>';
+//		var_dump($extraRules);
+		$merge = array_merge($rules, $extraRules);
+//		echo '<hr/>';
+//		var_dump($merge);
+//		exit;
+		return $merge;
 	}
-	
-	
 	
 }

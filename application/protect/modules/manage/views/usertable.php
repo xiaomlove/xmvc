@@ -11,10 +11,7 @@
 		<td><?php echo date('Y-m-d H:i', $user['last_login_time'])?></td>
 		<td><?php echo $user['role_name']?></td>
 		<td>
-			<a href="#">查看详情</a>
-			<a href="#">重置密码</a>
-			<a href="#">禁用</a>
-			<a href="#">删除</a>
+			<a href="<?php echo $this->createUrl('manage/user/detail', array('id' => $user['id']))?>">查看详情</a>
 		</td>
 	</tr>
 	<?php endForeach?>
