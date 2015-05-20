@@ -129,18 +129,18 @@ if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) === FALSE)
 $pdo = connectDB();
 
 //5、验证passkey，获得个人信息
-$sql = 'SELECT id, downloaded, uploaded, seed_time, leech_time, is_banned, is_hang_up, use_banned_client FROM user WHERE passkey=:passkey LIMIT 1';
+$sql = 'SELECT id, downloaded, uploaded, seed_time, leech_time, state, use_banned_client FROM user WHERE passkey=:passkey LIMIT 1';
 $userInfo = query($sql, array(':passkey' => $_GET['passkey']));
 if (empty($userInfo))
 {
 	error('passkey error');
 }
 $userInfo = $userInfo[0];
-if ($userInfo['is_banned'])
+if ($userInfo['state'] == 0)
 {
 	error('user is banned');//用户已被BAN
 }
-if ($userInfo['is_hang_up'])
+if ($userInfo['state'] == 2)
 {
 	error('user is hang up');//用户账号已经挂起
 }
@@ -325,7 +325,7 @@ if (!$isFirstRequest)
 	if ($uploadSpeed/1024/1024 > 100)
 	{
 		//速度超100MB/s，算作弊了，也只能从速度随便判断一下了
-		$sql = 'UPDATE user SET is_banned=1 WHERE user_id='.$userInfo['id'];
+		$sql = 'UPDATE user SET state=0 WHERE user_id='.$userInfo['id'];
 		execute($sql);
 		error('you are cheating,we will disabled your account');
 	}

@@ -25,9 +25,46 @@
     			<th>相关操作</th>
     		</thead>
     		<tbody>
-	    		<tr><td>ID</td><td><?php echo $userInfo['id']?></td></tr>
+	    		<tr><td>ID</td><td><?php echo $userInfo['id']?></td><td></td></tr>
 	    		<tr><td>用户名称</td><td><?php echo $userInfo['name']?></td><td><a href="#">修改</a></td></tr>
 	    		<tr><td>密码</td><td>********</td><td><a href="#">重置</a></td></tr>
+	    		<tr><td>账号状态</td><td>
+	    		<?php 
+	    			if ($userInfo['state'] == 0)
+	    			{
+	    				echo '禁用';
+	    			}
+	    			elseif ($userInfo['state'] == 2)
+	    			{
+	    				echo '挂起';
+	    			}
+	    			elseif ($userInfo['state'] == 1)
+	    			{
+	    				echo '正常';
+	    			}
+	    			else
+	    			{
+	    				echo '出错';
+	    			}
+	    		?>
+	    		</td><td><a href="#">修改</a></td></tr>
+	    		<tr><td>加入时间</td><td><?php echo date('Y-m-d H:i', $userInfo['add_time'])?></td><td></td></tr>
+	    		<tr><td>最近登陆</td><td><?php echo date('Y-m-d H:i', $userInfo['this_login_time'])?></td><td></td></tr>
+	    		<tr><td>当前可连接</td><td>
+	    		<?php 
+	    			if ($userInfo['connectable'] == 0)
+	    			{
+	    				echo '否';
+	    			}
+	    			elseif ($userInfo['connectable'] == 1)
+	    			{
+	    				echo '是';
+	    			}
+	    			else 
+	    			{
+	    				echo '未知';
+	    			}
+	    		?></td><td></td></tr>
 	    		<tr><td>所属角色</td><td>
 	    		<?php 
 	    			if (!empty($roles))
@@ -54,7 +91,24 @@
 	    			}
 	    		?>
 	    		</td><td><a href="#">添加</a></td></tr>
-	    		<tr><td>头像</td><td><img src="/<?php echo $userInfo['avatar_url']?>"></td><td><a href="#">修改</a></td></tr>
+	    		<tr><td>头像</td><td><img src="/<?php echo $userInfo['avatar_url']?>" style="width: 50px"></td><td><a href="#">修改</a></td></tr>
+	    		<tr><td>上传量</td><td><?php echo $this->getSize($userInfo['uploaded'])?></td><td><a href="#">增加</a></td></tr>
+	    		<tr><td>下载量</td><td><?php echo $this->getSize($userInfo['downloaded'])?></td><td><a href="#">增加</a></td></tr>
+	    		<tr><td>分享率</td><td>
+	    		<?php 
+	    			if ($userInfo['downloaded'])
+	    			{
+	    				echo number_format($userInfo['uploaded']/$userInfo['downloaded'], 3);
+	    			}
+	    			else
+	    			{
+	    				echo 0;
+	    			}
+	    		?>
+	    		</td><td></td></tr>
+	    		<tr><td>魔力值</td><td><?php echo $userInfo['bonus']?></td><td><a href="#">增加</a></td></tr>
+	    		<tr><td>做种时间</td><td><?php echo $this->getTTL($userInfo['seed_time'], '', $userInfo['seed_time'])?></td><td></td></tr>
+	    		<tr><td>下载时间</td><td><?php echo $this->getTTL($userInfo['leech_time'], '', $userInfo['leech_time'])?></td><td></td></tr>
     		</tbody>
     	</table>
     </div>
