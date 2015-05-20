@@ -202,7 +202,7 @@ class UserModel extends \framework\core\Model
 		}
 		else
 		{
-			return NULL;
+			return array();
 		}
 	}
 	
