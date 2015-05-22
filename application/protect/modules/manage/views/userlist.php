@@ -12,7 +12,7 @@
 		<th data-field="email">邮箱</th>
 		<th data-field="uploaded">上传量</th>
 		<th data-field="downloaded">下载量</th>
-		<th data-field="last_login_time">上次登陆</th>
+		<th data-field="last_login_time">最近登陆</th>
 		<th>角色</th>
 		<th>操作</th>
 	</tr>
