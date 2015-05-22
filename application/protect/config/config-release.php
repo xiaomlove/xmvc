@@ -62,6 +62,7 @@ return array(
 			'admin/user'=>'manage/user/userlist',
 			'admin/user/add'=>'manage/user/useradd',
 			'admin/user/detail'=>'manage/user/detail',
+			'admin/user/getUserUploadTorrents'=>'manage/user/getUserUploadTorrents',
 				
 			'admin/role'=>'manage/role/rolelist',
 			'admin/role/add'=>'manage/role/roleadd',

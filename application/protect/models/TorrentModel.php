@@ -1,10 +1,9 @@
 <?php
 namespace application\protect\models;
 
-use framework;
-use framework\App as App;
+use framework\App;
 
-class TorrentModel extends framework\core\Model
+class TorrentModel extends \framework\core\Model
 {
 	public function tableName()
 	{
@@ -26,14 +25,15 @@ class TorrentModel extends framework\core\Model
 	/**
 	 * 一个公用的返回各种搜索条件结果的方法
 	 * Enter description here ...
-	 * @param array $condition
-	 * @return array 返回总记录条数以及当前页的数据
+	 * @param array $condition 分页条件，包括page,per,sortField,sortType
+	 * @param string $where  where中的限制条件
+	 * @return array 返回总记录条数以及当前页的数据及分页条件
 	 */
-	public function getList(array $condition)
+	public function getList(array $condition = array(), $where = '')
 	{
 		$default = array(
 			'page'=>1,
-			'per_page'=>5,
+			'per'=>5,
 			'sort_field'=>'add_time',
 			'sort_type'=>'desc'
 		);
@@ -44,7 +44,7 @@ class TorrentModel extends framework\core\Model
 				$default[$key] = $condition[$key];
 			}
 		}
-		$per = $default['per_page'];
+		$per = $default['per'];
 		$offset = ((int)$default['page'] - 1) * $per;
 		$sortField = $default['sort_field'];
 		if(stripos($sortField, 'user_name') !== FALSE)
@@ -57,12 +57,22 @@ class TorrentModel extends framework\core\Model
 		}
 		$sortType = strtoupper($default['sort_type']);	
 		$sql = "SELECT a.id, a.main_title, a.slave_title, a.add_time, a.size, a.seeder_count, a.leecher_count, a.finish_times, a.comment_count, a.view_times, a.user_id, b.name as user_name FROM torrent as a LEFT JOIN user as b ON a.user_id = b.id ";
+		if (!empty($where))
+		{
+			$sql .= "WHERE $where ";
+			$count = $this->where($where)->count();
+		}
+		else 
+		{
+			$count = $this->count();
+		}
+		
 		$sql .= "ORDER BY $sortField $sortType ";
 		$sql .= "LIMIT $offset, $per";
 		
 		$result = $this->findBySql($sql);
-		$count = $this->count();
-		return array('data' => $result, 'count' => $count);
+
+		return array('data' => $result, 'count' => $count, 'page' => $default['page'], 'per' => $per);
 		
 	}
 	
@@ -72,7 +82,7 @@ class TorrentModel extends framework\core\Model
 		$path = substr($info['name'], 0, 8);//前8位是文件夹名，时间不算了
 		$path = App::getPathOfAlias(App::getConfig('torrentSavePath')).$path.DS;//种子保存路径
 		$file = $path.$info['name'];//种子文件
-		$encodeFile = framework\helper\StringHelper::encodeFileName($file);
+		$encodeFile = \framework\helper\StringHelper::encodeFileName($file);
 //		var_dump($file);
 		if (file_exists($encodeFile))
 		{

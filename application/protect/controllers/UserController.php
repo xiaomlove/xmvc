@@ -1,6 +1,10 @@
 <?php
 namespace application\protect\controllers;
 
+use application\protect\models\TorrentModel;
+
+use application\protect\models\OptionModel;
+
 use framework\App as App;
 use application\protect\models\UserModel as UserModel;
 
@@ -21,5 +25,7 @@ class UserController extends CommonController
 		$threadList = $model->table('forum_thread')->where('user_id='.$userId)->order('add_time DESC')->select();
 		$html = $this->render('profile', array('userInfo' => $userInfo, 'torrentList'  => $torrentList, 'threadList' => $threadList));
 		echo $html;
-	}	
+	}
+
+	
 }

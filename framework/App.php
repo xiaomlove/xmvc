@@ -285,7 +285,7 @@ final class App
 		}
 		else 
 		{
-			trigger_error('没有找到方法：'.ACTION, E_USER_ERROR);
+			trigger_error(CONTROLLER.'中没有找到方法：'.ACTION, E_USER_ERROR);
 		}
 	}
 	

@@ -2,8 +2,8 @@
 namespace application\protect\modules\manage\controllers;
 
 use framework\App;
-use application\protect\models\UserModel;
-use application\protect\models\OptionModel;
+use application\protect\models as models;
+
 
 class UserController extends \application\protect\controllers\CommonController
 {
@@ -11,8 +11,8 @@ class UserController extends \application\protect\controllers\CommonController
 	
 	public function actionUserlist()
 	{
-		$model = UserModel::model();
-		$per = OptionModel::model()->get('manage_user_pagination');
+		$model = models\UserModel::model();
+		$per = models\OptionModel::model()->get('manage_user_pagination');
 		$per = $per ? $per : 10;
 //		$per = 2;//测试
 		$page = !empty($_GET['page']) ? $_GET['page'] : 1;
@@ -66,11 +66,37 @@ class UserController extends \application\protect\controllers\CommonController
 		{
 			$this->goError();
 		}
-		$model = UserModel::model();
+		$model = models\UserModel::model();
 		$userInfo = $model->findByPk($_GET['id']);
 		$roles = $model->getRoles($_GET['id']);
 		$extraRules = $model->getExtraRules($_GET['id']);
 		$html = $this->render('userdetail', array('userInfo' => $userInfo, 'roles' => $roles, 'extraRules' => $extraRules));
 		echo $html;
+	}
+	
+	public function actionGetUserUploadTorrents()
+	{
+		if (!empty($_GET['id']) && ctype_digit($_GET['id']))
+		{
+			$userId = $_GET['id'];
+		}
+		else
+		{
+			$userId = App::ins()->user->getId();
+		}
+		$per = models\OptionModel::model()->get('manage_user_detail_pagination');
+		if (empty($per))
+		{
+			$per = 5;
+		}
+		$_GET['per'] = $per;
+		$result = models\TorrentModel::model()->getList($_GET, "user_id=$userId");
+//		var_dump($result);
+		$pagination = $this->getAjaxNavHtml($result['page'], ceil($result['count']/$result['per']));
+		$html = $this->renderPartial('useruploadtorrentslist', array('torrents' => $result['data']));
+		if (App::ins()->request->isAjax())
+		{
+			echo json_encode(array('code' => 1, 'msg' => '请求数据成功', 'data' => $html, 'pagination' => $pagination));
+		}
 	}
 }
