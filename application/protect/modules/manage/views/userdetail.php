@@ -49,6 +49,7 @@
 	    		?>
 	    		</td><td><a href="#">修改</a></td></tr>
 	    		<tr><td>加入时间</td><td><?php echo date('Y-m-d H:i', $userInfo['add_time'])?></td><td></td></tr>
+	    		<tr><td>上次登陆</td><td><?php echo date('Y-m-d H:i', $userInfo['last_login_time'])?></td><td></td></tr>
 	    		<tr><td>最近登陆</td><td><?php echo date('Y-m-d H:i', $userInfo['this_login_time'])?></td><td></td></tr>
 	    		<tr><td>当前可连接</td><td>
 	    		<?php 

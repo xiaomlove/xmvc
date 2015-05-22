@@ -28,7 +28,7 @@ class UserController extends \application\protect\controllers\CommonController
 		{
 			$where = "1";
 		}
-		$userList = $model->where($where)->field('id, name, email, role_name, uploaded, downloaded, last_login_time')->order("$orderField $orderType")->limit($limit)->select();
+		$userList = $model->where($where)->field('id, name, email, role_name, uploaded, downloaded, this_login_time')->order("$orderField $orderType")->limit($limit)->select();
 // 		var_dump($userList);exit;
 		$count = $model->where($where)->count();
 		$pagination = $this->getAjaxNavHtml($page, ceil($count/$per));
