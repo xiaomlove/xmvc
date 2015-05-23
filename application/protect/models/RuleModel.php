@@ -74,6 +74,7 @@ class RuleModel extends \framework\core\Model
 			self::$_ruleList[$rule['rule_key']] = $rule['rule_mvc'];
 		}
 // 		var_dump($ruleMvc);
+// 		echo '<hr/>';
 // 		var_dump(self::$_ruleList);exit;
 		return in_array($ruleMvc, self::$_ruleList);
 	}
