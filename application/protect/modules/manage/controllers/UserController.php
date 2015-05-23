@@ -76,9 +76,9 @@ class UserController extends \application\protect\controllers\CommonController
 	
 	public function actionGetUserUploadTorrents()
 	{
-		if (!empty($_GET['id']) && ctype_digit($_GET['id']))
+		if (!empty($_GET['user_id']) && ctype_digit($_GET['user_id']))
 		{
-			$userId = $_GET['id'];
+			$userId = $_GET['user_id'];
 		}
 		else
 		{
@@ -93,10 +93,11 @@ class UserController extends \application\protect\controllers\CommonController
 		$result = models\TorrentModel::model()->getList($_GET, "user_id=$userId");
 //		var_dump($result);
 		$pagination = $this->getAjaxNavHtml($result['page'], ceil($result['count']/$result['per']));
-		$html = $this->renderPartial('useruploadtorrentslist', array('torrents' => $result['data']));
+		$html = $this->renderPartial('useruploadtorrentslist', array('torrentList' => $result['data'], 'pagination' => $pagination));
+// 		echo $html;exit;
 		if (App::ins()->request->isAjax())
 		{
-			echo json_encode(array('code' => 1, 'msg' => '请求数据成功', 'data' => $html, 'pagination' => $pagination));
+			echo json_encode(array('code' => 1, 'msg' => '请求数据成功', 'data' => $html));
 		}
 	}
 }

@@ -6,6 +6,9 @@ use framework\App;
 
 class UserModel extends \framework\core\Model
 {
+	const USER_STATE_BANNED = 0;//被禁止
+	const USER_STATE_NORMAL = 1;//正常
+	const USER_STATE_HANGUP = 2;//挂起
 
 	public function tableName()
 	{

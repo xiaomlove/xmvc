@@ -6,19 +6,19 @@
 <div role="tabpanel">
 
   <!-- Nav tabs -->
-  <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active"><a href="#basic-info" aria-controls="basic-info" role="tab" data-toggle="tab">基本信息</a></li>
-    <li role="presentation"><a href="#upload-torrents" aria-controls="upload-torrents" role="tab" data-toggle="tab">发布的种子 </a></li>
-    <li role="presentation"><a href="#download-torrents" aria-controls="download-torrents" role="tab" data-toggle="tab">下载的种子</a></li>
+  <ul class="nav nav-tabs" role="tablist" id="detail-tab-nav" style="margin-bottom: 50px">
+    <li role="presentation" class="active"><a href="#basic-info" aria-controls="basic-info" role="tab" data-toggle="tab" data-loaded="true">基本信息</a></li>
+    <li role="presentation"><a href="#upload-torrents" aria-controls="upload-torrents" role="tab" data-toggle="tab" data-url="<?php echo $this->createUrl('manage/user/getuseruploadtorrents', array('user_id' => $userInfo['id']))?>">发布的种子 </a></li>
+    <li role="presentation"><a href="#download-torrents" aria-controls="download-torrents" role="tab" data-toggle="tab" data-url="">下载的种子</a></li>
     <li role="presentation"><a href="#comments" aria-controls="comments" role="tab" data-toggle="tab">发表的评论</a></li>
     <li role="presentation"><a href="#threads" aria-controls="threads" role="tab" data-toggle="tab">发表的主题</a></li>
     <li role="presentation"><a href="#replys" aria-controls="replys" role="tab" data-toggle="tab">发表的回复</a></li>
   </ul>
 
   <!-- Tab panes -->
-  <div class="tab-content">
+  <div class="tab-content" id="detail-tab-content">
     <div role="tabpanel" class="tab-pane active" id="basic-info">
-    	<table class="table table-bordered table-hover" style="margin-top: 50px">
+    	<table class="table table-bordered table-hover">
     		<thead>
     			<th>项目名称</th>
     			<th>项目的值</th>
@@ -123,5 +123,41 @@
 </div>
 
 <script>
+	var $tabNav = $("#detail-tab-nav");
+	var $tabContent = $("#detail-tab-content");
+	//拉取数据
+	$tabNav.on("show.bs.tab", "a[data-toggle=tab]", function(e){
+		var $a = $(this);
+		if ($a.attr("data-loaded") === "true" || !$a.attr("data-url") || $a.attr("data-url").trim() === "") {
+			return;
+		}
+		var url = $a.attr("data-url");
+		var href= $a.attr("href");//content的id
+		var $content = $(href);
+		$content.html("正在获取数据，请稍候...");
+		$.when(getData(url)).done(function(result){
+			if (result.code == 1) {
+				$a.attr("data-loaded", "true");
+				$content.html(result.data);
+			}
+		}).fail(function(msg){
+			$content.html(msg);
+		})
+	});
+
+
+	function getData(url){
+		var dfd = $.Deferred();
+		$.ajax({
+			url: url,
+			type: "GET",
+			dataType: "json",
+		}).done(function(result){
+			return dfd.resolve(result);
+		}).error(function(){
+			return dfd.reject("ajax发生了错误");
+		});
+		return dfd.promise();
+	}
 	
 </script>
