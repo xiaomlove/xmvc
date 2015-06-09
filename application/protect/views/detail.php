@@ -508,7 +508,7 @@
 		const C = '◎';
 		const BR = '<br/>';
 		const SP = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp';
-		var HTML = C + '片' + SP + '名：' + result.original_title + BR;
+		var HTML = '<p class="douban-basic">' + C + '片' + SP + '名：' + result.original_title + BR;
 		HTML += C + '译' + SP + '名：' + result.title + BR;
 		HTML += C + '又' + SP + '名：' + arrToString(result.aka, null, '/') + BR;
 		HTML += C + '年' + SP + '代：' + result.year + BR;
@@ -530,7 +530,7 @@
 		for (var i = 1; i < len; i++) {
 			HTML += SP + SP + SP + result.casts[i].name + BR;
 		}
-		HTML += BR;	
+		HTML +='</p>' + BR;	
 		HTML += C + '简' + SP + '介：' + BR + BR;
 		HTML += '<p>' + SP + result.summary + '</p>';
 		return HTML;
