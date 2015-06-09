@@ -19,16 +19,26 @@
             <td>基本信息</td>
             <td>大小：<span class="text-success"><?php echo $this->getSize($torrent['size'])?></span>类型：<span class="text-success">Movie</span></td>
           </tr>
+          
           <tr>
             <td>行为</td>
             <td><a href="javascript:;" class="text-danger">删除种子</a><a href="<?php echo framework\App::ins()->user->getId() == $torrent['user_id'] ? $this->createUrl('torrent/edit', array('id' => $torrent['id'])) : '#'?>" class="text-primary">编辑种子</a><a href="javascript:;" class="text-warning">举报种子</a></td>
           </tr>
+          
+          <?php if (!empty($torrent['douban_id'])):?>
+          <tr>
+            <td>豆瓣信息</td>
+            <td id="douban_info" data-douban-id="<?php echo $torrent['douban_id']?>"></td>
+          </tr>
+          <?php endIf?>
+          
           <tr>
             <td>简介</td>
             <td>
               <div id="introduce"><?php echo $torrent['introduce']?></div>
             </td>
           </tr>
+          
           <tr>
             <td>种子信息</td>
             <td>hash码：<span class="text-primary"><?php echo $torrent['info_hash']?></span><span id="torrent-file-list"><a href="javascript:;">[查看结构]</a></span></td>
@@ -477,4 +487,76 @@
 		$tpl.find("tbody").empty();
 		return toReturn;
 	}
+
+	//获取豆瓣信息
+	var $doubanTd = $("#douban_info");
+	if ($doubanTd.length) {
+		var url = 'https://api.douban.com/v2/movie/subject/' + $doubanTd.attr('data-douban-id');
+		$.ajax({
+			url: url + '?callback=?',
+			dataType: 'jsonp',
+		}).done(function(result) {
+// 			console.log(result);
+			var HTML = createInfoHtml(result);
+			$doubanTd.html(HTML);
+		}).error(function(XMLHttpRequest, textStatus, errorThrown) {
+			console.log(textStatus, errorThrown);
+		})
+	}
+
+	function createInfoHtml(result) {
+		const C = '◎';
+		const BR = '<br/>';
+		const SP = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp';
+		var HTML = C + '片' + SP + '名：' + result.original_title + BR;
+		HTML += C + '译' + SP + '名：' + result.title + BR;
+		HTML += C + '又' + SP + '名：' + arrToString(result.aka, null, '/') + BR;
+		HTML += C + '年' + SP + '代：' + result.year + BR;
+		HTML += C + '国家地区：' + arrToString(result.countries, null, '/') + BR;
+		HTML += C + '类' + SP + '型：' + arrToString(result.genres, null, '/') + BR;
+		if ('languages' in result) {
+			HTML += C + '语' + SP + '言：' + arrToString(result.languages, null, '/') + BR;
+		}
+		if ('durations' in result) {
+			HTML += C + '时' + SP + '长：' + arrToString(result.durations, null, '/') + BR;
+		}
+		HTML += C + '豆瓣评分：' + result.rating.average + '/10(' + result.ratings_count + ' votes)' + BR;
+		HTML += C + '豆瓣链接：<a href="' + result.alt + '">' + result.alt + '</a>' + BR;
+		
+		HTML += C + '导' + SP + '演：' + arrToString(result.directors, 'name', '/') + BR;
+
+		HTML += C + '演' + SP + '员：' + result.casts.shift().name + BR;
+		const len = result.casts.length;
+		for (var i = 1; i < len; i++) {
+			HTML += SP + SP + SP + result.casts[i].name + BR;
+		}
+		HTML += BR;	
+		HTML += C + '简' + SP + '介：' + BR + BR;
+		HTML += '<p>' + SP + result.summary + '</p>';
+		return HTML;
+	}
+
+	function arrToString(arr, field, d) {
+		var doSub = false;
+		if (typeof d === 'undefined') {
+			d = '';
+		} else {
+			doSub = true;
+		}
+		var STR = '';
+		const len = arr.length;
+		for (var i = 0;i < len; i++) {
+			if (field) {
+				STR += arr[i][field] + d;
+			} else {
+				STR += arr[i] + d;
+			}
+		}
+		if (doSub) {
+			STR = STR.substring(0, STR.lastIndexOf(d));
+		}
+		return STR;
+	}
+
+	
  </script>

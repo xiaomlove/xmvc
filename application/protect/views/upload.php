@@ -28,21 +28,33 @@
         <div class="form-group <?php echo $model->getError('main_title')!= NULL ? "has-error" : ""?>">
           <label for="mainTitle" class="col-sm-2 control-label">标题</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="inputPassword3" placeholder="标题" name="main_title" value="<?php echo $model->getData('main_title')?>">
+            <input type="text" class="form-control" id="main_title" placeholder="标题" name="main_title" value="<?php echo $model->getData('main_title')?>">
             <?php if($model->getError('main_title') != NULL):?>
             <span class="help-block"><?php echo $model->getError('main_title')?></span>
             <?php endIf?>
           </div>
         </div>
+        
         <div class="form-group <?php echo $model->getError('slave_title')!= NULL ? "has-error" : ""?>">
-          <label for="inputPassword3" class="col-sm-2 control-label">副标题</label>
+          <label for="slave_title" class="col-sm-2 control-label">副标题</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="inputPassword3" placeholder="副标题" name="slave_title" value="<?php echo $model->getData('slave_title')?>">
+            <input type="text" class="form-control" id="slave_title" placeholder="副标题" name="slave_title" value="<?php echo $model->getData('slave_title')?>">
             <?php if($model->getError('slave_title') != NULL):?>
             <span class="help-block"><?php echo $model->getError('slave_title')?></span>
             <?php endIf?>
           </div>
         </div>
+        
+        <div class="form-group <?php echo $model->getError('douban_id')!= NULL ? "has-error" : ""?>">
+          <label for="douban_id" class="col-sm-2 control-label">豆瓣ID</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="douban_id" placeholder="豆瓣网上的对应ID，用于请求基本信息" name="douban_id" value="<?php echo $model->getData('douban_id')?>">
+            <?php if($model->getError('douban_id') != NULL):?>
+            <span class="help-block"><?php echo $model->getError('douban_id')?></span>
+            <?php endIf?>
+          </div>
+        </div>
+        
         <div class="form-group <?php echo $model->getError('introduce')!= NULL ? "has-error" : ""?>">
           <label for="inputPassword3" class="col-sm-2 control-label">简介</label>
           <div class="col-sm-10">

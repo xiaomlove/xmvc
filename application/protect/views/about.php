@@ -44,5 +44,14 @@ body{padding-bottom: 100px}
 				<li>加入用户组。一个用户可同时拥有多个不同用户组的角色，其权限是所有角色的集合。</li>
 			</ol>
 		</div>
+		
+		<h4 class="page-header"><em class="">2015-06-09</em></h4>
+		<div>
+			<ol>
+				<li>后台用户列表展示，完成通用Ajax分页页码。</li>
+				<li>后台用户详情，目前可查看用户发表的种子。</li>
+				<li>发表种子加入豆瓣ID，种子详情页展示来自豆瓣API提供的电影条目信息。</li>
+			</ol>
+		</div>
 	</div>
 </div>

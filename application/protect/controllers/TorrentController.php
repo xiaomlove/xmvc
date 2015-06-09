@@ -31,7 +31,7 @@ class TorrentController extends CommonController
 		}
 		$this->setPageTitle('种子详情');
 		$model = TorrentModel::model();
-		$result = $model->findByPk($_GET['id'], 'id, name, main_title, slave_title, size, introduce, info_hash, view_times, download_times, finish_times, seeder_count, leecher_count, user_id');
+		$result = $model->findByPk($_GET['id'], 'id, name, main_title, slave_title, size, introduce, info_hash, view_times, download_times, finish_times, seeder_count, leecher_count, user_id, douban_id');
 //		var_dump($result);exit;
 		echo $this->render('detail', array('torrent' => $result));
 	}
@@ -115,7 +115,12 @@ class TorrentController extends CommonController
 								{
 									$fileList = serialize(array('length'=>$decode['info']['length'], 'name'=>$decode['info']['name']));
 								}
-								$sql = "INSERT INTO torrent (main_title, slave_title, info_hash, name, introduce, size, file_count, file_list, user_id, add_time) VALUES ('{$_POST['main_title']}', '{$_POST['slave_title']}', '$info_hash', '{$name}', '{$_POST['introduce']}', {$decode['size']}, {$decode['filecount']}, '$fileList', $userId ,".time().")";
+								$sql = "INSERT INTO torrent (main_title, slave_title, info_hash, name, introduce, size, file_count, file_list, user_id, add_time, douban_id) VALUES ('{$_POST['main_title']}', '{$_POST['slave_title']}', '$info_hash', '{$name}', '{$_POST['introduce']}', {$decode['size']}, {$decode['filecount']}, '$fileList', $userId ,".time();
+								if (!empty($_POST['douban_id']))
+								{
+									$sql .= ','.intval(trim($_POST['douban_id']));
+								}
+								$sql .= ')';
 								$insert = $model->execute($sql);
 								if($insert === 0 || $insert === FALSE)
 								{
