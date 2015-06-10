@@ -3,7 +3,7 @@ namespace application\protect\models;
 
 use framework;
 
-class OptionModel extends framework\core\Model
+class OptionModel extends \framework\core\Model
 {
 	
 	public function tableName()

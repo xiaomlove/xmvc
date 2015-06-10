@@ -126,7 +126,7 @@ class ForumthreadModel extends \framework\core\Model
 		}
 		else 
 		{
-			$sql = "SELECT a.*,b.name as user_name FROM forum_thread a LEFT JOIN user b ON a.user_id=b.id WHERE section_id={$_GET['section_id']} AND state=".self::STATE_PUBLISH;
+			$sql = "SELECT a.*,b.name as user_name FROM forum_thread a LEFT JOIN user b ON a.user_id=b.id WHERE a.section_id={$_GET['section_id']} AND a.state=".self::STATE_PUBLISH;
 			if (!empty($default['filter']) && ($default['filter'] === 'add_time' || $default['filter'] === 'support_count'))
 			{
 				$sql .= " ORDER BY {$default['filter']} DESC,$sortField $sortType";
