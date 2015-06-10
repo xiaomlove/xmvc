@@ -6,7 +6,7 @@
 	<a class="btn btn-primary pull-right" href="<?php echo $this->createUrl('manage/category/add')?>"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加分类项</a>
 </h3>
 
-<table class="table table-bordered role-group-table">
+<table class="table table-bordered table-hover role-group-table">
 	<thead>
 		<tr>
 			<th>分类项ID</th>
