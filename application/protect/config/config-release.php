@@ -78,7 +78,10 @@ return array(
 			'admin/rule/list'=>'manage/rule/list',
 			'admin/rule/add'=>'manage/rule/add',
 			'admin/rule/edit'=>'manage/rule/edit',
-			'admin/rule/delete'=>'mamage/rule/delete',
+			'admin/rule/delete'=>'manage/rule/delete',
+	
+			'admin/category/list' => 'manage/category/list',
+			'admin/category/add' => 'manage/category/add',
 		),
 	),
 	
