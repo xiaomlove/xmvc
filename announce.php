@@ -2,9 +2,10 @@
 /**
  * 为了速度，面向过程一步一步的来。
  */
+use framework\lib\BEncode;
 //echo '<pre/>';
 //var_dump(strlen($_GET['peer_id']));
-//var_dump($_SERVER);exit;
+// var_dump($_SERVER);exit;
 
 //define('MODE', 'RELEASE');
 
@@ -34,6 +35,7 @@ require 'framework/lib/announce_functions.php';
 // fwrite($fo, serialize($_GET));
 // fclose($fo);
 // unset($fo);
+
 if (!isset($_GET['passkey']) || strlen($_GET['passkey']) !== 32)
 {
 	error('error passkey');

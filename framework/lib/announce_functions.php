@@ -1,4 +1,7 @@
 <?php
+
+use framework\lib\BEncode;
+
 require 'framework/lib/BEncode.php';
 
 /**
@@ -20,6 +23,7 @@ function error($msg, $notError = FALSE)
 	{
 		$out = $msg;//用于最后输出正确的返回信息
 	}
+	
 	header('Content-Type: text/plain; charset = utf-8');
 	header("Pragma: no-cache");
 	if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && $_SERVER['HTTP_ACCEPT_ENCODING'] === 'gzip' && function_exists('gzencode'))
