@@ -20,15 +20,15 @@
 	<tbody>
 	<?php if (!empty($categoryList)):?>
 	<?php foreach ($categoryList as $category):?>
-		<tr>
+		<tr id="<?php echo $category['id']?>">
 			<td><?php echo $category['id']?></td>
-			<td><?php echo $category['name']?></td>
+			<td class="category-name"><?php echo $category['name']?></td>
 			<td>
 				<span class="glyphicon glyphicon-arrow-up" aria-hidden="true" title="上移"></span>
 				<span class="glyphicon glyphicon-arrow-down" aria-hidden="true" title="下移"></span>
 			</td>
 			<td>
-				<a href="javascript:;" class="btn btn-info btn-xs">修改名称</a>
+				<a href="javascript:;" class="btn btn-info btn-xs change-btn">修改名称</a>
 				<a href="<?php echo $this->createUrl('manage/category/list', array('parent_id' => $category['id']))?>">查看子项目</a>
 				<a href="javascript:;">删除</a>
 			</td>
@@ -48,7 +48,7 @@
         <h4 class="modal-title">新建分类项</h4>
       </div>
       <div class="modal-body">
-        <p>分类项名称：<input type="text" id="add-input"></p>
+        <p>分类项名称：<input type="text" id="add-input" data-id="false"></p>
         <span id="add-error" class="text-danger">不能为空！</span>
       </div>
       <div class="modal-footer">
@@ -70,6 +70,9 @@
 	var $addClose = $modal.find('.close');
 	var $addCancel = $modal.find('.modal-cancel');
 	var creating = false;
+
+	var addUrl = '<?php echo $this->createUrl('manage/category/addparent')?>';
+	var editUrl = '<?php echo $this->createUrl('manage/category/editparent')?>';
 	
 	$addBtn.click(function(e) {
 		$modal.modal({
@@ -90,17 +93,24 @@
 
 	$modal.on('hidden.bs.modal', function(e) {
 		$addError.hide();
+		$addInput.val('').attr('data-id', 'false');
 	});
 
 	$addSubmit.click(function(e) {
 		var value = $addInput.val().trim();
+		var id = $addInput.attr('data-id');
 		if (value === '') {
 			$addError.show();
 			$addInput.focus();
 			return;
+		};
+		if (typeof id !== 'undefined' && id !== 'false') {
+			var url = eidtUrl + '?id=' + id;
+		} else {
+			var url = addUrl;
 		}
 		$.ajax({
-			url: '<?php echo $this->createUrl('manage/category/addparent')?>',
+			url: url,
 			type: 'POST',
 			dataType: 'json',
 			beforeSend: function() {
@@ -124,6 +134,17 @@
 			$addSubmit.text(errorText).removeAttr('disabled');
 		})
 			
+	});
+
+	//修改名称
+	$('.change-btn').on('click', function(e) {
+		var name = $(this).parent().parent().find('.category-name').text();
+		var id = $(this).parents('tr').attr('id');
+		$addInput.val(name).attr('data-id', id);
+		$modal.modal({
+			backdrop: 'static',
+			keyboard: false,
+		});
 	})
 	
 </script>
