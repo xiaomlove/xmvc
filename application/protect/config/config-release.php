@@ -83,6 +83,7 @@ return array(
 			'admin/category/list' => 'manage/category/list',
 			'admin/category/addparent' => 'manage/category/addParent',
 			'admin/category/editparent' => 'manage/category/editParent',
+			'admin/category/exchangesn' => 'manage/category/exchangeSn',
 		),
 	),
 	

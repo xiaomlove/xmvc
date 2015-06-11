@@ -17,15 +17,15 @@
 			<th>操作</th>
 		</tr>
 	</thead>
-	<tbody>
+	<tbody id="tbody">
 	<?php if (!empty($categoryList)):?>
 	<?php foreach ($categoryList as $category):?>
 		<tr id="<?php echo $category['id']?>">
 			<td><?php echo $category['id']?></td>
 			<td class="category-name"><?php echo $category['name']?></td>
 			<td>
-				<span class="glyphicon glyphicon-arrow-up" aria-hidden="true" title="上移"></span>
-				<span class="glyphicon glyphicon-arrow-down" aria-hidden="true" title="下移"></span>
+				<span class="glyphicon move glyphicon-arrow-up" aria-hidden="true" title="上移"></span>
+				<span class="glyphicon move glyphicon-arrow-down" aria-hidden="true" title="下移"></span>
 			</td>
 			<td>
 				<a href="javascript:;" class="btn btn-info btn-xs change-btn">修改名称</a>
@@ -63,7 +63,7 @@
 	//添加父分类项
 	var $addBtn = $('#add-btn');
 	var $modal = $('#add-modal');
-	var $modalContent = $modal.find('.modal-content');
+	var $modalTitle = $modal.find('.modal-title');
 	var $addInput = $('#add-input');
 	var $addSubmit = $modal.find('.modal-submit');
 	var $addError = $('#add-error');
@@ -75,6 +75,7 @@
 	var editUrl = '<?php echo $this->createUrl('manage/category/editparent')?>';
 	
 	$addBtn.click(function(e) {
+		$modalTitle.text('添加分类项');
 		$modal.modal({
 			backdrop: 'static',
 			keyboard: false,
@@ -105,7 +106,7 @@
 			return;
 		};
 		if (typeof id !== 'undefined' && id !== 'false') {
-			var url = eidtUrl + '?id=' + id;
+			var url = editUrl + '?id=' + id;
 		} else {
 			var url = addUrl;
 		}
@@ -120,8 +121,8 @@
 			data: 'name=' + encodeURIComponent(value),
 			timeout: 8000,
 		}).done(function(result) {
-//			console.log(result);
-			if (result.code == 1) {
+// 			console.log(result);return;
+			if (result.code == 1 || result.code == 0) {
 				$modal.modal('hide');
 				window.location.reload();
 			} else {
@@ -141,10 +142,65 @@
 		var name = $(this).parent().parent().find('.category-name').text();
 		var id = $(this).parents('tr').attr('id');
 		$addInput.val(name).attr('data-id', id);
+		$modalTitle.text('修改分类项');
 		$modal.modal({
 			backdrop: 'static',
 			keyboard: false,
 		});
-	})
+	});
+
+	//上下移动
+	var $tbody = $('#tbody');
+	const len = $tbody.children().length;
+	$tbody.on('click', '.move', function(e) {
+		var $icon = $(this);
+		var $tr = $icon.parents('tr[id]');
+		var index = $tr.index();
+		if ($icon.hasClass('glyphicon-arrow-up')) {
+			if (index == 0) {
+				console.log('顶端：',index);
+				return;
+			}
+			var direction = 'up';
+			var id = $icon.parents('tr[id]').attr('id');
+			var $target = $tr.prev();
+			var targetId = $target.attr('id');
+		} else if ($icon.hasClass('glyphicon-arrow-down')) {
+			if (index == len - 1) {
+				console.log('底端：',index);
+				return;
+			}
+			var direction = 'down';
+			var id = $icon.parents('tr[id]').attr('id');
+			var $target = $tr.next();
+			var targetId = $target.attr('id');
+		} else {
+			$.error('没有正确的class类名');
+			return;
+		}
+		$.ajax({
+			url: '<?php echo $this->createUrl('manage/category/exchangesn')?>',
+			type: 'POST',
+			dataType: 'json',
+			data: 'id=' + id + '&targetId=' + targetId + '&direction=' + direction,
+		}).done(function(result) {
+			console.log(result);
+			if (result.code == 1) {
+				if (direction === 'up') {
+					$tr.insertBefore($target);
+				} else if (direction === 'down') {
+					$tr.insertAfter($target);
+				} else {
+					$.error('direction错误');
+				}
+			} else {
+				$.error(result.msg);
+			}
+		}).error(function(xhr, errorText, errorThrow) {
+			$.error(errorText);
+		})
+		
+	});
+
 	
 </script>

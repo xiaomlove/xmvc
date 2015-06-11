@@ -88,30 +88,40 @@ class CategoryModel extends \framework\core\Model
 		return empty($result[0]['maxSn']) ? 99 : $result[0]['maxSn'];
 	}
 	/**
-	 * 为用户添加角色，如果不指定角色id，取普通用户组的默认角色
-	 * Enter description here ...
-	 * @param unknown_type $userId
-	 * @param unknown_type $roleId
+	 * 交换两个分类的排序序号sn
+	 * @param unknown $id  自身id
+	 * @param unknown $targetId  目标id
+	 * @return boolean  成功TRUE失败FALSE
 	 */
-	public function addUserRole($userId, $roleId = '')
+	public function exchangeSn($id, $targetId)
 	{
-		if (empty($roleId))
+		$self = $this->active()->findByPk($id);
+		if (empty($self))
 		{
-			$roleId = RoleModel::ROLE_DEFAULT_ID;
-		}
-		$sql = "SELECT * FROM role WHERE id=$roleId";
-		$roleInfo = $this->findBySql($sql);
-		if (empty($roleInfo))
-		{
-			trigger_error('默认角色不存在', E_USER_ERROR);
 			return FALSE;
 		}
-		$roleInfo = $roleInfo[0];
-//		var_dump($roleInfo);exit;
-		$delSql = "DELETE FROM user_role WHERE user_id=$userId AND role_group_id=".$roleInfo['role_group_id'];
-		$del = $this->execute($delSql);
-		$insertSql = "INSERT INTO user_role (user_id, role_id, role_group_id) VALUES ($userId, $roleId, {$roleInfo['role_group_id']})";
-		return $this->execute($insertSql);
+		$target = $this->active()->findByPk($targetId);
+		if (empty($target))
+		{
+			return FALSE;
+		}
+		$selfSn = $self->sn;
+		$targetSn = $target->sn;
+		$this->beginTransaction();
+		$self->sn = $targetSn;
+		$target->sn = $selfSn;
+		$updateSelf = $self->save();
+		$updateTarget = $target->save();
+		if ($updateSelf !== FALSE && $updateTarget !== FALSE)
+		{
+			$this->commit();
+			return TRUE;
+		}
+		else
+		{
+			$this->rollBack();
+			return FALSE;
+		}
 	}
 	
 	public function hashPassword($password)
