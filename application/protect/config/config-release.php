@@ -81,7 +81,7 @@ return array(
 			'admin/rule/delete'=>'manage/rule/delete',
 	
 			'admin/category/list' => 'manage/category/list',
-			'admin/category/add' => 'manage/category/add',
+			'admin/category/addparent' => 'manage/category/addParent',
 		),
 	),
 	

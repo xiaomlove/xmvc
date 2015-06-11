@@ -66,33 +66,26 @@ class CategoryModel extends \framework\core\Model
 		return $result;
 	}
 	/**
-	 * 添加用户
+	 * 添加一级分类
 	 * Enter description here ...
-	 * @param array $userInfo 用户的信息数组
+	 * @param array $name 一级分类名称
 	 */
-	public function addUser(array $userInfo)
+	public function addParent($name)
 	{
-		if(!empty($userInfo['password']) && strlen($userInfo['password']) < 60)
-		{
-			$userInfo['password'] = $this->hashPassword($userInfo['password']);
-		}
-		if(empty($userInfo['passkey']))
-		{
-			$userInfo['passkey'] = md5($userInfo['name'].time());
-		}
-		$user = new UserModel();//要写完整UserModel
-//		var_dump($user);exit;
-		foreach($userInfo as $field=>$value)
-		{
-			$user->$field = $value;
-		}
-		$user->add_time = time();
-		$user->role_level = 1;
-		$user->role_name = '幼儿园';
-		$user->avatar_url = 'application/public/images/avatar.jpg';
-		$result = $user->save();
-		return $result;
-		
+		$maxSn = self::getMaxSn() + 1;
+		$name = strip_tags($name);
+		$sql = "INSERT INTO ".self::tableName()." (name,sn) VALUES ('$name','$maxSn')";
+		return $this->execute($sql);
+	}
+	/**
+	 * 获得当前最大的排序序号，首条记录默认99
+	 * Enter description here ...
+	 */
+	public function getMaxSn()
+	{
+		$sql = 'SELECT max(sn) as maxSn FROM '.self::tableName();
+		$result = $this->findBySql($sql);
+		return empty($result[0]['maxSn']) ? 99 : $result[0]['maxSn'];
 	}
 	/**
 	 * 为用户添加角色，如果不指定角色id，取普通用户组的默认角色

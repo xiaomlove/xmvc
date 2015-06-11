@@ -19,17 +19,31 @@ class CategoryController extends \application\protect\controllers\CommonControll
 		echo $html;
 	}
 	
-	public function actionUseradd()
+	public function actionAddParent()
 	{
-		if (App::ins()->request->isGet())
+		if (App::ins()->request->isPost())
 		{
-			$html = $this->render('userform');
-			echo $html;
+			if (empty($_POST['name']))
+			{
+				echo json_encode(array('code' => -1, 'msg' => '参数不全'));exit;
+			}
+			$modal = CategoryModel::model();
+			$result = $modal->addParent($_POST['name']);
+			
+			if ($result)
+			{
+				echo json_encode(array('code' => 1, 'msg' => '添加成功', 'data' => $result));exit;
+			}
+			else
+			{
+				echo json_encode(array('code' => -1, 'msg' => '添加失败'));exit;
+			}
 		}
-		elseif(App::ins()->request->isPost())
+		else 
 		{
-			echo '提交添加section';
+			echo json_encode(array('code' => -1, 'msg' => '只能POST方式提交'));exit;
 		}
+		
 	}
 	
 	public function actionDetail()
