@@ -68,13 +68,14 @@ class CategoryModel extends \framework\core\Model
 	/**
 	 * 添加一级分类
 	 * Enter description here ...
-	 * @param array $name 一级分类名称
+	 * @param string $name 一级分类名称
+	 * @param string $field 对应torrent字段，需要先在数据库添加
 	 */
-	public function addParent($name)
+	public function addParent($name, $field)
 	{
 		$maxSn = self::getMaxSn() + 1;
 		$name = strip_tags($name);
-		$sql = "INSERT INTO ".self::tableName()." (name,sn) VALUES ('$name','$maxSn')";
+		$sql = "INSERT INTO ".self::tableName()." (name,sn,value) VALUES ('$name','$maxSn','$field')";
 		return $this->execute($sql);
 	}
 	/**

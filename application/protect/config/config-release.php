@@ -80,10 +80,13 @@ return array(
 			'admin/rule/edit'=>'manage/rule/edit',
 			'admin/rule/delete'=>'manage/rule/delete',
 	
-			'admin/category/list' => 'manage/category/list',
+			'admin/category/parentlist' => 'manage/category/parentList',
 			'admin/category/addparent' => 'manage/category/addParent',
 			'admin/category/editparent' => 'manage/category/editParent',
 			'admin/category/exchangesn' => 'manage/category/exchangeSn',
+			'admin/category/sublist' => 'manage/category/subList',
+			'admin/category/addsub' => 'manage/category/addSub',
+			'admin/category/editsub' => 'manage/category/editSub',
 		),
 	),
 	

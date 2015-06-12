@@ -1,44 +1,44 @@
 <style>
-	td span{margin-right: 10px;cursor: pointer}
+	td .glyphicon{margin-right: 10px;cursor: pointer}
 	.modal-title,.modal-body,.modal-footer{text-align: center}
 	#add-error,#field-error{display: none}
 	.modal-label{margin-bottom: 10px}
 </style>
 <h3 class="main-title">
-	<strong>种子分类项</strong>
-	<a id="add-btn" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加分类项</a>
+	<strong>【<?php echo $parent['name']?>】下的具体分类项目</strong>
+	<a class="btn btn-primary pull-right" href="<?php echo $this->createUrl('manage/category/parentlist')?>"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>返回</a>
+	<a class="btn btn-primary pull-right" href="<?php echo $this->createUrl('manage/category/addsub')?>"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加</a>
 </h3>
 
-<table class="table table-bordered table-hover role-group-table">
+<table class="table table-bordered table-hover sub-category-table">
 	<thead>
 		<tr>
-			<th>分类项ID</th>
-			<th>分类项名称</th>
-			<th>torrent字段</th>
+			<th>名称</th>
+			<th>图标</th>
+			<th>torrent值</th>
 			<th>排序</th>
 			<th>操作</th>
 		</tr>
 	</thead>
 	<tbody id="tbody">
-	<?php if (!empty($categoryList)):?>
-	<?php foreach ($categoryList as $category):?>
+	<?php if (!empty($subCategoryList)):?>
+	<?php foreach ($subCategoryList as $category):?>
 		<tr id="<?php echo $category['id']?>">
-			<td><?php echo $category['id']?></td>
-			<td class="category-name"><?php echo $category['name']?></td>
-			<td class="torrent-field"><?php echo $category['value']?></td>
+			<td><?php echo $category['name']?></td>
+			<td><span class="category-icon" style="background-image: url('<?php echo empty($category['icon_src']) ? '/application/assets/images/catsprites.png' : $category['icon_src']?>')"></span></td>
+			<td><?php echo $category['value']?></td>
 			<td>
 				<span class="glyphicon move glyphicon-arrow-up" aria-hidden="true" title="上移"></span>
 				<span class="glyphicon move glyphicon-arrow-down" aria-hidden="true" title="下移"></span>
 			</td>
 			<td>
-				<a href="javascript:;" class="btn btn-info btn-xs change-btn">修改</a>
-				<a href="<?php echo $this->createUrl('manage/category/sublist', array('parent_id' => $category['id']))?>">查看子项目</a>
+				<a href="<?php echo $this->createUrl('/manage/category/editsub', array('id' => $category['id']))?>">编辑</a>
 				<a href="javascript:;">删除</a>
 			</td>
 		</tr>
 	<?php endforeach?>
 	<?php else:?>
-		<tr><td colspan="4">暂无分类项</td></tr>
+		<tr><td colspan="5">暂无具体项目</td></tr>
 	<?php endIf?>
 	</tbody>
 </table>

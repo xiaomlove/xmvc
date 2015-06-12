@@ -147,7 +147,7 @@ body{-background-image:url('../images/light_grey.png');-font-family: Tahoma,"Mic
 .manage .manage-main .main-title{margin-bottom: 20px}
 .manage .manage-main .user-search{margin: 0 10px}
 .manage .manage-main .glyphicon-search{cursor: pointer}
-
+.manage .manage-main .main-title a.pull-right{margin-right: 10px}
 
 .manage .role-add-rule label input{position: relative;top: 2px}
 
@@ -169,3 +169,7 @@ body{-background-image:url('../images/light_grey.png');-font-family: Tahoma,"Mic
 .manage .clear-keyword{
 	margin: 0 40px;
 }
+
+/*种子分类*/
+.sub-category-table td{vertical-align: middle !important;padding: 5px 8px !important}
+.sub-category-table .category-icon{width: 45px;height: 46px;background-position: 0 0;display: inline-block}

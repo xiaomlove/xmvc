@@ -220,7 +220,7 @@ class TorrentController extends CommonController
 		$file = $model->getTorrent($_GET['id']);
 		if(!empty($file))
 		{
-			$encodeFile = framework\helper\StringHelper::encodeFileName($file);
+			$encodeFile = \framework\helper\StringHelper::encodeFileName($file);
 			$decode = BEncode::decode(file_get_contents($encodeFile));
 			if (!empty($decode))
 			{

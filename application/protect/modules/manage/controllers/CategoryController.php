@@ -1,6 +1,8 @@
 <?php
 namespace application\protect\modules\manage\controllers;
 
+use application\protect\models\TorrentModel;
+
 use application\protect\models\CategoryModel;
 
 use framework\App;
@@ -11,10 +13,10 @@ class CategoryController extends \application\protect\controllers\CommonControll
 {
 	public $layout = 'manage';
 	
-	public function actionList()
+	public function actionParentList()
 	{
 		$model = CategoryModel::model();
-		$categoryList = $model->order('sn ASC,id ASC')->select();
+		$categoryList = $model->where('parent_id=0')->order('sn ASC,id ASC')->select();
 		$html = $this->render('categorylist', array('categoryList' => $categoryList));
 		echo $html;
 	}
@@ -23,12 +25,23 @@ class CategoryController extends \application\protect\controllers\CommonControll
 	{
 		if (App::ins()->request->isPost())
 		{
-			if (empty($_POST['name']))
+			if (empty($_POST['name']) || empty($_POST['field']))
 			{
 				echo json_encode(array('code' => -1, 'msg' => '参数不全'));exit;
 			}
-			$modal = CategoryModel::model();
-			$result = $modal->addParent($_POST['name']);
+			$model = CategoryModel::model();
+			$field = $_POST['field'];
+			$_fields = TorrentModel::model()->_fields;//所有字段
+			if (!in_array($field, $_fields))
+			{
+				echo json_encode(array('code' => -2, 'msg' => '没有该字段'));exit;
+			}
+			$isHaved = $model->where("value='$field'")->limit(1)->select();
+			if (!empty($isHaved))
+			{
+				echo json_encode(array('code' => -2, 'msg' => '该字段的分类项已存在'));exit;
+			}
+			$result = $model->addParent($_POST['name'], trim($field));
 			
 			if ($result)
 			{
@@ -50,12 +63,24 @@ class CategoryController extends \application\protect\controllers\CommonControll
 	{
 		if (App::ins()->request->isPost())
 		{
-			if (empty($_POST['name']) || empty($_GET['id']))
+			if (empty($_POST['name']) || empty($_GET['id']) || empty($_POST['field']))
 			{
 				echo json_encode(array('code' => -1, 'msg' => '参数不全'));exit;
 			}
-			$modal = CategoryModel::model();
-			$result = $modal->updateByPk($_GET['id'], array('name' => strip_tags($_POST['name'])));
+			$model = CategoryModel::model();
+			$field = $_POST['field'];
+			$id = $_GET['id'];
+			$_fields = TorrentModel::model()->_fields;//所有字段
+			if (!in_array($field, $_fields))
+			{
+				echo json_encode(array('code' => -2, 'msg' => '没有该字段'));exit;
+			}
+			$haved = $model->where("value='$field'")->limit(1)->select();
+			if (!empty($haved) && $haved[0]['id'] != $id)
+			{
+				echo json_encode(array('code' => -2, 'msg' => '该字段的分类项已存在'));exit;
+			}
+			$result = $model->updateByPk($id, array('name' => strip_tags($_POST['name']), 'value' => trim($field)));
 // 			var_dump($result);			
 			if ($result)
 			{
@@ -102,30 +127,20 @@ class CategoryController extends \application\protect\controllers\CommonControll
 		}
 	}
 	
-	public function actionGetUserUploadTorrents()
+	public function actionSubList()
 	{
-		if (!empty($_GET['user_id']) && ctype_digit($_GET['user_id']))
+		if (empty($_GET['parent_id']) || !ctype_digit($_GET['parent_id']))
 		{
-			$userId = $_GET['user_id'];
+			$this->goError();
 		}
-		else
+		$model = CategoryModel::model();
+		$parent = $model->findByPk($_GET['parent_id']);
+		if (empty($parent))
 		{
-			$userId = App::ins()->user->getId();
+			$this->goError();
 		}
-		$per = models\OptionModel::model()->get('manage_user_detail_pagination');
-		if (empty($per))
-		{
-			$per = 5;
-		}
-		$_GET['per'] = $per;
-		$result = models\TorrentModel::model()->getList($_GET, "user_id=$userId");
-//		var_dump($result);
-		$pagination = $this->getAjaxNavHtml($result['page'], ceil($result['count']/$result['per']));
-		$html = $this->renderPartial('useruploadtorrentslist', array('torrentList' => $result['data'], 'pagination' => $pagination));
-// 		echo $html;exit;
-		if (App::ins()->request->isAjax())
-		{
-			echo json_encode(array('code' => 1, 'msg' => '请求数据成功', 'data' => $html));
-		}
+		$subList = $model->where("parent_id=".$parent['id'])->select();
+		$html = $this->render('subcategorylist', array('parent' => $parent, 'subCategoryList' => $subList));
+		echo $html;
 	}
 }
