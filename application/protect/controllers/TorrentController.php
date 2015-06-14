@@ -1,10 +1,10 @@
 <?php
 namespace application\protect\controllers;
 
-use framework\App as App;
-use application\protect\models\TorrentModel as TorrentModel;
-use framework\lib\BEncode as BEncode;
-use framework;
+use framework\App;
+use application\protect\models\TorrentModel;
+use application\protect\models\CategoryModel;
+use framework\lib\BEncode;
 
 class TorrentController extends CommonController
 {
@@ -353,5 +353,55 @@ class TorrentController extends CommonController
 		$snatchList = $model->findBySql($sql);
 		$html = $this->render('snatch', array('torrentInfo' => $torrent, 'snatchList' => $snatchList));
 		echo $html;
+	}
+	
+	protected function createCategoryFormGroup($model)
+	{
+		$model = CategoryModel::model();
+		$tree = $model->getParentSubTree();
+// 		var_dump($tree);
+		$out = "";
+		if (!empty($tree))
+		{
+			foreach ($tree as $item)
+			{
+				$out .= '<div class="form-group'.($model->hasError($item['value']) ? " has-error" : "").'">';
+				$out .= '<label for="'.$item['value'].'" class="col-sm-2 control-label">'.$item['name'].'</label>';
+				$out .= '<div class="col-sm-10">';
+				$out .= '<select class="form-control" id="'.$item['value'].'" name="'.$item['value'].'">';
+				if (!empty($item['subs']))
+				{
+					if ($item['value'] == 'tag')
+					{
+						$out .= '<option value="0">该项可以不选...</option>';
+					}
+					else 
+					{
+						$out .= '<option value="0">务必选择正确的一项...</option>';
+					}
+					foreach ($item['subs'] as $sub)
+					{
+						$selected = "";
+						if ($sub['value'] == $model->getData($item['value']))
+						{
+							$selected = " selected";
+						}
+						$out .= '<option value="'.$sub['value'].'"'.$selected.'>'.$sub['name'].'</option>';
+					}
+				}
+				$out .= '</select>';
+		        if ($model->hasError($item['value']))
+		        {
+		        	$out .= '<span class="help-block">'.$model->getError($item['value']).'</span>';
+		        }
+		        $out .= '</div></div>';
+			}
+		}
+		return $out;
+	}
+	
+	protected function getSearchBox()
+	{
+		return CategoryModel::model()->createSearchBox();
 	}
 }

@@ -78,6 +78,7 @@ class CommonController extends \framework\core\Controller
 				}
 				else
 				{
+					header('Content-Type:text/html;charset=UTF-8');
 					die('没有该权限');
 				}
 			}

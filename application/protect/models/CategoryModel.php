@@ -15,56 +15,107 @@ class CategoryModel extends \framework\core\Model
 	{
 		return parent::getModel(__CLASS__);
 	}
+	
+	public function rules()
+	{
+		return array(
+			array('name, value', 'required', '不能为空'),
+			array('value', 'number', '必须是数字值'),
+		);
+	}
 	/**
-	 * 通过用户名查找用户，可返回部分字段，默认返回id,name,password
-	 * @param unknown $name
-	 * @param mixed $fields
+	 * 查找某一父分类下的所有子项目
+	 * @param string $parentField
 	 * @return array
 	 */
-	public function findByName($name, $fields = 'id, name, password')
+	public function getByParentField($parentField)
 	{
-		if(empty($name) || !is_string($name))
+		$table = self::tableName();
+		$sql = "SELECT * FROM $table WHERE parent_id=(SELECT id FROM $table WHERE value='$parentField' AND parent_id=0 LIMIT 1) ORDER by sn ASC,id ASC";
+		return $this->findBySql($sql);
+	}
+	/**
+	 * 获得父分类与子分类
+	 * @return array 返回父分类，二维数组，父分类的subs属性存储其子分类
+	 */
+	public function getParentSubTree()
+	{
+		$parentList = $this->where('parent_id=0')->order('sn ASC')->select();
+		if (empty($parentList))
 		{
-			return NULL;
+			return array();
 		}
-		if(!empty($fields) && is_array($fields))
+		$subList = $this->where('parent_id>0')->order('sn ASC')->select();
+		foreach ($parentList as &$parent)
 		{
-			$fields = implode(',', $fields);
+			$parent['subs'] = array_filter($subList, function($sub) use(&$parent) {
+				return $sub['parent_id'] == $parent['id'];
+			});
 		}
-		$result = $this->field($fields)->where('name = :name', array(':name'=>$name))->limit(1)->select();
-		return empty($result) ? NULL : $result[0];
+		return $parentList;
 	}
 	
-	/**
-	 * 通过邮箱查找用户，可返回部分字段，默认返回id,name,password
-	 * @param unknown $name
-	 * @param mixed $fields
-	 * @return array
-	 */
-	public function findByEmail($email, $fields = 'id, name, password')
+	public function createSearchBox()
 	{
-		if(empty($email) || !is_string($email))
+		$categoryData = self::getParentSubTree();
+		if (empty($categoryData))
 		{
-			return NULL;
+			return '';
 		}
-		if(!empty($fields) && is_array($fields))
+		$boxHtml = '<table class="table table-bordered search-box">';
+		$boxHtml .= '<thead><tr><th colspan="2" class="search-box-title"><span class="search-box-icon" title="点击收缩或展开"><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>搜索箱</span></th></tr></thead>';
+		$boxHtml .= '<tbody class="category-box"><tr><td>';
+		$boxHtml .= '<div>';
+		foreach ($categoryData as $category)
 		{
-			$fields = implode(',', $fields);
+			$boxHtml .= '<div class="category-item"><div class="parent-category">';
+			$boxHtml .= '<strong>'.$category['name'].'</strong><button type="button" class="btn btn-default btn-xs select-all">全选</button>';
+			$boxHtml .= '</div><div class="sub-category">';
+			if (!empty($category['subs']))
+			{
+				$boxHtml .= '<ul class="list-unstyled list-inline">';
+				foreach ($category['subs'] as $sub)
+				{
+					if ($category['value'] === 'source_type')
+					{
+						$boxHtml .= '<li title="'.$sub['name'].'"><input type="checkbox" name="'.$category['value'].'" value="'.$sub['value'].'"><span class="category-icon" style="background-image: url(\''.(empty($sub['icon_src']) ? '/application/assets/images/catsprites.png' : $sub['icon_src']).'\')"></span></li>';
+					}
+					else
+					{
+						$boxHtml .= '<li><input type="checkbox" name="'.$category['value'].'" value="'.$sub['value'].'">'.$sub['name'].'</li>';
+					}
+				}
+				$boxHtml .= '</ul>';
+			}
+			$boxHtml .= '</div></div>';//完成一个category-item
 		}
-		$result = $this->field($fields)->where('email = :email', array(':email'=>$email))->limit(1)->select();
-		return empty($result) ? NULL : $result[0];
+		$boxHtml .= '</div>';//完成categorybox
+		$boxHtml .= '</td>';//完成左边td
+		$boxHtml .= '<td>';//开始右边td
+		$boxHtml .= '<div class="right-item"><strong>活动状态</strong><select name="active-state"><option value="1">全部</option><option value="2">仅活种</option><option value="3">仅死种</option></select></div>';
+		$boxHtml .= '<div class="right-item"><strong>促销状态</strong><select name="sp-state"><option value="1">全部</option><option value="2">正常</option><option value="3">50%</option></select></div>';
+		$boxHtml .= '</td>';//完成右边td		
+		$boxHtml .= '</tr></tbody>';//完成分类tbody
+		
+		$boxHtml .= '<tbody class="input-area"><tr><td>';
+		
+		//关键字输入区
+		$boxHtml .= '<div>搜索关键字：<input type="text" name="keyword">';
+		$boxHtml .= '<span>范围：<select name="range"><option value="1">标题</option><option value="2">描述</option><option value="3">发布者</option><option value="4">IMDB</option></select></span>';	
+		$boxHtml .= '</div>';//输入区结束
+		
+		//热门关键字
+		$boxHtml .= '<div class="hot-words"><small><a href="#">冲锋车</a></small><small><a href="#">盗墓笔记</a></small><small><a href="#">超能查派</a></small><small><a href="#">侏罗纪世界</a></small><small><a href="#">奔跑吧兄弟</a></small></div>';
+		
+		
+		$boxHtml .= '</td><td>';
+		$boxHtml .= '<button type="button" class="btn btn-success">给我搜</button>';
+		$boxHtml .= '</td></tr></tbody>';
+		$boxHtml .= '</table>';
+		return $boxHtml;
 	}
-	/**
-	 * 登陆操作，如果记住登陆信息，默认30天
-	 * Enter description here ...
-	 */
-	public function login($id, $name, $password, $remember = TRUE, $expire = 108000)
-	{
-		$sql = "UPDATE user SET last_login_time=this_login_time,this_login_time=".$_SERVER['REQUEST_TIME']." WHERE id=$id";
-		$this->execute($sql);
-		$result = App::ins()->user->setLogin($id, $name, $password, $remember, $expire);
-		return $result;
-	}
+	
+
 	/**
 	 * 添加一级分类
 	 * Enter description here ...
@@ -82,9 +133,13 @@ class CategoryModel extends \framework\core\Model
 	 * 获得当前最大的排序序号，首条记录默认99
 	 * Enter description here ...
 	 */
-	public function getMaxSn()
+	public function getMaxSn($parentId = '')
 	{
 		$sql = 'SELECT max(sn) as maxSn FROM '.self::tableName();
+		if (!empty($parentId))
+		{
+			$sql .= ' WHERE parent_id='.$parentId;
+		}
 		$result = $this->findBySql($sql);
 		return empty($result[0]['maxSn']) ? 99 : $result[0]['maxSn'];
 	}

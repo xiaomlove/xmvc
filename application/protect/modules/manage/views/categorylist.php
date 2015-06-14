@@ -108,6 +108,7 @@
 		$fieldError.hide();
 		$addInput.val('').attr('data-id', 'false');
 		$fieldInput.val('');
+		$addSubmit.text('确定');
 	});
 
 	$addSubmit.click(function(e) {
@@ -144,15 +145,14 @@
 			if (result.code == 1 || result.code == 0) {
 				$modal.modal('hide');
 				window.location.reload();
-			} else if (result.code == -2) {
+				return;
+			} else if (result.code == -2 || result.code == -4) {
 				$fieldError.text(result.msg).show();
-				$addSubmit.text('确定').removeAttr('disabled');
-				creating = false;
-			} else {
-				creating = false;
-				$addSubmit.text(result.msg).removeAttr('disabled');
-				
+			} else if (result.code == -3) {
+				$addError.text(result.msg).show();
 			}
+			creating = false;
+			$addSubmit.text(result.msg).removeAttr('disabled');
 		}).error(function(xhr, errorText, errorThrow) {
 			creating = false;
 			$addSubmit.text(errorText).removeAttr('disabled');

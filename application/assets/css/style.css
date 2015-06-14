@@ -46,7 +46,27 @@ body{-background-image:url('../images/light_grey.png');-font-family: Tahoma,"Mic
 .paopao-action img, #paopao-expression img{max-width:32px;cursor: pointer}
 .paopao-action img{margin-top: 30px}
 #paopao-expression{width: 530px;position: absolute;display: none; padding: 50px; -border: 1px solid #e69}
-#torrent-list-table {margin-top: 50px;}
+
+
+/*种子列表页面*/
+.search-box{margin-top: 30px}
+.search-box .search-box-title{text-align: center;}
+.search-box .search-box-icon{cursor: pointer}
+.search-box .category-box{}
+.search-box .category-box .category-item{margin: 5px 0}
+.search-box .category-box .parent-category{width: 13%;display: inline-block}
+.search-box .category-box .parent-category .btn{margin-left: 5px}
+.search-box .category-box .sub-category{width: 87%;display: inline-block}
+.search-box .category-box .sub-category .category-icon{width: 45px;height: 46px;background-position: 0 0;display: inline-block;cursor: pointer}
+.search-box .right-item{width: 100%;text-align: center;margin-top: 50px}
+.search-box .right-item select{width: 100%;display: inline-block;margin-top: 10px}
+.search-box .input-area td{text-align: center;vertical-align: middle}
+.search-box .input-area input[name=keyword]{margin-right: 20px}
+.search-box .input-area .hot-words{margin-top: 5px}
+.search-box .input-area .hot-words small{margin-right: 20px}
+
+
+#torrent-list-table {margin-top: 30px;}
 
 #torrent-list-table tr th:nth-of-type(1){width:50%;text-align:left}
 #torrent-list-table tr td:nth-of-type(1){width:50%;text-align:left}
@@ -97,6 +117,7 @@ body{-background-image:url('../images/light_grey.png');-font-family: Tahoma,"Mic
 
 #profile td:nth-of-type(1){width: 20%}
 .profile-main .page-header{font-weight: bold}
+
 /*论坛*/
 .bg-light-gray{background-color: #eee}
 .forum-section-table thead{background-color: #ddd}

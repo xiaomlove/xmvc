@@ -64,8 +64,12 @@
             <span class="help-block"><?php echo $model->getError('introduce')?></span>
             <?php endIf?>
           </div>
-          
         </div>
+          
+          <!-- 筛选条件/种子分类开始 -->
+          
+          <?php echo $this->createCategoryFormGroup($model)?>
+          
         <div class="form-group">
           <div class="col-sm-offset-2 col-sm-10 submit-btn">
             <button type="submit" class="btn btn-primary" id="submit"><?php echo ACTION === 'Upload' ? '发布' : '编辑'?></button>

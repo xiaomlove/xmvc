@@ -1,3 +1,5 @@
+	<?php echo $this->getSearchBox()?>
+
 <div class="row">
       <table class="table table-bordered table-hover table-striped" id="torrent-list-table">
         <thead>
@@ -37,3 +39,25 @@
         <?php echo $navHtml?>
       </nav>
     </div>
+    
+ <script>
+	var $categoryBox = $('.category-box');
+	$('.search-box-icon').click(function(e) {
+		if ($categoryBox.hasClass('hidden')) {
+			$(this).children('span').attr('class', 'glyphicon glyphicon-minus-sign');
+			$categoryBox.removeClass('hidden');
+		} else {
+			$(this).children('span').attr('class', 'glyphicon glyphicon-plus-sign');
+			$categoryBox.addClass('hidden');
+		}
+	});
+
+	$('.select-all').click(function(e) {
+		var $btn = $(this);
+		if ($btn.attr('data-selected') === 'true') {
+			$btn.removeAttr('data-selected').text('全选').parents('.category-item').find('.sub-category input[type=checkbox]').prop('checked', false);
+		} else {
+			$btn.attr('data-selected', 'true').text('全不选').parents('.category-item').find('.sub-category input[type=checkbox]').prop('checked', true);
+		}
+	})
+ </script>

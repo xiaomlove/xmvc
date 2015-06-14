@@ -76,6 +76,14 @@
 			}
         })
     }
-  })
+  });
+
+  	$(document).on('keydown', function(e) {
+	    var keyCode = e.keyCode;
+	    var activeId = document.activeElement.id;
+		if (keyCode === 13 && (activeId === 'inputPassword' || activeId === 'inputName')) {
+			$submit.click();
+		}
+	})
  
   </script>
