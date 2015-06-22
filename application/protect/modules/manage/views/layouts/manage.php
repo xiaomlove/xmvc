@@ -23,7 +23,7 @@
 		<div class="col-md-1 manage-left">
 			<ul class="list-unstyled">
 				<li <?php if(CONTROLLER === 'User') echo "class=\"active\""?>><a href="<?php echo $this->createUrl('manage/user/userlist')?>">用户列表</a></li>
-				<li <?php if(CONTROLLER === 'Role') echo "class=\"active\""?>><a href="<?php echo $this->createUrl('manage/rolegroup/list')?>">用户组</a></li>
+				<li <?php if(CONTROLLER === 'Rolegroup' || CONTROLLER === 'Role') echo "class=\"active\""?>><a href="<?php echo $this->createUrl('manage/rolegroup/list')?>">用户组</a></li>
 				<li <?php if(CONTROLLER === 'Rule') echo "class=\"active\""?>><a href="<?php echo $this->createUrl('manage/rule/list')?>">权限管理</a></li>
 				<li <?php if(CONTROLLER === 'Category') echo "class=\"active\""?>><a href="<?php echo $this->createUrl('manage/category/parentlist')?>">种子分类</a></li>
 				<li <?php if(CONTROLLER === 'Forum') echo "class=\"active\""?>><a href="<?php echo $this->createUrl('manage/forum/sectionlist')?>">论坛版块</a></li>
