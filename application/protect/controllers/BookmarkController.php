@@ -15,7 +15,7 @@ class BookmarkController extends CommonController
 		//检查是否已经收藏
 		$userId = App::ins()->user->getId();
 		$model = models\BookmarkModel::model();
-		$count = $model->where("type=".$_POST['type'].",user_id=".$userId.",resource_id=".$_POST['resource_id'])->count();
+		$count = $model->where("type=".$_POST['type']." AND user_id=".$userId." AND resource_id=".$_POST['resource_id'])->count();
 		if ($count > 0)
 		{
 			echo json_encode(array('code' => 2, 'msg' => '已经收藏过了'));exit;

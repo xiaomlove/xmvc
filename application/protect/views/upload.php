@@ -28,7 +28,7 @@
         <div class="form-group <?php echo $model->getError('main_title')!= NULL ? "has-error" : ""?>">
           <label for="mainTitle" class="col-sm-2 control-label">标题</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="main_title" placeholder="标题" name="main_title" value="<?php echo $model->getData('main_title')?>">
+            <input type="text" class="form-control" id="main_title" placeholder="若不填写，会取种子的文件名" name="main_title" value="<?php echo $model->getData('main_title')?>">
             <?php if($model->getError('main_title') != NULL):?>
             <span class="help-block"><?php echo $model->getError('main_title')?></span>
             <?php endIf?>
@@ -38,7 +38,7 @@
         <div class="form-group <?php echo $model->getError('slave_title')!= NULL ? "has-error" : ""?>">
           <label for="slave_title" class="col-sm-2 control-label">副标题</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="slave_title" placeholder="副标题" name="slave_title" value="<?php echo $model->getData('slave_title')?>">
+            <input type="text" class="form-control" id="slave_title" placeholder="副标题，必须" name="slave_title" value="<?php echo $model->getData('slave_title')?>">
             <?php if($model->getError('slave_title') != NULL):?>
             <span class="help-block"><?php echo $model->getError('slave_title')?></span>
             <?php endIf?>
@@ -48,9 +48,19 @@
         <div class="form-group <?php echo $model->getError('douban_id')!= NULL ? "has-error" : ""?>">
           <label for="douban_id" class="col-sm-2 control-label">豆瓣ID</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="douban_id" placeholder="豆瓣网上的对应ID，用于请求基本信息" name="douban_id" value="<?php echo $model->getData('douban_id')?>">
+            <input type="text" class="form-control" id="douban_id" placeholder="豆瓣网上的对应ID，用于请求基本信息。可选，尽量填写且保证正确" name="douban_id" value="<?php echo $model->getData('douban_id') == NULL ? '' : $model->getData('douban_id')?>">
             <?php if($model->getError('douban_id') != NULL):?>
             <span class="help-block"><?php echo $model->getError('douban_id')?></span>
+            <?php endIf?>
+          </div>
+        </div>
+        
+        <div class="form-group <?php echo $model->getError('imdb_id')!= NULL ? "has-error" : ""?>">
+          <label for="imdb_id" class="col-sm-2 control-label">IMDB ID</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="imdb_id" placeholder="IMDB网上的对应ID，用于请求基本信息。可远，尽量填写且保证正确" name="imdb_id" value="<?php echo $model->getData('imdb_id') == NULL ? '' : $model->getData('imdb_id')?>">
+            <?php if($model->getError('imdb_id') != NULL):?>
+            <span class="help-block"><?php echo $model->getError('imdb_id')?></span>
             <?php endIf?>
           </div>
         </div>

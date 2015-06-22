@@ -1,4 +1,7 @@
 <?php
 
-$a = '/ss/bb/hq-min.js';
-var_dump(pathinfo($a));
+$a = '山村      1999';
+
+$result = preg_split('/\s+/', $a);
+
+var_dump($result);

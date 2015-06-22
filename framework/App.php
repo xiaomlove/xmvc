@@ -55,6 +55,7 @@ final class App
 		define('LIB_PATH', __DIR__.DS.'lib'.DS);
 		define('HELPER_PATH', __DIR__.DS.'helper'.DS);
 		define('COM_PATH', __DIR__.DS.'component'.DS);
+		define('TIME_NOW', $_SERVER['REQUEST_TIME']);//定义常量方便使用
 	}
 	
 	private static function setErrorHandler()

@@ -1,8 +1,7 @@
 <?php
 namespace application\protect\models;
 
-use framework\App;
-
+use framework\core\Router;
 class CategoryModel extends \framework\core\Model
 {
 
@@ -34,6 +33,7 @@ class CategoryModel extends \framework\core\Model
 		$sql = "SELECT * FROM $table WHERE parent_id=(SELECT id FROM $table WHERE value='$parentField' AND parent_id=0 LIMIT 1) ORDER by sn ASC,id ASC";
 		return $this->findBySql($sql);
 	}
+	
 	/**
 	 * 获得父分类与子分类
 	 * @return array 返回父分类，二维数组，父分类的subs属性存储其子分类
@@ -66,9 +66,15 @@ class CategoryModel extends \framework\core\Model
 		$boxHtml .= '<thead><tr><th colspan="2" class="search-box-title"><span class="search-box-icon" title="点击收缩或展开"><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>搜索箱</span></th></tr></thead>';
 		$boxHtml .= '<tbody class="category-box"><tr><td>';
 		$boxHtml .= '<div>';
+		$typeUrl = Router::createUrl('torrent/list');
 		foreach ($categoryData as $category)
 		{
-			$boxHtml .= '<div class="category-item"><div class="parent-category">';
+			$valueArr = array();
+			if (!empty($_GET[$category['value']]) && preg_match('/^\d(\d|,)*$/', $_GET[$category['value']]))
+			{
+				$valueArr = explode(',', $_GET[$category['value']]);
+			}
+			$boxHtml .= '<div class="category-item" data-field="'.$category['value'].'"><div class="parent-category">';
 			$boxHtml .= '<strong>'.$category['name'].'</strong><button type="button" class="btn btn-default btn-xs select-all">全选</button>';
 			$boxHtml .= '</div><div class="sub-category">';
 			if (!empty($category['subs']))
@@ -76,13 +82,18 @@ class CategoryModel extends \framework\core\Model
 				$boxHtml .= '<ul class="list-unstyled list-inline">';
 				foreach ($category['subs'] as $sub)
 				{
+					$checked = '';
+					if (in_array($sub['value'], $valueArr))
+					{
+						$checked = ' checked';
+					}
 					if ($category['value'] === 'source_type')
 					{
-						$boxHtml .= '<li title="'.$sub['name'].'"><input type="checkbox" name="'.$category['value'].'" value="'.$sub['value'].'"><span class="category-icon" style="background-image: url(\''.(empty($sub['icon_src']) ? '/application/assets/images/catsprites.png' : $sub['icon_src']).'\')"></span></li>';
+						$boxHtml .= '<li title="'.$sub['name'].'"><input type="checkbox" name="'.$category['value'].'" value="'.$sub['value'].'"'.$checked.'><a href="'.$typeUrl.'?'.$category['value'].'='.$sub['value'].'"><span class="category-icon" style="background-image: url(\''.(empty($sub['icon_src']) ? '/application/assets/images/catsprites.png' : $sub['icon_src']).'\')"></span></a></li>';
 					}
 					else
 					{
-						$boxHtml .= '<li><input type="checkbox" name="'.$category['value'].'" value="'.$sub['value'].'">'.$sub['name'].'</li>';
+						$boxHtml .= '<li><label><input type="checkbox" name="'.$category['value'].'" value="'.$sub['value'].'"'.$checked.'>'.$sub['name'].'</label></li>';
 					}
 				}
 				$boxHtml .= '</ul>';
@@ -92,16 +103,26 @@ class CategoryModel extends \framework\core\Model
 		$boxHtml .= '</div>';//完成categorybox
 		$boxHtml .= '</td>';//完成左边td
 		$boxHtml .= '<td>';//开始右边td
-		$boxHtml .= '<div class="right-item"><strong>活动状态</strong><select name="active-state"><option value="1">全部</option><option value="2">仅活种</option><option value="3">仅死种</option></select></div>';
-		$boxHtml .= '<div class="right-item"><strong>促销状态</strong><select name="sp-state"><option value="1">全部</option><option value="2">正常</option><option value="3">50%</option></select></div>';
+		$activeState = -1;
+		if (!empty($_GET['active_state']) && ctype_digit($_GET['active_state']))
+		{
+			$activeState = $_GET['active_state'];
+		}
+		$boxHtml .= '<div class="right-item"><strong>活动状态</strong><select name="active-state"><option value="0">全部</option><option value="1"'.($activeState === '1' ? ' selected' : '').'>仅活种</option><option value="2"'.($activeState === '2' ? ' selected' : '').'>仅死种</option></select></div>';
+		$boxHtml .= '<div class="right-item"><strong>促销状态</strong><select name="sp-state"><option value="0">全部</option><option value="1">正常</option><option value="2">50%</option></select></div>';
 		$boxHtml .= '</td>';//完成右边td		
 		$boxHtml .= '</tr></tbody>';//完成分类tbody
 		
 		$boxHtml .= '<tbody class="input-area"><tr><td>';
 		
 		//关键字输入区
-		$boxHtml .= '<div>搜索关键字：<input type="text" name="keyword">';
-		$boxHtml .= '<span>范围：<select name="range"><option value="1">标题</option><option value="2">描述</option><option value="3">发布者</option><option value="4">IMDB</option></select></span>';	
+		$boxHtml .= '<div>搜索关键字：<input type="text" name="keyword" value="'.(!empty($_GET['keyword']) ? $_GET['keyword'] : '').'">';
+		$range = -1;
+		if (!empty($_GET['range']) && ctype_digit($_GET['range']))
+		{
+			$range = $_GET['range'];
+		}
+		$boxHtml .= '<span>范围：<select name="range"><option value="1"'.($range === '1' ? ' selected' : '').'>标题</option><option value="2"'.($range === '2' ? ' selected' : '').'>描述</option><option value="3"'.($range === '3' ? ' selected' : '').'>发布者</option><option value="4"'.($range === '4' ? ' selected' : '').'>IMDB</option></select></span>';	
 		$boxHtml .= '</div>';//输入区结束
 		
 		//热门关键字
@@ -109,7 +130,7 @@ class CategoryModel extends \framework\core\Model
 		
 		
 		$boxHtml .= '</td><td>';
-		$boxHtml .= '<button type="button" class="btn btn-success">给我搜</button>';
+		$boxHtml .= '<button type="button" id="search-btn" class="btn btn-success">给我搜</button>';
 		$boxHtml .= '</td></tr></tbody>';
 		$boxHtml .= '</table>';
 		return $boxHtml;
@@ -179,119 +200,30 @@ class CategoryModel extends \framework\core\Model
 			return FALSE;
 		}
 	}
-	
-	public function hashPassword($password)
+	/**
+	 * 返回用于筛选的父分类
+	 * @return array
+	 */
+	public function getFilterFields()
 	{
-		if(empty($password) || !is_string($password))
+		$parentCategory = $this->field('value')->where('parent_id=0')->select();
+		$out = array();
+		if (!empty($parentCategory))
 		{
-			return FALSE;
-		}
-		if(function_exists('password_hash'))
-		{
-			return password_hash($password, PASSWORD_DEFAULT);
-		}
-		else
-		{
-			//App::addRequirePath(LIB_PATH.'phpass-0.3'.DS);
-			$hasher = new \framework\lib\phpass\PasswordHash(8, false);
-			$hashPassword = $hasher->HashPassword($password);
-			return $hashPassword;
-		}
-		
-	}
-	
-	public function checkPassword($inputPassword, $password)
-	{
-		if(function_exists('password_verify'))
-		{
-			return password_verify($inputPassword, $password);
-		}
-		else
-		{
-			$hasher = new \framework\lib\phpass\PasswordHash(8, false);
-			return $hasher->CheckPassword($inputPassword, $password);
+			if (function_exists('array_column'))
+			{
+				$out = array_column($parentCategory, 'value');
+			}
+			else
+			{
+				foreach ($parentCategory as &$category)
+				{
+					$out[] = $category['value'];
+				}
+			}
 			
 		}
-	}
-	
-	/**
-	 * 获得用户拥有的角色
-	 * @param return array 二维数组，每个角色为一个元素
-	 */
-	public function getRoles($userId = '')
-	{
-		$isLogin = App::ins()->user->isLogin();
-		if ($isLogin)
-		{
-			if (empty($userId))
-			{
-				$userId = App::ins()->user->getId();
-			}
-			$sql = "SELECT a.*,b.name as role_group_name FROM role a LEFT JOIN role_group b 
-					ON a.role_group_id=b.id WHERE a.id IN 
-					(SELECT role_id FROM user_role WHERE user_id=$userId)";
-			return $this->findBySql($sql);
-		}
-		else
-		{
-			$result = $this->table('role')->where('role_group_id='.RolegroupModel::ROLE_GROUP_NORMAR)->order('level ASC')->limit(1)->select();
-			return empty($result) ? NULL : $result;
-		}
-		
-	}
-	/**
-	 * 获得额外的权限，除角色外的权限
-	 * Enter description here ...
-	 * @param unknown_type $userId
-	 * @param return array
-	 */
-	public function getExtraRules($userId = '')
-	{
-		$isLogin = App::ins()->user->isLogin();
-		if ($isLogin)
-		{
-			if (empty($userId))
-			{
-				$userId = App::ins()->user->getId();
-			}
-			$sql = "SELECT * FROM rule WHERE id IN (SELECT rule_id FROM user_rule WHERE user_id=$userId)";
-			$result = $this->findBySql($sql);
-			return $result;
-		}
-		else
-		{
-			return array();
-		}
-	}
-	
-	/**
-	 * 获得当前用户的所有权限，角色上的+额外的。不登陆为游客的
-	 */
-	public function getRules()
-	{
-		$roles = self::getRoles();//角色
- 	
-		if (empty($roles))
-		{
-			return NULL;
-		}
-
-		$roleId = array();
-		foreach ($roles as $role)
-		{
-			$roleId[] = $role['id'];
-		}
-		$rules = RuleModel::model()->getRulesByRole($roleId);
-//		var_dump($rules);
-//		echo '<hr/>';
-		$extraRules = self::getExtraRules();
-//		echo '<hr/>';
-//		var_dump($extraRules);
-		$merge = array_merge($rules, $extraRules);
-//		echo '<hr/>';
-//		var_dump($merge);
-//		exit;
-		return $merge;
+		return $out;
 	}
 	
 }

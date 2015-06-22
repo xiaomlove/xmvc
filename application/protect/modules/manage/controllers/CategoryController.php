@@ -36,13 +36,13 @@ class CategoryController extends \application\protect\controllers\CommonControll
 				echo json_encode(array('code' => -2, 'msg' => '没有该字段'));exit;
 			}
 			//检查名称是否已经存在
-			$hadName = $model->where("name='$name', parent_id=0")->limit(1)->select();
+			$hadName = $model->where("name='$name' AND parent_id=0")->limit(1)->select();
 			if (!empty($hadName))
 			{
 				echo json_encode(array('code' => -3, 'msg' => '该名称已存在'));exit;
 			}
 			//检查值是否已经存在
-			$hadValue = $model->where("value='$field', parent_id=0")->limit(1)->select();
+			$hadValue = $model->where("value='$field' AND parent_id=0")->limit(1)->select();
 			if (!empty($hadValue))
 			{
 				echo json_encode(array('code' => -4, 'msg' => '该字段的分类项已存在'));exit;
@@ -84,13 +84,13 @@ class CategoryController extends \application\protect\controllers\CommonControll
 				echo json_encode(array('code' => -2, 'msg' => '没有该字段'));exit;
 			}
 			
-			$hadName = $model->where("name='$name', parent_id=0")->limit(1)->select();
+			$hadName = $model->where("name='$name' AND parent_id=0")->limit(1)->select();
 			if (!empty($hadName) && $hadName[0]['id'] != $id)
 			{
 				echo json_encode(array('code' => -3, 'msg' => '该名称已存在'));exit;
 			}
 			
-			$hadField = $model->where("value='$field', parent_id=0")->limit(1)->select();
+			$hadField = $model->where("value='$field' AND parent_id=0")->limit(1)->select();
 			if (!empty($hadField) && $hadField[0]['id'] != $id)
 			{
 				echo json_encode(array('code' => -4, 'msg' => '该torrent字段已存在'));exit;
@@ -191,14 +191,14 @@ class CategoryController extends \application\protect\controllers\CommonControll
 			}
 			if ($model->validate($_POST))
 			{
-				$valueCount = $model->where("parent_id={$_POST['parent_id']}, value='{$_POST['value']}'")->count();
+				$valueCount = $model->where("parent_id={$_POST['parent_id']} AND value='{$_POST['value']}'")->count();
 				if ($valueCount)
 				{
 					$model->setError('value', '该值已存在');
 					goto A;
 				}
 				
-				$nameCount = $model->where("parent_id={$_POST['parent_id']}, name='{$_POST['name']}'")->count();
+				$nameCount = $model->where("parent_id={$_POST['parent_id']} AND name='{$_POST['name']}'")->count();
 				if ($nameCount)
 				{
 					$model->setError('name', '该name已存在');
@@ -261,14 +261,14 @@ class CategoryController extends \application\protect\controllers\CommonControll
 			}
 			if ($model->validate($_POST))
 			{
-				$hadValue = $model->where('parent_id='.$parent['id'].', value=\''.$_POST['value'].'\'')->limit(1)->select();
+				$hadValue = $model->where('parent_id='.$parent['id'].' AND value=\''.$_POST['value'].'\'')->limit(1)->select();
 				if (!empty($hadValue) && $hadValue[0]['id'] != $_POST['id'])
 				{
 					$model->setError('value', '该值已存在！');
 					goto A;
 				}
 				
-				$hadName = $model->where('parent_id='.$parent['id'].', name=\''.$_POST['name'].'\'')->limit(1)->select();
+				$hadName = $model->where('parent_id='.$parent['id'].' AND name=\''.$_POST['name'].'\'')->limit(1)->select();
 				if (!empty($hadName) && $hadName[0]['id'] != $_POST['id'])
 				{
 					$model->setError('value', '该值已存在！');

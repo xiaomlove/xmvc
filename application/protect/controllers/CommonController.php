@@ -85,9 +85,26 @@ class CommonController extends \framework\core\Controller
 		}
 	}
 	
-	protected function goError()
+	protected function goError($title = 'ERROR!')
 	{
-		$this->redirect('index/error');exit;
+		if (App::ins()->request->isAjax())
+		{
+			echo json_encode(array('code' => -1, 'msg' => $title));exit;
+		}
+		$this->setPageTitle($title);
+// 		$this->redirect('index/error');exit;
+
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_TIMEOUT, 3);
+		curl_setopt($curl, CURLOPT_URL, 'http://cn.bing.com/HPImageArchive.aspx?idx=0&n=1');
+		curl_setopt($curl, CURLOPT_HEADER, 1);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+		$str = curl_exec($curl);
+		$imgurl = '';
+		if(preg_match("/<url>(.+?)<\/url>/ies", $str, $matches)){
+			$imgurl = 'http://cn.bing.com'.$matches[1];
+		}
+		echo $this->renderPartial('error', array('bgImg' => $imgurl));exit;
 	}
 	/**
 	 * 返回过去某个时间点离现在时间过去了多久

@@ -283,7 +283,7 @@ class ThreadController extends \application\protect\controllers\CommonController
 			//检查是否已经支持过
 			$userId = App::ins()->user->getId();
 			$userName = App::ins()->user->getName();
-			$count = $model->where('thread_id='.$_POST['thread_id'].',user_id='.$userId)->count();
+			$count = $model->where('thread_id='.$_POST['thread_id'].' AND user_id='.$userId)->count();
 			if ($count > 0)
 			{
 				echo json_encode(array('code' => 0, 'msg' => '已经支持过了'));exit;

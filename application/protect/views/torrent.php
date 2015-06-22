@@ -39,8 +39,9 @@
         <?php echo $navHtml?>
       </nav>
     </div>
-    
+    <input type="hidden" id="torrent-url" value="<?php echo $this->createUrl('torrent/list')?>" />
  <script>
+ 	//收缩展开搜索箱
 	var $categoryBox = $('.category-box');
 	$('.search-box-icon').click(function(e) {
 		if ($categoryBox.hasClass('hidden')) {
@@ -51,7 +52,7 @@
 			$categoryBox.addClass('hidden');
 		}
 	});
-
+	//切换全选、全不选
 	$('.select-all').click(function(e) {
 		var $btn = $(this);
 		if ($btn.attr('data-selected') === 'true') {
@@ -59,5 +60,62 @@
 		} else {
 			$btn.attr('data-selected', 'true').text('全不选').parents('.category-item').find('.sub-category input[type=checkbox]').prop('checked', true);
 		}
+	});
+	//防止点击某一分类选中文字
+	$categoryBox.on('mousedown', 'label', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+// 		if (window.getSelection) {
+// 			window.getSelection().removeAllRanges();
+// 		} else if (document.selection) {
+// 			document.selection.empty();
+// 		}
+	});
+	//点击“给我搜”
+	var $searchBtn = $('#search-btn');
+	$searchBtn.click(function(e) {
+		//分类部分
+		var category = '';
+		$categoryBox.find('.category-item').each(function(index, item) {
+			var $item = $(this);
+			var field = $item.attr('data-field');
+			var $checked = $item.find('input[name=' + field + ']:checked');
+			if ($checked.length) {
+				category += field + '=' + $checked.map(function() {
+					return $(this).val();
+				}).get().join(',') + '&';
+			}
+		});
+		
+		//关键字部分
+		var keyword = $.trim($('input[name=keyword]').val());
+		if (keyword !== '') {
+			keyword = 'keyword=' + keyword + '&range=' + $('select[name=range]').val() + '&';
+		}
+		//右边存活、促销状态
+		var activeState = $categoryBox.find('select[name="active-state"]').val();
+		var spState = $categoryBox.find('select[name="sp-state"]').val();
+
+		//拼凑最终url
+		var params = '?';
+		if (category !== '') {
+			params += category;
+		}
+		if (keyword !== '') {
+			params += keyword
+		}
+		if (activeState > 0) {
+			params += 'active_state=' + activeState + '&';
+		}
+		if (spState > 0) {
+			params += 'sp_state=' + spState + '&';
+		}
+		if (params === '?') {
+			return;
+		} else {
+			params = params.substring(0, params.length - 1);
+		}
+// 		console.log(params);return;
+		window.location.href= $('#torrent-url').val() + params;		
 	})
  </script>

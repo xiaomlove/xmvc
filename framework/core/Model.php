@@ -62,7 +62,13 @@ abstract class Model
 			$this->_tableName = '`'.self::$_db->prefix.$this->tableName().'`';//每次都是一个对象，用self只会存一份
 			$this->_getFields();
 		}
+		$this->init();
 		
+	}
+	
+	public function init()
+	{
+		//初始化方法
 	}
 	
 	public function __set($name, $value)
@@ -219,7 +225,14 @@ abstract class Model
 	
 	private function where($where, $options = array())
 	{
-		$where = $this->_parseParam($where, 'AND');
+		if (empty($where))
+		{
+			return $this;
+		}
+		if (is_array($where))
+		{
+			$where = $this->_parseParam($where, 'AND');
+		}
 		if(empty($this->where))
 		{
 			$this->where = $where;

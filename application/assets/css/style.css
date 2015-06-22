@@ -58,6 +58,7 @@ body{-background-image:url('../images/light_grey.png');-font-family: Tahoma,"Mic
 .search-box .category-box .parent-category .btn{margin-left: 5px}
 .search-box .category-box .sub-category{width: 87%;display: inline-block}
 .search-box .category-box .sub-category .category-icon{width: 45px;height: 46px;background-position: 0 0;display: inline-block;cursor: pointer}
+.search-box .category-box .sub-category label{margin-bottom: 0;cursor: pointer}
 .search-box .right-item{width: 100%;text-align: center;margin-top: 50px}
 .search-box .right-item select{width: 100%;display: inline-block;margin-top: 10px}
 .search-box .input-area td{text-align: center;vertical-align: middle}

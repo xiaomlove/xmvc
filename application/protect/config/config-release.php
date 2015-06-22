@@ -128,6 +128,6 @@ return array(
 		'gc_maxlifetime'=>'',//gc发生时间，感觉这块没必要，默认即可
 	),
 		
-	'torrentSavePath'=>'application.protected.data.torrents',//种子保存目录
+	'torrentSavePath'=>'application.protect.data.torrents',//种子保存目录
 	
 );

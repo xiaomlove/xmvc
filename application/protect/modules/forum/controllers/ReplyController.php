@@ -221,7 +221,7 @@ class ReplyController extends \application\protect\controllers\CommonController
 				$this->goError();
 			}
 			$userId = App::ins()->user->getId();
-			$reply = $model->where("user_id=$userId,id=".$_GET['reply_id'])->limit(1)->select();
+			$reply = $model->where("user_id=$userId AND id=".$_GET['reply_id'])->limit(1)->select();
 			if (empty($reply))
 			{
 				$this->goError();

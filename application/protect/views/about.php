@@ -53,5 +53,14 @@ body{padding-bottom: 100px}
 				<li>发表种子加入豆瓣ID，种子详情页展示来自豆瓣API提供的电影条目信息。</li>
 			</ol>
 		</div>
+		
+		<h4 class="page-header"><em class="">2015-06-22</em></h4>
+		<div>
+			<ol>
+				<li>后台添加种子分类管理功能。</li>
+				<li>发布种子界面加入种子分类属性的选择。</li>
+				<li>种子列表页搜索箱实现。</li>
+			</ol>
+		</div>
 	</div>
 </div>

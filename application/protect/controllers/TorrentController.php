@@ -15,9 +15,9 @@ class TorrentController extends CommonController
 		$this->setPageTitle('种子列表');
 		$model = TorrentModel::model();
 		$result = $model->getList($_GET);
-		
-		$page = !empty($_GET['page']) ? $_GET['page'] : 1;
-		$per = !empty($_GET['per_page']) ? $_GET['per_page'] : 5;
+// 		var_dump($result);exit;
+		$page = $result['page'];
+		$per = $result['per'];
 		$total = ceil($result['count']/$per);
 		$navHtml = $this->getNavHtml($page, $per, $total);//导航链接上的其他参数从$_GET取
 		echo $this->render('torrent', array('data' => $result['data'], 'navHtml' => $navHtml));
@@ -32,6 +32,10 @@ class TorrentController extends CommonController
 		$this->setPageTitle('种子详情');
 		$model = TorrentModel::model();
 		$result = $model->findByPk($_GET['id'], 'id, name, main_title, slave_title, size, introduce, info_hash, view_times, download_times, finish_times, seeder_count, leecher_count, user_id, douban_id');
+		if (empty($result))
+		{
+			$this->goError('种子不存在！');
+		}
 //		var_dump($result);exit;
 		echo $this->render('detail', array('torrent' => $result));
 	}
@@ -43,12 +47,12 @@ class TorrentController extends CommonController
 		$action = $this->createUrl('torrent/upload');
 		if(App::ins()->request->isPost())
 		{
-//			echo '<pre/>';
-//			var_dump($_POST);
+// 			echo '<pre/>';
+// 			var_dump($_POST);
 //			var_dump($_FILES);
 //			echo '<hr/>';
-//			exit;
-			
+// 			exit;
+			$_POST = array_map('trim', $_POST);//去除空格
 			if($model->validate($_POST))
 			{
 				if(isset($_FILES['torrentFile']) && is_uploaded_file($_FILES['torrentFile']['tmp_name']))
@@ -115,12 +119,25 @@ class TorrentController extends CommonController
 								{
 									$fileList = serialize(array('length'=>$decode['info']['length'], 'name'=>$decode['info']['name']));
 								}
-								$sql = "INSERT INTO torrent (main_title, slave_title, info_hash, name, introduce, size, file_count, file_list, user_id, add_time, douban_id) VALUES ('{$_POST['main_title']}', '{$_POST['slave_title']}', '$info_hash', '{$name}', '{$_POST['introduce']}', {$decode['size']}, {$decode['filecount']}, '$fileList', $userId ,".time();
-								if (!empty($_POST['douban_id']))
+								if (empty($_POST['douban_id']))
 								{
-									$sql .= ','.intval(trim($_POST['douban_id']));
+									$_POST['douban_id'] = 0;
 								}
-								$sql .= ')';
+								if (empty($_POST['imdb_id']))
+								{
+									$_POST['imdb_id'] = 0;
+								}
+								if (empty($_POST['mtime_id']))
+								{
+									$_POST['mtime_id'] = 0;
+								}
+								if (empty($_POST['main_title']))
+								{
+									$_POST['main_title'] = $uploadFile['name'];
+								}
+								$sql = "INSERT INTO torrent (
+								main_title, slave_title, info_hash, name, introduce, size, file_count, file_list, user_id, add_time, douban_id, imdb_id, mtime_id, source_medium, source_type, video_encode, audio_encode, imdb_rate, resolution, tag, team, year, region) VALUES (
+								'{$_POST['main_title']}', '{$_POST['slave_title']}', '$info_hash', '{$name}', '{$_POST['introduce']}', {$decode['size']}, {$decode['filecount']}, '$fileList', $userId ,".TIME_NOW.", {$_POST['douban_id']}, {$_POST['imdb_id']}, {$_POST['mtime_id']}, {$_POST['source_medium']}, {$_POST['source_type']}, {$_POST['video_encode']}, {$_POST['audio_encode']}, {$_POST['imdb_rate']}, {$_POST['resolution']}, {$_POST['tag']}, {$_POST['team']}, {$_POST['year']}, {$_POST['region']})";
 								$insert = $model->execute($sql);
 								if($insert === 0 || $insert === FALSE)
 								{
@@ -150,6 +167,8 @@ class TorrentController extends CommonController
 			}
 			A:
 			$errors = $model->getError();
+// 			echo '<pre/>';
+// 			var_dump($errors);
 			if(empty($errors))
 			{
 				App::ins()->user->setFlash('upload_success', '发布成功！你需要重新下载种子并使用它来做种！');
@@ -178,7 +197,11 @@ class TorrentController extends CommonController
 			{
 				$this->goError();
 			}
-			$torrent = $model->findByPk($_GET['id'], 'name,main_title,slave_title,introduce');
+			$torrent = $model->findByPk($_GET['id'], 'name,main_title,slave_title,introduce,douban_id,imdb_id,mtime_id,source_type,source_medium,imdb_rate,video_encode,audio_encode,resolution,team,year,region,tag');
+			if (empty($torrent))
+			{
+				$this->goError('种子不存在!');
+			}
 			$model->setData($torrent);
 			$html = $this->render('upload', array('model' => $model, 'action' => $action));
 			echo $html;
@@ -357,9 +380,8 @@ class TorrentController extends CommonController
 	
 	protected function createCategoryFormGroup($model)
 	{
-		$model = CategoryModel::model();
-		$tree = $model->getParentSubTree();
-// 		var_dump($tree);
+		$tree = CategoryModel::model()->getParentSubTree();//不要搞乱了model，这是CategoryModel里边的方法
+// 		var_dump($model->getError());exit;
 		$out = "";
 		if (!empty($tree))
 		{
@@ -373,7 +395,7 @@ class TorrentController extends CommonController
 				{
 					if ($item['value'] == 'tag')
 					{
-						$out .= '<option value="0">该项可以不选...</option>';
+						$out .= '<option value="0">不符合请不要选...</option>';
 					}
 					else 
 					{
