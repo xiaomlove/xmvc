@@ -1,8 +1,8 @@
 <?php
 namespace framework\component;
 
-use framework\App as App;
-use framework\core\Log as Log;
+use framework\App;
+use framework\core\Log;
 
 class Db
 {
@@ -108,19 +108,6 @@ class Db
 			self::_freePDOStat();
 		}
 		$this->lastSql = $sql;
-		if(self::$_debug)
-		{
-			$optionStr = $sql;
-			if(!empty($options))
-			{
-				foreach($options as $key=>$value)
-				{
-					$optionStr .= '，'.$key.'=>'.$value;
-				}
-			}
-			
-			Log::executeSql($optionStr);
-		}
 		self::$_PDOStat = self::$_link->prepare($sql);
 		try
 		{
@@ -140,10 +127,6 @@ class Db
 	private function _exec($sql)
 	{
 		$this->lastSql = $sql;
-		if(self::$_debug)
-		{
-			Log::executeSql($sql);
-		}
 		try
 		{
 			return self::$_link->exec($sql);
@@ -173,8 +156,20 @@ class Db
 			trigger_error('参数错误：sql语句不能为空且绑定参数须以数组形式传递', E_USER_ERROR);
 			return '';
 		}
-		$this->_query($sql, $options);
-		return self::$_PDOStat->fetchAll($fetchStyle);	
+		if (self::$_debug)
+		{
+			$start = microtime(TRUE);
+			$this->_query($sql, $options);
+			$result = self::$_PDOStat->fetchAll($fetchStyle);
+			$end = microtime(TRUE);
+			self::_logSql($end - $start, $sql, $options);
+		}
+		else
+		{
+			$this->_query($sql, $options);
+			$result = self::$_PDOStat->fetchAll($fetchStyle);
+		}
+		return $result;
 	}
 	
 	/**
@@ -190,8 +185,20 @@ class Db
 			trigger_error('参数错误：sql语句不能为空且绑定参数须以数组形式传递', E_USER_ERROR);
 			return '';
 		}
-		$this->_query($sql, $options);
-		return self::$_PDOStat->fetch($fetchStyle);
+		if (self::$_debug)
+		{
+			$start = microtime(TRUE);
+			$this->_query($sql, $options);
+			$result = self::$_PDOStat->fetch($fetchStyle);
+			$end = microtime(TRUE);
+			self::_logSql($end - $start, $sql, $options);
+		}
+		else
+		{
+			$this->_query($sql, $options);
+			$result = self::$_PDOStat->fetch($fetchStyle);
+		}
+		return $result;
 	}
 	/**
 	 * 执行update,delete,insert语句，update/delete返回受影响记录条数，insert返回最后插入记录的id
@@ -208,15 +215,37 @@ class Db
 		if(stripos(trim($sql), 'INSERT') === 0)
 		{
 			//插入操作
-			$this->_exec($sql);
-			return self::$_link->lastInsertId();
+			if  (self::$_debug)
+			{
+				$start = microtime(TRUE);
+				$this->_exec($sql);
+				$result = self::$_link->lastInsertId();
+				$end = microtime(TRUE);
+				self::_logSql($end - $start, $sql, $options);
+			}
+			else 
+			{
+				$this->_exec($sql);
+				$result = self::$_link->lastInsertId();
+			}
 		}
 		else 
 		{
-			$this->_query($sql, $options);
-			return self::$_PDOStat->rowCount();
+			if (self::$_debug)
+			{
+				$start = microtime(TRUE);
+				$this->_query($sql, $options);
+				$result = self::$_PDOStat->rowCount();
+				$end = microtime(TRUE);
+				self::_logSql($end - $start, $sql, $options);
+			}
+			else 
+			{
+				$this->_query($sql, $options);
+				$result = self::$_PDOStat->rowCount();
+			}
 		}
-		
+		return $result;
 	}
 	
 	public function count($sql = '', $options = array())
@@ -225,8 +254,20 @@ class Db
 		{
 			return FALSE;
 		}
-		$this->_query($sql, $options);
-		return self::$_PDOStat->fetchColumn();
+		if (self::$_debug)
+		{
+			$start = microtime(TRUE);
+			$this->_query($sql, $options);
+			$result = self::$_PDOStat->fetchColumn();
+			$end = microtime(TRUE);
+			self::_logSql($end - $start, $sql, $options);
+		}
+		else
+		{
+			$this->_query($sql, $options);
+			$result = self::$_PDOStat->fetchColumn();
+		}
+		return $result;
 	}
 	/**
 	 * 开启事务
@@ -251,6 +292,9 @@ class Db
 		return self::$_link->rollBack();
 	}
 	
-	
+	private static function _logSql($time, $sql, array $bind = array())
+	{
+		Log::executeSql(array('time' => $time, 'sql' => $sql, 'bind' => $bind));
+	}
 
 }

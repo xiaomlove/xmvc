@@ -4,6 +4,7 @@ namespace application\protect\models;
 use framework\core\Router;
 class CategoryModel extends \framework\core\Model
 {
+	private static $_categoryInfo = array();//分类父子Tree信息
 
 	public function tableName()
 	{
@@ -40,6 +41,10 @@ class CategoryModel extends \framework\core\Model
 	 */
 	public function getParentSubTree()
 	{
+		if (!empty(self::$_categoryInfo))
+		{
+			return self::$_categoryInfo;
+		}
 		$parentList = $this->where('parent_id=0')->order('sn ASC')->select();
 		if (empty($parentList))
 		{
@@ -52,8 +57,10 @@ class CategoryModel extends \framework\core\Model
 				return $sub['parent_id'] == $parent['id'];
 			});
 		}
+		self::$_categoryInfo = $parentList;
 		return $parentList;
 	}
+	
 	
 	public function createSearchBox()
 	{
@@ -87,7 +94,7 @@ class CategoryModel extends \framework\core\Model
 					{
 						$checked = ' checked';
 					}
-					if ($category['value'] === 'source_type')
+					if ($category['value'] === 'resource_type')
 					{
 						$boxHtml .= '<li title="'.$sub['name'].'"><input type="checkbox" name="'.$category['value'].'" value="'.$sub['value'].'"'.$checked.'><a href="'.$typeUrl.'?'.$category['value'].'='.$sub['value'].'"><span class="category-icon" style="background-image: url(\''.(empty($sub['icon_src']) ? '/application/assets/images/catsprites.png' : $sub['icon_src']).'\')"></span></a></li>';
 					}

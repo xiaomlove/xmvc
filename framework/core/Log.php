@@ -46,9 +46,9 @@ final class Log
 		self::$_requireFiles[] = array('time'=>microtime(true), 'memory'=>memory_get_usage(true), 'fileName'=>$file);	
 	}
 	
-	public static function executeSql($sql)
+	public static function executeSql($sqlInfo)
 	{
-		self::$_sqls[] = $sql;
+		self::$_sqls[] = $sqlInfo;
 	}
 	
 	private static function getRequireFiles()
@@ -94,12 +94,17 @@ final class Log
 		$sqls = self::getSqls();
 		if(count($sqls))
 		{
-			echo '<ol id="sql">';
+			echo '<table class="table">';
+			echo '<thead><tr><th>执行时间</th><th>语句</th><th style="min-width: 75px">绑定数据</th></tr></thead>';
+			echo '<tbody>';
+			$totalExecTime = 0;
 			foreach($sqls as $sql)
 			{
-				echo '<li>'.$sql.'</li>';
+				$totalExecTime += $sql['time'];
+				echo '<tr><td>'.number_format($sql['time'], 6).'</td><td>'.$sql['sql'].'</td><td>'.self::_arrToStr($sql['bind']).'</td></tr>';
 			}
-			echo '</ol>';
+			echo '</tbody>';
+			echo '<tfoot><tr><td colspan="3">总耗时：'.$totalExecTime.'</td></tr></tfoot></table>';
 		}
 		
 		
@@ -134,5 +139,14 @@ final class Log
 		$endTime = microtime(true);
 		echo '<h1>结束时间：'.$endTime.'，脚本总耗时：'.number_format(($endTime-self::$_startTime), 4).'秒</h1></div>';
 
+	}
+	private static function _arrToStr($arr)
+	{
+		$out = '';
+		foreach ($arr as $key => $value)
+		{
+			$out .= $key.'=>'.$value;
+		}
+		return $out;
 	}
 }

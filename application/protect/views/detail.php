@@ -17,7 +17,15 @@
           </tr>
           <tr>
             <td>基本信息</td>
-            <td>大小：<span class="text-success"><?php echo $this->getSize($torrent['size'])?></span>类型：<span class="text-success">Movie</span></td>
+            <td>
+            	<strong>大小：</strong><span><?php echo $this->getSize($torrent['size'])?></span>
+            	<strong>类型：</strong><span><?php echo $this->getCategory('resource_type', $torrent['resource_type'])?></span>
+            	<strong>媒介：</strong><span><?php echo $this->getCategory('resource_medium', $torrent['resource_medium'])?></span>
+            	<strong>视频编码：</strong><span><?php echo $this->getCategory('video_encode', $torrent['video_encode'])?></span>
+            	<strong>音频编码：</strong><span><?php echo $this->getCategory('audio_encode', $torrent['audio_encode'])?></span>
+            	<strong>分辨率：</strong><span><?php echo $this->getCategory('resolution', $torrent['resolution'])?></span>
+            	<strong>制作组：</strong><span><?php echo $this->getCategory('team', $torrent['team'])?></span>
+            </td>
           </tr>
           
           <tr>

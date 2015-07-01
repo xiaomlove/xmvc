@@ -31,13 +31,48 @@ class TorrentController extends CommonController
 		}
 		$this->setPageTitle('种子详情');
 		$model = TorrentModel::model();
-		$result = $model->findByPk($_GET['id'], 'id, name, main_title, slave_title, size, introduce, info_hash, view_times, download_times, finish_times, seeder_count, leecher_count, user_id, douban_id');
+		$result = $model->findByPk($_GET['id'], 'id, name, main_title, slave_title, size, introduce, info_hash, view_times, download_times, finish_times, seeder_count, leecher_count, user_id, douban_id, resource_type, resource_medium, imdb_rate, video_encode, audio_encode, resolution, tag, team, year, region');
 		if (empty($result))
 		{
 			$this->goError('种子不存在！');
 		}
-//		var_dump($result);exit;
+		$CategoryModel = CategoryModel::model();
+// 		$categoryInfo = $CategoryModel->getParentSubTree();
+// 		echo '<pre/>';
+// 		var_dump($categoryInfo);exit;
 		echo $this->render('detail', array('torrent' => $result));
+	}
+	
+	public function getCategory($parentKey, $subValue)
+	{
+		$allCategory = CategoryModel::model()->getParentSubTree();
+// 		echo '<pre/>';
+// 		var_dump($allCategory);exit;
+		$subs = array();
+		$result = '';
+		if (!empty($allCategory) && is_array($allCategory))
+		{
+			foreach ($allCategory as $category)
+			{
+				if ($category['value'] == $parentKey)
+				{
+					$subs = $category['subs'];
+					break;
+				}
+			}
+		}
+		if (!empty($subs) && is_array($subs))
+		{
+			foreach ($subs as $sub)
+			{
+				if ($sub['value'] == $subValue)
+				{
+					$result = $sub['name'];
+					break;
+				}
+			}
+		}
+		return $result;
 	}
 	
 	public function actionUpload()
