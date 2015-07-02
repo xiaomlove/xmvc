@@ -151,7 +151,7 @@ abstract class Model
 	private  function _getFields()
 	{
 		
-		$sql = 'DESC '.$this->_tableName;
+		$sql = 'SHOW COLUMNS FROM '.$this->_tableName;
 		$result = self::$_db->getAllBySql($sql);
 		
 		foreach($result as $row)

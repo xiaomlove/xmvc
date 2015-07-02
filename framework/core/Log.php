@@ -95,16 +95,16 @@ final class Log
 		if(count($sqls))
 		{
 			echo '<table class="table">';
-			echo '<thead><tr><th>执行时间</th><th>语句</th><th style="min-width: 75px">绑定数据</th></tr></thead>';
+			echo '<thead><tr><th style="min-width: 50px">序号</th><th>执行时间</th><th>语句</th><th style="min-width: 75px">绑定数据</th></tr></thead>';
 			echo '<tbody>';
 			$totalExecTime = 0;
-			foreach($sqls as $sql)
+			foreach($sqls as $k => $sql)
 			{
 				$totalExecTime += $sql['time'];
-				echo '<tr><td>'.number_format($sql['time'], 6).'</td><td>'.$sql['sql'].'</td><td>'.self::_arrToStr($sql['bind']).'</td></tr>';
+				echo '<tr><td>'.($k+1).'</td><td>'.number_format($sql['time'], 6).'</td><td>'.$sql['sql'].'</td><td>'.self::_arrToStr($sql['bind']).'</td></tr>';
 			}
 			echo '</tbody>';
-			echo '<tfoot><tr><td colspan="3">总耗时：'.$totalExecTime.'</td></tr></tfoot></table>';
+			echo '<tfoot><tr><td colspan="4"><strong>总耗时：'.$totalExecTime.'(秒)</strong></td></tr></tfoot></table>';
 		}
 		
 		
