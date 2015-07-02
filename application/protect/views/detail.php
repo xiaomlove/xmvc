@@ -18,13 +18,13 @@
           <tr>
             <td>基本信息</td>
             <td>
-            	<strong>大小：</strong><span><?php echo $this->getSize($torrent['size'])?></span>
-            	<strong>类型：</strong><span><?php echo $this->getCategory('resource_type', $torrent['resource_type'])?></span>
-            	<strong>媒介：</strong><span><?php echo $this->getCategory('resource_medium', $torrent['resource_medium'])?></span>
-            	<strong>视频编码：</strong><span><?php echo $this->getCategory('video_encode', $torrent['video_encode'])?></span>
-            	<strong>音频编码：</strong><span><?php echo $this->getCategory('audio_encode', $torrent['audio_encode'])?></span>
-            	<strong>分辨率：</strong><span><?php echo $this->getCategory('resolution', $torrent['resolution'])?></span>
-            	<strong>制作组：</strong><span><?php echo $this->getCategory('team', $torrent['team'])?></span>
+            	大小：<strong><?php echo $this->getSize($torrent['size'])?></strong>
+            	类型：<strong><?php echo $this->getCategory('resource_type', $torrent['resource_type'])?></strong>
+            	媒介：<strong><?php echo $this->getCategory('resource_medium', $torrent['resource_medium'])?></strong>
+            	视频编码：<strong><?php echo $this->getCategory('video_encode', $torrent['video_encode'])?></strong>
+            	音频编码：<strong><?php echo $this->getCategory('audio_encode', $torrent['audio_encode'])?></strong>
+            	分辨率：<strong><?php echo $this->getCategory('resolution', $torrent['resolution'])?></strong>
+            	制作组：<strong><?php echo $this->getCategory('team', $torrent['team'])?></strong>
             </td>
           </tr>
           
@@ -49,7 +49,11 @@
           
           <tr>
             <td>种子信息</td>
-            <td>hash码：<span class="text-primary"><?php echo $torrent['info_hash']?></span><span id="torrent-file-list"><a href="javascript:;">[查看结构]</a></span></td>
+            <td>
+            	hash码：<span class="text-primary"><?php echo $torrent['info_hash']?></span>
+            	<span><a href="javascript:;" id="view-filelist">[查看结构]</a></span>
+            	
+            </td>
           </tr>
           <tr>
             <td>热度表</td>
@@ -566,5 +570,8 @@
 		return STR;
 	}
 
+	//查看文件列表
+	var $viewFileListBtn = $('#view-filelist');
+	
 	
  </script>

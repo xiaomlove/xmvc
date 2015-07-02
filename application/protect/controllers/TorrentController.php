@@ -31,15 +31,30 @@ class TorrentController extends CommonController
 		}
 		$this->setPageTitle('种子详情');
 		$model = TorrentModel::model();
-		$result = $model->findByPk($_GET['id'], 'id, name, main_title, slave_title, size, introduce, info_hash, view_times, download_times, finish_times, seeder_count, leecher_count, user_id, douban_id, resource_type, resource_medium, imdb_rate, video_encode, audio_encode, resolution, tag, team, year, region');
+		$result = $model->findByPk($_GET['id'], 'id, name, main_title, slave_title, size, introduce, info_hash, view_times, download_times, finish_times, seeder_count, leecher_count, file_list, user_id, douban_id, reresource_type, reresource_medium, imdb_rate, video_encode, audio_encode, resolution, tag, team, year, region');
 		if (empty($result))
 		{
 			$this->goError('种子不存在！');
 		}
 		$CategoryModel = CategoryModel::model();
-// 		$categoryInfo = $CategoryModel->getParentSubTree();
 // 		echo '<pre/>';
-// 		var_dump($categoryInfo);exit;
+// 		var_dump(unserialize($result['file_list']));exit;
+		$fileListTable = '';
+// 		if (!empty($result['file_list']) && ($fileListData = unserialize($result['file_list'])))
+// 		{
+// 			$fileListTable .= "<table class=\"table\"><thead><tr><th>路径</th><th>尺寸</th></tr></thead><tbody>";
+// 			foreach ($fileListData as $file)
+// 			{
+// 				if (is_array($file))
+// 				{
+// 					foreach ($file as $item)
+// 					{
+// 						$fileListTable .= "<tr><td>".$this->getSize($item['length'])."</td><td>".$item['path'][0]."</td>";
+// 					}
+// 				}
+// 			}
+			
+// 		}
 		echo $this->render('detail', array('torrent' => $result));
 	}
 	
@@ -171,8 +186,8 @@ class TorrentController extends CommonController
 									$_POST['main_title'] = $uploadFile['name'];
 								}
 								$sql = "INSERT INTO torrent (
-								main_title, slave_title, info_hash, name, introduce, size, file_count, file_list, user_id, add_time, douban_id, imdb_id, mtime_id, source_medium, source_type, video_encode, audio_encode, imdb_rate, resolution, tag, team, year, region) VALUES (
-								'{$_POST['main_title']}', '{$_POST['slave_title']}', '$info_hash', '{$name}', '{$_POST['introduce']}', {$decode['size']}, {$decode['filecount']}, '$fileList', $userId ,".TIME_NOW.", {$_POST['douban_id']}, {$_POST['imdb_id']}, {$_POST['mtime_id']}, {$_POST['source_medium']}, {$_POST['source_type']}, {$_POST['video_encode']}, {$_POST['audio_encode']}, {$_POST['imdb_rate']}, {$_POST['resolution']}, {$_POST['tag']}, {$_POST['team']}, {$_POST['year']}, {$_POST['region']})";
+								main_title, slave_title, info_hash, name, introduce, size, file_count, file_list, user_id, add_time, douban_id, imdb_id, mtime_id, resource_medium, resource_type, video_encode, audio_encode, imdb_rate, resolution, tag, team, year, region) VALUES (
+								'{$_POST['main_title']}', '{$_POST['slave_title']}', '$info_hash', '{$name}', '{$_POST['introduce']}', {$decode['size']}, {$decode['filecount']}, '$fileList', $userId ,".TIME_NOW.", {$_POST['douban_id']}, {$_POST['imdb_id']}, {$_POST['mtime_id']}, {$_POST['resource_medium']}, {$_POST['resource_type']}, {$_POST['video_encode']}, {$_POST['audio_encode']}, {$_POST['imdb_rate']}, {$_POST['resolution']}, {$_POST['tag']}, {$_POST['team']}, {$_POST['year']}, {$_POST['region']})";
 								$insert = $model->execute($sql);
 								if($insert === 0 || $insert === FALSE)
 								{
@@ -232,7 +247,7 @@ class TorrentController extends CommonController
 			{
 				$this->goError();
 			}
-			$torrent = $model->findByPk($_GET['id'], 'name,main_title,slave_title,introduce,douban_id,imdb_id,mtime_id,source_type,source_medium,imdb_rate,video_encode,audio_encode,resolution,team,year,region,tag');
+			$torrent = $model->findByPk($_GET['id'], 'name,main_title,slave_title,introduce,douban_id,imdb_id,mtime_id,resource_type,resource_medium,imdb_rate,video_encode,audio_encode,resolution,team,year,region,tag');
 			if (empty($torrent))
 			{
 				$this->goError('种子不存在!');
