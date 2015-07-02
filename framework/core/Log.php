@@ -77,24 +77,24 @@ final class Log
 		{
 			self::$_errors[] = array('level'=>self::$_error_constant[1], 'msg'=>$lastError['message'], 'file'=>$lastError['file'], 'line'=>$lastError['line']);
 		}
-		echo '<div id="wrap" class="container" style="margin-top: 100px"><h3 class="page-header">引入文件：</h3>';
+		echo '<div id="wrap" class="container" style="margin-top: 100px"><h1 class="">引入文件：</h1>';
 		$files = self::getRequireFiles();
 		if(count($files))
 		{
-			echo '<ol id="require-file">';
-			foreach($files as $file)
+			echo '<table class="table table-condensed table-hover"><thead><tr><th>序号</th><th>时间</th><th>内存占用(KB)</th><th>文件路径</th></tr></thead><tbody>';
+			foreach($files as $num => $file)
 			{
-				echo '<li>时间：'.$file['time'].'，内存：'.($file['memory']/8/1024).'KB，位置：'.$file['fileName']. '</li>';
+				echo '<tr><td>'.($num + 1).'</td><td>'.$file['time'].'</td><td>'.($file['memory']/8/1024).'</td><td>'.$file['fileName']. '</td></tr>';
 			}
-			echo '</ol>';
+			echo '</tbody></table>';
 		}
 		
 		
-		echo '<h3 class="page-header">sql语句：</h3>';
+		echo '<h1 class="">SQL语句：</h1>';
 		$sqls = self::getSqls();
 		if(count($sqls))
 		{
-			echo '<table class="table">';
+			echo '<table class="table table-condensed table-hover">';
 			echo '<thead><tr><th style="min-width: 50px">序号</th><th>执行时间</th><th>语句</th><th style="min-width: 75px">绑定数据</th></tr></thead>';
 			echo '<tbody>';
 			$totalExecTime = 0;
@@ -108,7 +108,7 @@ final class Log
 		}
 		
 		
-		echo '<h3 class="page-header">错误信息：</h3>';
+		echo '<h1 class="page-header">错误信息：</h1>';
 		$errors = self::getErrors();
 		if(count($errors))
 		{
