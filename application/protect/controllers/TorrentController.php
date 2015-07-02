@@ -31,7 +31,7 @@ class TorrentController extends CommonController
 		}
 		$this->setPageTitle('种子详情');
 		$model = TorrentModel::model();
-		$result = $model->findByPk($_GET['id'], 'id, name, main_title, slave_title, size, introduce, info_hash, view_times, download_times, finish_times, seeder_count, leecher_count, file_list, user_id, douban_id, reresource_type, reresource_medium, imdb_rate, video_encode, audio_encode, resolution, tag, team, year, region');
+		$result = $model->findByPk($_GET['id'], 'id, name, main_title, slave_title, size, introduce, info_hash, view_times, download_times, finish_times, seeder_count, leecher_count, file_list, user_id, douban_id, resource_type, resource_medium, imdb_rate, video_encode, audio_encode, resolution, tag, team, year, region');
 		if (empty($result))
 		{
 			$this->goError('种子不存在！');
