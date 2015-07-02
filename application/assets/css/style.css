@@ -1,4 +1,5 @@
 .pagination a{cursor: pointer}
+.btn{border-radius: 0}
 
 #login-form, #register-form {max-width: 600px;margin: 15% auto;}
 .go-login, .go-register {margin-left: 8px;}
@@ -10,11 +11,11 @@
 #main-nav li.user-box a:focus{outline: 0}
 body{-background-image:url('../images/light_grey.png');-font-family: Tahoma,"Microsoft Yahei", sans-serif;}
 
-/*Ê×Ò³*/
+/*ï¿½ï¿½Ò³*/
 .welcome{display: inline-block;}
 .userbox{display: inline-block;font-size:16px;margin-left:20px}
 
-/*ÁÄÌìÊÒ*/
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 .talk-wrap,.talk-content,.online-user{height: 400px;}
 .talk-wrap{border: 1px solid #999;}
 .talk-content{overflow: auto}
@@ -48,7 +49,7 @@ body{-background-image:url('../images/light_grey.png');-font-family: Tahoma,"Mic
 #paopao-expression{width: 530px;position: absolute;display: none; padding: 50px; -border: 1px solid #e69}
 
 
-/*ÖÖ×ÓÁÐ±íÒ³Ãæ*/
+/*ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½Ò³ï¿½ï¿½*/
 .search-box{margin-top: 30px}
 .search-box .search-box-title{text-align: center;}
 .search-box .search-box-icon{cursor: pointer}
@@ -119,7 +120,7 @@ body{-background-image:url('../images/light_grey.png');-font-family: Tahoma,"Mic
 #profile td:nth-of-type(1){width: 20%}
 .profile-main .page-header{font-weight: bold}
 
-/*ÂÛÌ³*/
+/*ï¿½ï¿½Ì³*/
 .bg-light-gray{background-color: #eee}
 .forum-section-table thead{background-color: #ddd}
 .forum-thread-table thead{background-color: #ddd}
@@ -156,7 +157,7 @@ body{-background-image:url('../images/light_grey.png');-font-family: Tahoma,"Mic
 
 #support a{cursor: pointer}
 
-/*¹ÜÀí½çÃæ*/
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 .manage{margin-top: 20px}
 .manage .manage-left{background-color: #282828;padding-left: 0;padding-right: 0;position: fixed}
 .manage .manage-left a{color: #6E6E6E;display: block;width: 100%;text-align: center}
@@ -177,7 +178,7 @@ body{-background-image:url('../images/light_grey.png');-font-family: Tahoma,"Mic
 	margin-right: 10px;
 }
 
-/*ÓÃ»§ÁÐ±í*/
+/*ï¿½Ã»ï¿½ï¿½Ð±ï¿½*/
 .manage .user-list-table thead th[data-field]{
 	cursor: pointer;
 }
@@ -192,6 +193,6 @@ body{-background-image:url('../images/light_grey.png');-font-family: Tahoma,"Mic
 	margin: 0 40px;
 }
 
-/*ÖÖ×Ó·ÖÀà*/
+/*ï¿½ï¿½ï¿½Ó·ï¿½ï¿½ï¿½*/
 .sub-category-table td{vertical-align: middle !important;padding: 5px 8px !important}
 .sub-category-table .category-icon{width: 45px;height: 46px;background-position: 0 0;display: inline-block}
