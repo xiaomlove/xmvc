@@ -81,13 +81,16 @@ body{-background-image:url('../images/light_grey.png');-font-family: Tahoma,"Mic
 .torrent-title {text-align: center;font-weight: bold;margin: 0 auto;}
 .torrent-detail {margin-top: 30px;text-align: center;}
 #detail-table {margin: 20px auto;}
-#detail-table td span {margin-right: 15px}
+#detail-table img{max-width: 100%}
+#detail-table td span,#detail-table td strong {margin-right: 15px}
 #detail-table td a {margin-right: 15px}
 #detail-table td button {margin-right: 15px}
-
+#detail-table .file-list-table{display: none;margin-top: 10px}
+#detail-table .file-list-table table{margin-bottom: 0}
 #detail-table>tbody>tr>td:nth-of-type(1) {width: 10% !important; text-align: right;padding-right: 10px}
 #detail-table>tbody>tr>td:nth-of-type(2) {width: 90% !important; text-align: left;padding-left: 10px;}
 #detail-table .douban-basic{line-height: 25px}
+#detail-table .view-action{margin: 0}
 
 #upload-success-flash{margin: 10px}
 #upload-success-flash strong{box-shadow:0 0 10px red;}

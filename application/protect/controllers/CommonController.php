@@ -167,7 +167,7 @@ class CommonController extends \framework\core\Controller
 		{
 			return 0;
 		}
-		if(!ctype_digit($size))
+		if(!ctype_digit(strval($size)))
 		{
 			trigger_error('getSize()只接收正整数', E_USER_NOTICE);
 		}

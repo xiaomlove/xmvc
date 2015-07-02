@@ -51,8 +51,8 @@
             <td>种子信息</td>
             <td>
             	hash码：<span class="text-primary"><?php echo $torrent['info_hash']?></span>
-            	<span><a href="javascript:;" id="view-filelist">[查看结构]</a></span>
-            	
+            	<span><a href="javascript:;" id="view-filelist" data-show="false">[ <span class="view-action">查看</span>文件(<?php echo $torrent['file_count']?>) ]</a></span>
+            	<?php echo $fileList?>
             </td>
           </tr>
           <tr>
@@ -572,6 +572,17 @@
 
 	//查看文件列表
 	var $viewFileListBtn = $('#view-filelist');
-	
+	var $fileListTable = $('.file-list-table');
+	$viewFileListBtn.click(function(e) {
+		if ($viewFileListBtn.attr('data-show') == 'false') {
+			$fileListTable.slideDown(function() {
+				$viewFileListBtn.attr('data-show', 'true').find('.view-action').text('隐藏');
+			});
+		} else {
+			$fileListTable.slideUp(function() {
+				$viewFileListBtn.attr('data-show', 'false').find('.view-action').text('查看');
+			});
+		}
+	});
 	
  </script>

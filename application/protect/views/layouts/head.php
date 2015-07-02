@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="<?php echo framework\App::ins()->request->getBaseUrl()?>application/assets/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="<?php echo framework\App::ins()->request->getBaseUrl()?>application/assets/css/style.css">
   <?php echo $this->getScript('application/assets/js/config.js', FALSE)?>
+  <script src="http://libs.baidu.com/jquery/1.10.2/jquery.min.js"></script>
+  <script src="<?php echo framework\App::ins()->request->getBaseUrl()?>application/assets/js/bootstrap.min.js"></script>
   <!--[if lt IE 9]>
   <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
   <script src="<?php echo framework\App::ins()->request->getBaseUrl()?>application/assets/js/respond.js"></script>

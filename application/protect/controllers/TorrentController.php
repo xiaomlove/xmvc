@@ -31,7 +31,7 @@ class TorrentController extends CommonController
 		}
 		$this->setPageTitle('种子详情');
 		$model = TorrentModel::model();
-		$result = $model->findByPk($_GET['id'], 'id, name, main_title, slave_title, size, introduce, info_hash, view_times, download_times, finish_times, seeder_count, leecher_count, file_list, user_id, douban_id, resource_type, resource_medium, imdb_rate, video_encode, audio_encode, resolution, tag, team, year, region');
+		$result = $model->findByPk($_GET['id'], 'id, name, main_title, slave_title, size, introduce, info_hash, view_times, download_times, finish_times, seeder_count, leecher_count, file_list, file_count, user_id, douban_id, resource_type, resource_medium, imdb_rate, video_encode, audio_encode, resolution, tag, team, year, region');
 		if (empty($result))
 		{
 			$this->goError('种子不存在！');
@@ -40,22 +40,26 @@ class TorrentController extends CommonController
 // 		echo '<pre/>';
 // 		var_dump(unserialize($result['file_list']));exit;
 		$fileListTable = '';
-// 		if (!empty($result['file_list']) && ($fileListData = unserialize($result['file_list'])))
-// 		{
-// 			$fileListTable .= "<table class=\"table\"><thead><tr><th>路径</th><th>尺寸</th></tr></thead><tbody>";
-// 			foreach ($fileListData as $file)
-// 			{
-// 				if (is_array($file))
-// 				{
-// 					foreach ($file as $item)
-// 					{
-// 						$fileListTable .= "<tr><td>".$this->getSize($item['length'])."</td><td>".$item['path'][0]."</td>";
-// 					}
-// 				}
-// 			}
-			
-// 		}
-		echo $this->render('detail', array('torrent' => $result));
+		if (!empty($result['file_list']) && ($fileListData = unserialize($result['file_list'])))
+		{
+			$fileListTable .= "<div class=\"file-list-table\"><table class=\"table table-hover\"><thead><tr><th>路径</th><th>尺寸</th></tr></thead><tbody>";
+			if (count($fileListData) === count($fileListData, TRUE))
+			{
+				//一维数组，只有一个文件
+				$fileListTable .= "<tr><td>".$fileListData['name']."</td><td>".$this->getSize($fileListData['length'])."</td></tr>";
+			}
+			else
+			{
+				//多个文件
+				foreach ($fileListData as $file)
+				{
+					$path = implode('/', $file['path']);
+					$fileListTable .= "<tr><td>".$path."</td><td>".$this->getSize($file['length'])."</td></tr>";
+				}
+			}
+			$fileListTable .= "</tbody></table></div>";
+		}
+		echo $this->render('detail', array('torrent' => $result, 'fileList' => $fileListTable));
 	}
 	
 	public function getCategory($parentKey, $subValue)
