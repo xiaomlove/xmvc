@@ -36,6 +36,7 @@ return array(
 			'addbookmark'=>'bookmark/add',
 			'profile'=>'user/profile',
 			'about'=>'index/about',
+			'award' => 'torrent/addaward',
 			'user/name/<name:.+>/age/<age:\d+>'=>'user/filter',
 			'user/sex/<sex:.+>'=>'user/filter',
 			'user/year/<year>'=>array('user/filter', 'urlSuffix'=>'.shtml'),

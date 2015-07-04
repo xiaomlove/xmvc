@@ -9,10 +9,10 @@
 	<thead>
 		<tr>
 			<th>标题</th>
-			<th>作者</th>
-			<th><?php echo $this->getSortHref('reply_count', '回复')?></th>
-			<th><?php echo $this->getSortHref('view_count', '查看')?></th>
-			<th><?php echo $this->getSortHref('last_reply_time', '最近回复')?></th>
+			<th class="thead-author hidden-xs">作者</th>
+			<th class="thead-reply hidden-sm hidden-xs"><?php echo $this->getSortHref('reply_count', '回复')?></th>
+			<th class="thead-view hidden-sm hidden-xs"><?php echo $this->getSortHref('view_count', '查看')?></th>
+			<th class="thead-last-reply hidden-md hidden-sm hidden-xs"><?php echo $this->getSortHref('last_reply_time', '最近回复')?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -22,15 +22,15 @@
 			<td>
 				<strong><a href="<?php echo $this->createUrl('forum/thread/detail', array('section_id' => $sectionId, 'thread_id' => $thread['id'])).$this->getExtraParam(array('section_id'))?>">
 				<?php
-					if ($thread['is_top']) echo '<span class="glyphicon glyphicon-arrow-up" aria-hidden="true" title="置顶"></span>';
+					if ($thread['is_top']) echo '<span class="glyphicon glyphicon-circle-arrow-up" aria-hidden="true" title="置顶"></span>';
 					echo $thread['title'];
 				?>
 				</a></strong>
 			</td>
-			<td><?php echo $thread['user_name']."<br/><small>".date('Y-m-d H:i', $thread['add_time'])."</small>"?></td>
-			<td><?php echo $thread['reply_count']?></td>
-			<td><?php echo $thread['view_count']?></td>
-			<td>
+			<td class="hidden-xs"><?php echo $thread['user_name']."<br/><small>".date('Y-m-d H:i', $thread['add_time'])."</small>"?></td>
+			<td class="hidden-sm hidden-xs"><?php echo $thread['reply_count']?></td>
+			<td class="hidden-sm hidden-xs"><?php echo $thread['view_count']?></td>
+			<td class="hidden-md hidden-sm hidden-xs">
 			<?php
 				if (!empty($thread['last_reply']))
 				{

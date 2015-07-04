@@ -62,5 +62,15 @@ body{padding-bottom: 100px}
 				<li>种子列表页搜索箱实现。</li>
 			</ol>
 		</div>
+		
+		<h4 class="page-header"><em class="">2015-07-04</em></h4>
+		<div>
+			<ol>
+				<li>种子详情基本信息补充各种筛选属性的值</li>
+				<li>种子详情可查看种子包含的文件</li>
+				<li>种子详情可说谢谢&魔力奖励</li>
+				<li>论坛、种子列表及详情页适配平板、手机等小屏幕</li>
+			</ol>
+		</div>
 	</div>
 </div>

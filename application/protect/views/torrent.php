@@ -5,15 +5,15 @@
         <thead>
           <tr>
             <th style="text-align: center"><?php echo $this->getSortHref('main_title', '标题')?></th>
-            <th><?php echo $this->getSortHref('add_time', '添加于')?></th>
-            <th title="存活时间">TTL</th>
-            <th><?php echo $this->getSortHref('size', '大小')?></th>
-            <th><?php echo $this->getSortHref('seeder_count', '做种')?></th>
-            <th><?php echo $this->getSortHref('leecher_count', '下载')?></th>
-            <th><?php echo $this->getSortHref('finish_times', '完成')?></th>
-            <th><?php echo $this->getSortHref('comment_count', '评论')?></th>
-            <th><?php echo $this->getSortHref('view_times', '查看')?></th>
-            <th><?php echo $this->getSortHref('user_name', '发布者')?></th>
+            <th class="hidden-sm hidden-xs"><?php echo $this->getSortHref('add_time', '添加于')?></th>
+            <th class="hidden-sm hidden-xs" title="存活时间">TTL</th>
+            <th class="hidden-xs"><?php echo $this->getSortHref('size', '大小')?></th>
+            <th class="hidden-xs"><?php echo $this->getSortHref('seeder_count', '做种')?></th>
+            <th class="hidden-xs"><?php echo $this->getSortHref('leecher_count', '下载')?></th>
+            <th class="hidden-md hidden-sm hidden-xs"><?php echo $this->getSortHref('finish_times', '完成')?></th>
+            <th class="hidden-md hidden-sm hidden-xs"><?php echo $this->getSortHref('comment_count', '评论')?></th>
+            <th class="hidden-md hidden-sm hidden-xs"><?php echo $this->getSortHref('view_times', '查看')?></th>
+            <th class="hidden-xs"><?php echo $this->getSortHref('user_name', '发布者')?></th>
           </tr>
         </thead>
         <?php if(!empty($data)):?>
@@ -21,15 +21,15 @@
         <?php foreach ($data as $k => $v):?>
           <tr>
             <td><a href="<?php echo $this->createUrl('torrent/detail', array('id' => $v['id']))?>"><?php echo $v['main_title']."<br/>".$v['slave_title']?></a></td>
-            <td><?php echo date('Y-m-d', $v['add_time'])."<br/>".date('H:i:s', $v['add_time'])?></td>
-            <td><?php echo $this->getTTL($v['add_time'], '<br/>')?></td>
-            <td><?php echo $this->getSize($v['size'])?></td>
-            <td title="做种"><?php echo $v['seeder_count']?></td>
-            <td title="下载"><?php echo $v['leecher_count']?></td>
-            <td title="完成"><?php echo $v['finish_times']?></td>
-            <td title="评论"><?php echo $v['comment_count']?></td>
-            <td title="查看"><?php echo $v['view_times']?></td>
-            <td><a href="#"><?php echo $v['user_name']?></a></td>
+            <td class="hidden-sm hidden-xs"><?php echo date('Y-m-d', $v['add_time'])."<br/>".date('H:i:s', $v['add_time'])?></td>
+            <td class="hidden-sm hidden-xs"><?php echo $this->getTTL($v['add_time'], '<br/>')?></td>
+            <td class="hidden-xs"><?php echo $this->getSize($v['size'])?></td>
+            <td title="做种" class="hidden-xs"><?php echo $v['seeder_count']?></td>
+            <td title="下载" class="hidden-xs"><?php echo $v['leecher_count']?></td>
+            <td title="完成" class="hidden-md hidden-sm hidden-xs"><?php echo $v['finish_times']?></td>
+            <td title="评论" class="hidden-md hidden-sm hidden-xs"><?php echo $v['comment_count']?></td>
+            <td title="查看" class="hidden-md hidden-sm hidden-xs"><?php echo $v['view_times']?></td>
+            <td class="hidden-xs"><a href="#"><?php echo $v['user_name']?></a></td>
           </tr>
           <?php endForeach?>
         </tbody>

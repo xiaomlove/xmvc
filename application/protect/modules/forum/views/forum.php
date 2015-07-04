@@ -5,19 +5,19 @@
 	<thead>
 		<tr>
 			<th><?php echo $section['name']?></th>
-			<th>主题数</th>
-			<th>回复数</th>
-			<th>最近回复</th>
-			<th>版主</th>
+			<th class="hidden-xs">主题数</th>
+			<th class="hidden-xs">回复数</th>
+			<th class="hidden-md hidden-sm hidden-xs">最近回复</th>
+			<th class="hidden-sm hidden-xs">版主</th>
 		</tr>
 	</thead>
 	<?php else:?>
 	<tbody>
 		<tr>
 			<td><?php echo "<a href=\"".$this->createUrl('forum/thread/list', array('section_id' => $section['id']))."\"><strong>".$section['name']."</strong></a><em>(今日：<i class=\"forum-section-today\">".($section['thread_today_count']+$section['reply_today_count'])."</i>)</em><br/>".$section['description']?></td>
-			<td><?php echo $section['thread_total_count']?></td>
-			<td><?php echo $section['reply_total_count']?></td>
-			<td>
+			<td class="hidden-xs"><?php echo $section['thread_total_count']?></td>
+			<td class="hidden-xs"><?php echo $section['reply_total_count']?></td>
+			<td  class="hidden-md hidden-sm hidden-xs">
 				<?php 
 					if (!empty($section['last_reply']))
 					{
@@ -28,7 +28,7 @@
 					}
 				?>
 			</td>
-			<td><?php echo $section['master_name_list']?></td>
+			<td  class="hidden-sm hidden-xs"><?php echo $section['master_name_list']?></td>
 		</tr>
 	</tbody>
 	<?php endIF?>

@@ -230,7 +230,7 @@ class ThreadController extends \application\protect\controllers\CommonController
 			//直接进入第一页和分页后的referer不一样
 			$backUrl .= '&'.urldecode($_GET['extra']);
 		}
-		$prepend = "<li><a href=\"".$backUrl."\"><span class=\"glyphicon glyphicon-arrow-left\" aria-hidden=\"true\"></span>返回</a></li>";
+		$prepend = "<li><a href=\"".$backUrl."\"><span class=\"glyphicon glyphicon-chevron-left\" aria-hidden=\"true\"></span>返回</a></li>";
 		$navHtml = $this->getNavHtml($page, $per, $total, $prepend);//导航链接上的其他参数从$_GET取
 		$userId = App::ins()->user->getId();
 		$html = $this->render('threaddetail', array('section' => $this->section, 'thread' => $thread, 'replyList' => $replyList, 'appraiseList' => $appraiseList, 'navHtml' => $navHtml, 'userId' => $userId));
@@ -245,7 +245,7 @@ class ThreadController extends \application\protect\controllers\CommonController
 		$per = $data['per_page'];
 		$total = ceil($data['count']/$per);
 		$page = !empty($_GET['page']) ? $_GET['page'] : 1;
-		$prepend = "<li><a href=\"".$this->createUrl('forum/section/list')."\"><span class=\"glyphicon glyphicon-arrow-left\" aria-hidden=\"true\"></span>返回</a></li>";
+		$prepend = "<li><a href=\"".$this->createUrl('forum/section/list')."\"><span class=\"glyphicon glyphicon-chevron-left\" aria-hidden=\"true\"></span>返回</a></li>";
 		$navHtml = $this->getNavHtml($page, $per, $total, $prepend);
 		$html = $this->render('threadlist', array('threadList' => $threadList, 'sectionId' => $_GET['section_id'], 'navHtml' => $navHtml));
 		echo $html;

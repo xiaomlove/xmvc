@@ -5,6 +5,7 @@ use framework\App;
 use application\protect\models\TorrentModel;
 use application\protect\models\CategoryModel;
 use framework\lib\BEncode;
+use application\protect\models\AwardModel;
 
 class TorrentController extends CommonController
 {
@@ -59,7 +60,28 @@ class TorrentController extends CommonController
 			}
 			$fileListTable .= "</tbody></table></div>";
 		}
-		echo $this->render('detail', array('torrent' => $result, 'fileList' => $fileListTable));
+		//支持情况
+		$awardModel = AwardModel::model();
+		$awardList = $awardModel->getList($_GET['id']);
+		$userAward = !empty($awardList[AwardModel::TYPE_USER]) ? $this->createAwardUserList($awardList[AwardModel::TYPE_USER]) : NULL;
+		$systemAward = !empty($awardList[AwardModel::TYPE_SYSTEM]) ? $this->createAwardUserList($awardList[AwardModel::TYPE_SYSTEM]) : NULL;
+		echo $this->render('detail', array('torrent' => $result, 'fileList' => $fileListTable, 'userAward' => $userAward, 'systemAward' => $systemAward, 'userAwardSum' => $awardList['sum']));
+	}
+	
+	protected function createAwardUserList(array $data)
+	{
+		$result = '';
+		$userId = App::ins()->user->getId();
+		foreach ($data as $value)
+		{
+			$className = '';
+			if ($value['user_id'] == $userId)
+			{
+				$className = "bg-danger";
+			}
+			$result .= '<a href="#" class="'.$className.'">'.$value['user_name'].'</a>';
+		}
+		return $result;
 	}
 	
 	public function getCategory($parentKey, $subValue)
@@ -479,5 +501,58 @@ class TorrentController extends CommonController
 	protected function getSearchBox()
 	{
 		return CategoryModel::model()->createSearchBox();
+	}
+	
+	public function actionAddAward()
+	{
+		if (!App::ins()->request->isPost())
+		{
+			$this->goError('请求错误');
+		}
+		if (empty($_POST['torrentId']) || !ctype_digit($_POST['torrentId']) || 
+			empty($_POST['value']) || !ctype_digit($_POST['value']) || 
+			empty($_POST['type']) || !ctype_digit($_POST['type']))
+		{
+			$this->goError('参数错误');
+		}
+		
+		//检查种子是否存在
+		$torrentInfo = TorrentModel::model()->findByPk($_POST['torrentId']);
+		if (empty($torrentInfo))
+		{
+			$this->goError('种子不存在');
+		}
+		//检查值与类型是否正确
+		$model = AwardModel::model();
+		$typeValueOK = $model->checkTypeValue($_POST['type'], $_POST['value']);
+		if (!$typeValueOK)
+		{
+			$this->goError('类型与值错误');
+		}
+		//检查是否已经奖励过
+		$userId = App::ins()->user->getId();
+		$map = array(
+				'torrent_id' => $_POST['torrentId'],
+				'type' => $_POST['type'],
+				'user_id' => $userId,
+		);
+		$myAward = $model->where($map)->count();
+		if ($myAward > 0) 
+		{
+			echo json_encode(array('code' => 0, 'msg' => '已经操作过了'));exit;
+		}
+		$map['add_time'] = TIME_NOW;
+		$map['value'] = $_POST['value'];
+		$add = $model->insert($map);
+		//删除用户魔力与给用户增加魔力暂时略
+		if ($add)
+		{
+			$userName = App::ins()->user->getName();
+			echo json_encode(array('code' => 1, 'msg' => '操作成功', 'data' => array('name' => $userName, 'id' => $userId, 'value' => $_POST['value'])));
+		}
+		else
+		{
+			echo json_encode(array('code' => -1, 'msg' => '操作失败'));
+		}
 	}
 }

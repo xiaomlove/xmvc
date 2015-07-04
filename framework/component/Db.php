@@ -15,7 +15,7 @@ class Db
 	private $serverVersion;
 	private $serverInfo;
 	private $clientVersion;
-	private $lastSql;
+	private $lastSql = NULL;
 	private $active = FALSE;
 	
 	//'SELECT%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT% %UNION%%COMMENT%'
@@ -107,7 +107,7 @@ class Db
 		{
 			self::_freePDOStat();
 		}
-		$this->lastSql = $sql;
+		$this->lastSql = $sql.(!empty($options) ? http_build_query($options) : '');
 		self::$_PDOStat = self::$_link->prepare($sql);
 		try
 		{
@@ -126,7 +126,6 @@ class Db
 	 */
 	private function _exec($sql)
 	{
-		$this->lastSql = $sql;
 		try
 		{
 			return self::$_link->exec($sql);
@@ -212,6 +211,7 @@ class Db
 			trigger_error('参数错误：sql语句不能为空且绑定参数须以数组形式传递', E_USER_ERROR);
 			return FALSE;
 		}
+		$this->lastSql = $sql.(!empty($options) ? http_build_query($options) : '');
 		if(stripos(trim($sql), 'INSERT') === 0)
 		{
 			//插入操作
@@ -295,6 +295,11 @@ class Db
 	private static function _logSql($time, $sql, array $bind = array())
 	{
 		Log::executeSql(array('time' => $time, 'sql' => $sql, 'bind' => $bind));
+	}
+	
+	public function getLastSql()
+	{
+		return $this->lastSql;
 	}
 
 }

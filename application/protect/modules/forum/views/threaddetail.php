@@ -4,7 +4,7 @@
 	  <?php echo $navHtml?>
 </nav>
 
-<div class="row forum-thread-head"">
+<div class="row forum-thread-head">
 	<div class="col-md-2">
 		<span>查看</span>
 		<span class="text-danger"><?php echo $thread['view_count']+1?></span>
@@ -12,7 +12,7 @@
 		<span>回复</span>
 		<span class="text-danger"><?php echo $thread['reply_count']?></span>
 	</div>
-	<div class="col-md-10">
+	<div class="col-md-10 text-left">
 		<a href="#" class="forum-thread-title"><?php echo $thread['state'] == \application\protect\models\ForumthreadModel::STATE_DRAFT ? "【草稿】".$thread['title'] : $thread['title']?></a>
 		<div class="pull-right">
 			<a href="#" class="glyphicon glyphicon-arrow-left" aria-hidden="true" title="上一主题" style="cursor: pointer"></a>
@@ -39,9 +39,9 @@
 		</h4>
 	</div>
 	
-	<div class="col-md-2 forum-reply-user">
+	<div class="col-md-2 hidden-sm hidden-xs forum-reply-user">
 		<div><a href="#"><img src="<?php echo \framework\App::ins()->request->getBaseUrl()?>application/assets/images/avatar.jpg" class="img-responsive"></a></div>
-		<div>
+		<div class="hidden-md hidden-sm hidden-xs">
 			<table class="table user-info-table">
 				<tbody>
 					<tr>
@@ -67,7 +67,7 @@
 	</div>
 	
 	<!-- 支持部分 -->
-	<div id="appraise">
+	<div id="appraise" class="hidden-sm hidden-xs">
 	<?php if (count($appraiseList)):?>
 	<div class="col-md-offset-2 col-md-10 bg-warning text-danger forum-thread-support-title"><h4><span class="glyphicon glyphicon-record" aria-hidden="true"></span>支持</h4></div>
 	<div class="col-md-offset-2 col-md-10">
@@ -140,9 +140,9 @@
 		</h4>
 	</div>
 	
-	<div class="col-md-2 forum-reply-user">
+	<div class="col-md-2 hidden-sm hidden-xs forum-reply-user">
 		<div><a href="#"><img src="<?php echo \framework\App::ins()->request->getBaseUrl()?>application/assets/images/avatar.jpg" class="img-responsive"></a></div>
-		<div>
+		<div class="hidden-md hiden-sm hidden-xs">
 			<table class="table user-info-table">
 				<tbody>
 					<tr>
@@ -174,7 +174,7 @@
 	</div>
 
 
-	<div class="col-md-offset-2 col-md-10 forum-thread-reply-action">
+	<div class="col-md-offset-2 clearfix col-md-10 forum-thread-reply-action">
 		<?php if (!empty($reply['front_reply'])):?>
 		<div class="pull-left forum-thread-reply-reply-nav">
 		<?php if ($reply['reply_count'] > 5) echo '还有'.($reply['reply_count']-5).'条回复，<a href="javascript:;" class="view-more">点击查看</a>'?>
@@ -307,17 +307,17 @@
 </nav>
 
 <div class="row">
-	<div class="col-md-offset-3 col-md-6">
+	<div class="col-md-offset-3 col-md-6 col-sm-12">
 		<form class="form-horizontal">
 		  <div class="form-group">
-		    <div class="col-sm-12">
+		    <div class="col-xs-12">
 		      <script id="uecontainer" name="content" type="text/plain"></script>
 		    </div>
 		  </div>
 
 		  <div class="form-group">
-		    <div class="col-sm-offset-5 col-sm-7">
-		      <button type="button" id="submit" class="btn btn-primary">回复</button>
+		    <div class="col-xs-12 text-center">
+		      <button type="button" id="submit" class="btn btn-success">回复</button>
 		      <a href="<?php echo $this->createUrl('forum/reply/add', array('section_id' => $_GET['section_id'], 'thread_id' => $_GET['thread_id']))?>" type="button" class="btn btn-default btn-sm pull-right">高级模式</a>
 		    </div>
 		  </div>
@@ -673,5 +673,7 @@
 		}
 	}
 	
-	  
+	window.onload = function() {
+		document.getElementById('edui1').removeAttribute('style');
+	}
   </script>

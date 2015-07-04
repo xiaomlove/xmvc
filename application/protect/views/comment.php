@@ -9,7 +9,7 @@
       <div class="item" data-id="<?php echo $comment['id']?>" data-userid="<?php echo $comment['user_id']?>">
         <h4 class="comment-head">#<span class="comment-floor"><?php echo $comment['floor']?></span><span class="text-primary comment-username"><?php echo $comment['user_name']?></span><small class="pull-right comment-add-time"><?php echo date('Y-m-d H:i:s', $comment['add_time'])?></small></h4>
         <div class="clearfix">
-          <div class="col-xs-2 avatar">
+          <div class="col-xs-2 hidden-sm hidden-xs avatar">
             <img src="<?php echo $comment['user_avatar']?>" class="img-responsive"/>
           </div>
           <div class="col-xs-10 comment-box">
@@ -19,7 +19,7 @@
           </div>
         </div>
         <div class="clearfix comment-foot">
-          <div class="col-xs-2 social">
+          <div class="col-xs-2 hidden-sm hidden-xs social">
             <span class="text-danger">私信</span><span class="text-primary">加好友</span>
           </div>
           <div class="col-xs-10 action">

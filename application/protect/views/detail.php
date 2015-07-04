@@ -1,3 +1,4 @@
+
 <div class="row torrent-detail">
 	<?php if (!empty($torrent)):?>
       <h1 class="torrent-title"><?php echo $torrent['main_title']?></h1>
@@ -8,15 +9,15 @@
 
         <tbody>
           <tr>
-            <td>下载</td>
+            <td class="hidden-sm hidden-xs">下载</td>
             <td><a href="download?id=<?php echo $torrent['id']?>"><?php echo $this->getTorrentName($torrent['name'])?></a></td>
           </tr>
           <tr>
-            <td>副标题</td>
+            <td class="hidden-sm hidden-xs">副标题</td>
             <td><?php echo $torrent['slave_title']?></td>
           </tr>
           <tr>
-            <td>基本信息</td>
+            <td class="hidden-sm hidden-xs">基本信息</td>
             <td>
             	大小：<strong><?php echo $this->getSize($torrent['size'])?></strong>
             	类型：<strong><?php echo $this->getCategory('resource_type', $torrent['resource_type'])?></strong>
@@ -29,26 +30,26 @@
           </tr>
           
           <tr>
-            <td>行为</td>
+            <td class="hidden-sm hidden-xs">行为</td>
             <td><a href="javascript:;" class="text-danger">删除种子</a><a href="<?php echo framework\App::ins()->user->getId() == $torrent['user_id'] ? $this->createUrl('torrent/edit', array('id' => $torrent['id'])) : '#'?>" class="text-primary">编辑种子</a><a href="javascript:;" class="text-warning">举报种子</a></td>
           </tr>
           
           <?php if (!empty($torrent['douban_id'])):?>
           <tr>
-            <td>豆瓣信息</td>
+            <td class="hidden-sm hidden-xs">豆瓣信息</td>
             <td id="douban_info" data-douban-id="<?php echo $torrent['douban_id']?>"></td>
           </tr>
           <?php endIf?>
           
           <tr>
-            <td>简介</td>
+            <td class="hidden-sm hidden-xs">简介</td>
             <td>
               <div id="introduce"><?php echo $torrent['introduce']?></div>
             </td>
           </tr>
           
           <tr>
-            <td>种子信息</td>
+            <td class="hidden-sm hidden-xs">种子信息</td>
             <td>
             	hash码：<span class="text-primary"><?php echo $torrent['info_hash']?></span>
             	<span><a href="javascript:;" id="view-filelist" data-show="false">[ <span class="view-action">查看</span>文件(<?php echo $torrent['file_count']?>) ]</a></span>
@@ -56,11 +57,11 @@
             </td>
           </tr>
           <tr>
-            <td>热度表</td>
+            <td class="hidden-sm hidden-xs">热度表</td>
             <td>查看：<span class="text-primary"><?php echo $torrent['view_times']?>次</span>下载：<span class="text-primary"><?php echo $torrent['download_times']?>次</span>完成：<span class="text-primary"><?php echo $torrent['finish_times']?>次</span><span id="view-snatch"><a href="<?php echo $this->createUrl('torrent/snatch', array('id' => $torrent['id']))?>">[查看完成情况]</a></span></td>
           </tr>
           <tr>
-            <td>同伴</td>
+            <td class="hidden-sm hidden-xs">同伴</td>
             <td>
             	<button class="btn btn-xs btn-info" id="partner"  data-haved="false">查看小伙伴们</button>做种者：<span class="text-primary"><em class="seeder-count"><?php echo $torrent['seeder_count']?></em>个</span>下载者：<span class="text-primary "><em class="leecher-count"><?php echo $torrent['leecher_count']?></em>个</span>
             	<div id="seeder-leecher-list" style="display: none">
@@ -69,8 +70,26 @@
             </td>
           </tr>
           <tr>
-            <td>感谢者</td>
-            <td><button class="btn btn-success btn-xs">说谢谢</button><span class="text-primary">admin1</span><span class="text-primary">admin2</span><span class="text-primary">xiaomiao</span></td>
+            <td class="hidden-sm hidden-xs">魔力奖励</td>
+            <td>
+            	目前发布者已收到奖励：<strong class="award-total"><?php echo $userAwardSum?></strong>，有以下会员给予了奖励：
+            	<p class="award-list">
+            	<?php echo $userAward?>
+            	</p>
+            	<button class="btn btn-success btn-xs award" data-value="100" data-type="2" title="从自己魔力扣除100奖励发布者" data-toggle="popover" data-placement="top" data-trigger="manual">100</button>
+            	<button class="btn btn-success btn-xs award" data-value="200" data-type="2" title="从自己魔力扣除200奖励发布者" data-toggle="popover" data-placement="top" data-trigger="manual">200</button>
+            	<button class="btn btn-success btn-xs award" data-value="500" data-type="2" title="从自己魔力扣除500奖励发布者" data-toggle="popover" data-placement="top" data-trigger="manual">500</button>
+            	<button class="btn btn-success btn-xs award" data-value="1000" data-type="2" title="从自己魔力扣除1000奖励发布者" data-toggle="popover" data-placement="top" data-trigger="manual">1000</button>
+            </td>
+          </tr>
+          <tr>
+            <td class="hidden-sm hidden-xs">感谢者</td>
+            <td>
+            	<p class="award-list">
+            		<?php echo $systemAward?>
+            	</p>
+            	<button class="btn btn-default btn-xs award" data-value="3"  data-type="1" data-toggle="popover" data-placement="top" data-trigger="manual">点击感谢发布者，由系统奖励发布者3魔力</button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -204,6 +223,13 @@
  	uParse('#introduce', {
 	    rootPath: './'
 	});
+ 	var torrentId = $("#torrentId").val();
+ 	$('[data-toggle=popover]').on('shown.bs.popover', function() {
+			$obj = $(this);
+			setTimeout(function() {
+				$obj.popover('hide');
+			}, 1500);
+ 	 });
 	//添加图片表情
 	$("body").on("click", ".expression img", function(e){
 		var $comment = $(this).parents("form").find(".comment"), sel = window.getSelection(), range = document.createRange();
@@ -260,7 +286,7 @@
 			}
 			
 		}
-		var torrentId = $("#torrentId").val();
+		
 		var $total = $("#comment-total");
 		if ($total.length){
 			maxFloor = parseInt($total.val())+1;
@@ -584,5 +610,36 @@
 			});
 		}
 	});
-	
+
+	//给予奖励
+	$('.award').click(function(e) {
+		var $btn = $(this);
+		var type = $btn.attr('data-type');
+		var value = $btn.attr('data-value');
+		$.ajax({
+			url: '<?php echo $this->createUrl('torrent/addaward')?>',
+			type: 'POST',
+			dataType: 'json',
+			data: 'torrentId=' + torrentId + '&type=' + type + '&value=' + value,
+			timeout: 8000,
+			beforeSend: function() {
+				$btn.attr('disabled', 'disabled');
+			}
+		}).done(function(result) {
+			console.log(result);
+			if (result.code == 1) {
+				$td = $btn.attr('data-content', '操作成功').popover('show').closest('td');
+				$td.find('.award-list').append('<a href="#" class="bg-danger">' + result.data.name + '</a>');
+				$td.find('.award-total').text(function(index, text) {return parseInt(text) + parseInt(result.data.value)});
+				$btn.siblings().attr('disabled', 'disabled');
+			} else if (result.code == 0) {
+				$btn.attr('data-content', '已经操作过了').popover('show').siblings().attr('disabled', 'disabled');
+			} else {
+				$btn.attr('data-content', result.msg).popover('show').removeAttr('disabled');
+			}
+			
+		}).error(function(xhr, errorText) {
+			$btn.text(result.msg).removeAttr('disabled');
+		})
+	})
  </script>

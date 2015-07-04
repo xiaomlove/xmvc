@@ -70,8 +70,8 @@ class CategoryModel extends \framework\core\Model
 			return '';
 		}
 		$boxHtml = '<table class="table table-bordered search-box">';
-		$boxHtml .= '<thead><tr><th colspan="2" class="search-box-title"><span class="search-box-icon" title="点击收缩或展开"><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>搜索箱</span></th></tr></thead>';
-		$boxHtml .= '<tbody class="category-box"><tr><td>';
+		$boxHtml .= '<thead><tr><th colspan="2" class="search-box-title"><span class="search-box-icon" title="点击收缩或展开"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>搜索箱</span></th></tr></thead>';
+		$boxHtml .= '<tbody class="category-box hidden"><tr><td>';
 		$boxHtml .= '<div>';
 		$typeUrl = Router::createUrl('torrent/list');
 		foreach ($categoryData as $category)

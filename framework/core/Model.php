@@ -109,7 +109,7 @@ abstract class Model
 		$chainedList = array('distinct', 'field', 'group', 'having', 'join', 'limit', 'order', 'table', 'where', 'active', 
 							'findByPk', 'findBySql', 'select', 'deleteByPk', 'delete', 'updateByPk', 'update', 'insert', 'execute',
 							'beginTransaction', 'commit', 'rollBack', 'count', 'validate', 'getError', 'setError', 'hasError', 'cache',
-							'setData', 'getData', 'hasData',
+							'setData', 'getData', 'hasData', 'getLastSql',
 						);
 		//活跃对象可以执行的方法
 		$activeList = array('delete', 'save');
@@ -372,11 +372,11 @@ abstract class Model
 		elseif(is_array($param) && ArrayHelper::is_assoc($param))//数组必须是键和值连起是一个完整的条件，推荐使用逗号连接，也就是是索引数组
 		{
 			$result = '';
-// 			array('id'=>'>5', 'name'=>'like "abc"')
+// 			array('id'=>'>5', 'name'=>'like "abc"')//这种写语句，默认是=条件
 			$joinStr = empty($connectStr) ? ',' : $connectStr;
 			foreach($param as $key=>$value)
 			{
-				$paramOne = $key.' '.$value.' '.$joinStr.' ';
+				$paramOne = $key.'='.$value.' '.$joinStr.' ';
 				
 				$result .= $paramOne;
 			}
@@ -1139,4 +1139,8 @@ abstract class Model
 		return isset($this->data[$key]);
 	}
 	
+	private function getLastSql()
+	{
+		return self::$_db->getLastSql();
+	}
 }
