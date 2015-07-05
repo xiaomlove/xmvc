@@ -151,16 +151,32 @@ class Db
 	 * @param unknown $fetchStyle
 	 * @return multitype:
 	 */
-	public function getAllBySql($sql = '', $options = array(), $fetchStyle = \PDO::FETCH_ASSOC)
+	public function getAllBySql($sql = '', $options = array(), $cacheExpire = '', $fetchStyle = \PDO::FETCH_ASSOC)
 	{
 		if(empty($sql) || !is_array($options))
 		{
 			trigger_error('参数错误：sql语句不能为空且绑定参数须以数组形式传递', E_USER_ERROR);
 			return '';
 		}
+		$doCache = FALSE;
 		if (self::$_debug)
 		{
 			$start = microtime(TRUE);
+			if ($cacheExpire !== '' && App::isComponentEnabled('Memcache') && !defined('NO_CACHE'))
+			{
+				$cacheKey = $sql.json_encode($options);
+				$result = App::ins()->mem->get($cacheKey);
+				if ($result !== FALSE)
+				{
+					$end = microtime(TRUE);
+					self::_logSql($end - $start, $sql.'【FROM CACHE】', $options);
+					return $result;
+				}
+				else 
+				{
+					$doCache = TRUE;
+				}
+			}
 			$this->_query($sql, $options);
 			$result = self::$_PDOStat->fetchAll($fetchStyle);
 			$end = microtime(TRUE);
@@ -168,8 +184,29 @@ class Db
 		}
 		else
 		{
+			if ($cacheExpire !== '' && App::isComponentEnabled('Memcache') && !defined('NO_CACHE'))
+			{
+				$cacheKey = $sql.json_encode($options);
+				$result = App::ins()->mem->get($cacheKey);
+				if ($result !== FALSE)
+				{
+					return $result;
+				}
+				else
+				{
+					$doCache = TRUE;
+				}
+			}
 			$this->_query($sql, $options);
 			$result = self::$_PDOStat->fetchAll($fetchStyle);
+		}
+		if ($doCache)
+		{
+			$cache = App::ins()->mem->set($cacheKey, $result, FALSE, $cacheExpire);
+			if ($cache === FALSE)
+			{
+				trigger_error('Memcache set failed', E_USER_NOTICE);
+			}
 		}
 		return $result;
 	}

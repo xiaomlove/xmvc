@@ -98,10 +98,14 @@ return array(
 	
 	//对组件的一些配置
 	'component'=>array(
-		'user'=>array(
-			'guestName'=>'游客',//未登陆时用户名
-			'sessionExpire'=>108000,//session有效时间
-		)
+			'user'=>array(
+				'guestName'=>'游客',//未登陆时用户名
+				'sessionExpire'=>108000,//session有效时间
+			),
+			'Memcache' => array(
+					'host' => 'localhost',
+					'port' => 11211,
+			),
 	),
 
 	'cache'=>array(
@@ -124,6 +128,7 @@ return array(
 		)
 		
 	),
+		
 	
 	'session'=>array(
 		'gc_maxlifetime'=>'',//gc发生时间，感觉这块没必要，默认即可

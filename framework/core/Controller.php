@@ -13,6 +13,10 @@ class Controller
 	
 	public function __construct()
 	{
+		if (defined('FLUSH_CACHE'))
+		{
+			App::ins()->mem->flush();//清除缓存		
+		}
 		$this->init();
 	}
 	
@@ -172,7 +176,7 @@ class Controller
 				'PowerBy' => 'TinyHD',
 				'queries' => App::ins()->db->getQueries(),
 				'time' => number_format(microtime(TRUE) - App::getStartTime(), 4),
-				
+				'MemcacheOn' => App::isComponentEnabled('Memcache'),
 		);
 		if (!$onlyArr)
 		{
@@ -180,6 +184,7 @@ class Controller
 			$str .= '&copy; '.$out['year'].'  ';
 			$str .= 'Powered By <a href="/about">'.$out['PowerBy'].'</a></br>';
 			$str .= 'Page created in '.$out['time'].' seconds with '.$out['queries'].' queries';
+			$str .= $out['MemcacheOn'] ? ',Memcache On' : ' Memcache Off';
 			$str .= '</footer></div></div></div>';
 			return $str;
 		}

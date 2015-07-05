@@ -14,6 +14,8 @@ final class App
 	private static $_ins = NULL;
 	private static $_requirePath = array();//额外的引入路径
 	
+	private static $_enabledComponent = array();//启用了的component
+	
 	
 	public static function run($config)
 	{
@@ -26,8 +28,13 @@ final class App
 			Log::requireFile(__FILE__);
 			register_shutdown_function('framework\\core\\Log::outPutLog');
 		}
+		
 		self::$_config = $config;	
-			
+		
+		if(isset($config['component']))
+		{
+			self::$_enabledComponent = array_keys($config['component']);
+		}
 		self::setErrorHandler();
 		
 		self::$_ins = new Application();
@@ -299,5 +306,10 @@ final class App
 	public static function getStartTime()
 	{
 		return self::$_startTime;
+	}
+	
+	public static function isComponentEnabled($componentName)
+	{
+		return in_array($componentName, self::$_enabledComponent);
 	}
 }

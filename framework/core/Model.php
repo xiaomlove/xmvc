@@ -152,7 +152,7 @@ abstract class Model
 	{
 		
 		$sql = 'SHOW COLUMNS FROM '.$this->_tableName;
-		$result = self::$_db->getAllBySql($sql);
+		$result = self::$_db->getAllBySql($sql, array(), 0);
 		
 		foreach($result as $row)
 		{

@@ -8,6 +8,8 @@ define('NO_LOG_AJAX', true);
 define('STOP_REDIRECT', false);
 
 define('MODE', 'RELEASE');//线上环境定义该常量，引入不同的配置和js
+// define('NO_CACHE', true);//不缓存
+// define('FLUSH_CACHE', true);//清除缓存
 
 
 if (defined('MODE') && MODE === 'RELEASE')
