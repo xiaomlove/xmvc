@@ -162,7 +162,7 @@ class Db
 		if (self::$_debug)
 		{
 			$start = microtime(TRUE);
-			if ($cacheExpire !== '' && App::isComponentEnabled('Memcache') && !defined('NO_CACHE'))
+			if ($cacheExpire !== '' && App::isComponentEnabled('Memcache'))
 			{
 				$cacheKey = $sql.json_encode($options);
 				$result = App::ins()->mem->get($cacheKey);
@@ -184,7 +184,7 @@ class Db
 		}
 		else
 		{
-			if ($cacheExpire !== '' && App::isComponentEnabled('Memcache') && !defined('NO_CACHE'))
+			if ($cacheExpire !== '' && App::isComponentEnabled('Memcache'))
 			{
 				$cacheKey = $sql.json_encode($options);
 				$result = App::ins()->mem->get($cacheKey);

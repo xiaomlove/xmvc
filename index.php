@@ -23,3 +23,10 @@ else
 
 require './framework/App.php';
 framework\App::run($config);
+
+
+/**
+ * 已经设置缓存的内容
+ * 1、Model中的SHOW_COLUMNS
+ * 2、UserModel中的getRules
+ */

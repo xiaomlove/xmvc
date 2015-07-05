@@ -127,7 +127,11 @@ final class Log
 				}
 			}	
 		}
-		
+		if (App::isComponentEnabled('Memcache'))
+		{
+			echo '<h1>Memcache缓存中的有效键：</h1>';
+			self::_outPutMemcache();
+		}
 		$endTime = microtime(true);
 		echo '<h1>结束时间：'.$endTime.'，脚本总耗时：'.number_format(($endTime - App::getStartTime()), 4).'秒</h1></div>';
 
@@ -140,5 +144,36 @@ final class Log
 			$out .= $key.'=>'.$value;
 		}
 		return $out;
+	}
+	
+	private static function _outPutMemcache()
+	{
+		$memConfig = App::getConfig(array('component', 'Memcache'));
+		$host = $memConfig['host'];
+		$port = $memConfig['port'];
+		$mem = App::ins()->mem;
+		$items=$mem->getExtendedStats ('items');
+		$items=$items["$host:$port"]['items'];
+		if (count($items) === 0)
+		{
+			return;
+		}
+		foreach($items as $key=>$values)
+		{
+			$number=$key;;
+			$str=$mem->getExtendedStats ("cachedump",$number,0);
+			$line=$str["$host:$port"];
+			if( is_array($line) && count($line)>0){
+				foreach($line as $k=>$v){
+					$result = $mem->get($k);
+					if ($result  !== FALSE)
+					{
+						echo $k.'<br/>';
+					}
+					// print_r($mem->get($key));
+					// echo "<p>";
+				}
+			}
+		}
 	}
 }

@@ -13,7 +13,7 @@ class Controller
 	
 	public function __construct()
 	{
-		if (defined('FLUSH_CACHE'))
+		if (defined('FLUSH_CACHE') && FLUSH_CACHE && App::isComponentEnabled('Memcache'))
 		{
 			App::ins()->mem->flush();//清除缓存		
 		}

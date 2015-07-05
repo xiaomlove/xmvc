@@ -20,7 +20,6 @@ final class Mem extends \Memcache
 		{
 			trigger_error('Memcache连接失败', E_USER_ERROR);
 		}
-		
 	}
 	
 	private function __clone()
@@ -37,5 +36,22 @@ final class Mem extends \Memcache
 		return self::$_instance;
 	}
 	
+	public function get($key, $flag = NULL)
+	{
+		if (defined('NO_CACHE') && (NO_CACHE === TRUE || NO_CACHE === 1))
+		{
+			return FALSE;
+		}
+		return parent::get($key, $flag);
+	}
+	
+	public function set($key, $var, $flag = 0, $expire = 1800)
+	{
+		if (defined('NO_CACHE') && (NO_CACHE === TRUE || NO_CACHE === 1))
+		{
+			return TRUE;
+		}
+		return parent::set($key, $var, $flag, $expire);
+	}
 	
 }

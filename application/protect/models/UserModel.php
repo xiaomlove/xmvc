@@ -214,8 +214,20 @@ class UserModel extends \framework\core\Model
 	 */
 	public function getRules()
 	{
+		$doCache = FALSE;
+		if (App::isComponentEnabled('Memcache'))
+		{
+			$userId = App::ins()->user->getId();
+			$cacheKey = 'user_rules_'.$userId;
+			$result = App::ins()->mem->get($cacheKey);
+			if ($result !== FALSE)
+			{
+				return $result;
+			}
+			$doCache = TRUE;
+		}
+		
 		$roles = self::getRoles();//角色
- 	
 		if (empty($roles))
 		{
 			return NULL;
@@ -236,6 +248,10 @@ class UserModel extends \framework\core\Model
 //		echo '<hr/>';
 //		var_dump($merge);
 //		exit;
+		if ($doCache)
+		{
+			App::ins()->mem->set($cacheKey, $merge);
+		}
 		return $merge;
 	}
 	

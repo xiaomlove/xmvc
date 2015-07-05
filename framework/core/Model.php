@@ -492,7 +492,7 @@ abstract class Model
 			}
 		}
 		
-		$result = self::$_db->getAllBySql($sql, $options, \PDO::FETCH_ASSOC);
+		$result = self::$_db->getAllBySql($sql, $options);
 		if($this->active)
 		{
 			$result = $this->_addActiveObject($result);
@@ -553,7 +553,7 @@ abstract class Model
 			}
 		}
 		
-		$result = self::$_db->getAllBySql($sql, $options, \PDO::FETCH_ASSOC);
+		$result = self::$_db->getAllBySql($sql, $options);
 		if($this->active)
 		{
 			$result = $this->_addActiveObject($result);
