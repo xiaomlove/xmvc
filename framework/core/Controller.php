@@ -176,7 +176,7 @@ class Controller
 		);
 		if (!$onlyArr)
 		{
-			$str = '<div class="container" style="margin-top: 50px"><div class="row"><div class="col-xs-12"><footer class="text-center">';
+			$str = '<div class="container" style="margin-top: 50px;margin-bottom: 50px"><div class="row"><div class="col-xs-12"><footer class="text-center">';
 			$str .= '&copy;'.$out['year'].'  ';
 			$str .= 'Powered By <a href="/about">'.$out['PowerBy'].'</a></br>';
 			$str .= 'Page created in '.$out['time'].' seconds with '.$out['queries'].' queries';
