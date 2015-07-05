@@ -1,7 +1,7 @@
 <?php
 namespace framework\component;
 
-use framework\App as App;
+use framework\App;
 
 class User
 {
@@ -10,8 +10,9 @@ class User
 	private static $isLogin = FALSE;
 	private static $name = NULL;
 	private static $id = NULL;
+	private static $_instance = NULL;
 	
-	public function __construct()
+	private function __construct()
 	{
 		$config = App::getConfig(array('component', 'user'));
 		if(isset($config['guestName']))
@@ -19,6 +20,15 @@ class User
 			$this->guestName = $config['guestName'];
 		}
 	}
+	public static function getInstance()
+	{
+		if (self::$_instance === NULL)
+		{
+			self::$_instance = new self;
+		}
+		return self::$_instance;
+	}
+	
 	public function isLogin()
 	{
 		if (self::$isLogin)

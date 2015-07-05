@@ -30,5 +30,6 @@ $logout.on("click", function(e){
 	})
 });
 </script>
+<?php echo $this->getRunInfo()?>
 </body>
 </html>

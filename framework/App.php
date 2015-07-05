@@ -8,6 +8,7 @@ use framework\core\Router;
 
 final class App
 {
+	private static $_startTime = NULL;
 	private static $_config = NULL;
 	private static $_debug = FALSE;
 	private static $_ins = NULL;
@@ -16,13 +17,12 @@ final class App
 	
 	public static function run($config)
 	{
+		self::$_startTime = microtime(TRUE);
 		self::setPath();
 		spl_autoload_register(__NAMESPACE__.'\\App::namespaceLoad');
-		
 		if(defined('DEBUG') && (DEBUG === 1 || DEBUG === true))
 		{
 			self::$_debug = TRUE;
-			Log::start();
 			Log::requireFile(__FILE__);
 			register_shutdown_function('framework\\core\\Log::outPutLog');
 		}
@@ -294,5 +294,10 @@ final class App
 	public static function isDebug()
 	{
 		return self::$_debug;
+	}
+	
+	public static function getStartTime()
+	{
+		return self::$_startTime;
 	}
 }

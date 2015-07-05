@@ -5,7 +5,6 @@ use framework\App;
 
 final class Log
 {
-	private static $_startTime = NULL;
 	private static $_requireFiles = array();
 	private static $_sqls = array();
 	private static $_errors = array();
@@ -28,13 +27,6 @@ final class Log
 						1=>'FATAL_ERROR',
 					);
 	
-	public static function start()
-	{
-		if(self::$_startTime === NULL)
-		{
-			self::$_startTime = microtime(true);
-		}		
-	}
 	public static function errorCatch($level, $msg, $file, $line)
 	{
 		self::$_errors[] = array('level'=>self::$_error_constant[$level], 'msg'=>$msg, 'file'=>$file, 'line'=>$line, 'backTrace'=>debug_backtrace());
@@ -137,7 +129,7 @@ final class Log
 		}
 		
 		$endTime = microtime(true);
-		echo '<h1>结束时间：'.$endTime.'，脚本总耗时：'.number_format(($endTime-self::$_startTime), 4).'秒</h1></div>';
+		echo '<h1>结束时间：'.$endTime.'，脚本总耗时：'.number_format(($endTime - App::getStartTime()), 4).'秒</h1></div>';
 
 	}
 	private static function _arrToStr($arr)

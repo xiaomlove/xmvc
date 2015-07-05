@@ -6,7 +6,7 @@ class Application
 	public function __get($name)
 	{
 		$className = 'framework\component\\'.ucwords($name);
-		$this->$name = new $className;
+		$this->$name = $className::getInstance();
 		return $this->$name;
 	}	
 }

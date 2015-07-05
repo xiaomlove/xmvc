@@ -1,10 +1,26 @@
 <?php
 namespace framework\component;
 
-use framework\core\Router as Router;
+use framework\core\Router;
 
 class Request
 {
+	private static $_instance = NULL;
+	
+	private function __construct()
+	{
+		
+	}
+	
+	public static function getInstance()
+	{
+		if (self::$_instance === NULL)
+		{
+			self::$_instance = new self;
+		}
+		return self::$_instance;
+	}
+	
 	public function isAjax()
 	{
 		//这是jQuery自动添加的请求头，因此只对jQuery发起的ajax判断准确

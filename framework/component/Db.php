@@ -17,6 +17,7 @@ class Db
 	private $clientVersion;
 	private $lastSql = NULL;
 	private $active = FALSE;
+	private $queries = 0;
 	
 	//'SELECT%DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT% %UNION%%COMMENT%'
 	private function __construct()
@@ -111,6 +112,7 @@ class Db
 		self::$_PDOStat = self::$_link->prepare($sql);
 		try
 		{
+			$this->queries += 1;
 			self::$_PDOStat->execute($options);
 		}
 		catch(\PDOException $e)
@@ -128,6 +130,7 @@ class Db
 	{
 		try
 		{
+			$this->queries += 1;
 			return self::$_link->exec($sql);
 		}
 		catch(\PDOException $e)
@@ -301,5 +304,9 @@ class Db
 	{
 		return $this->lastSql;
 	}
-
+	
+	public function getQueries()
+	{
+		return $this->queries;
+	}
 }

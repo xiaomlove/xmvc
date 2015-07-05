@@ -1,9 +1,9 @@
 <?php
 namespace framework\core;
 
-use framework\App as App;
-use framework\core\Log as Log;
-use framework\core\Router as Router;
+use framework\App;
+use framework\core\Log;
+use framework\core\Router;
 
 class Controller
 {
@@ -165,6 +165,28 @@ class Controller
  		}
 	}
 	
-	
+	protected function getRunInfo($onlyArr = FALSE)
+	{
+		$out = array(
+				'year' => '2015~'.date('Y'),
+				'PowerBy' => 'TinyHD',
+				'queries' => App::ins()->db->getQueries(),
+				'time' => number_format(microtime(TRUE) - App::getStartTime(), 4),
+				
+		);
+		if (!$onlyArr)
+		{
+			$str = '<div class="container" style="margin-top: 50px"><div class="row"><div class="col-xs-12"><footer class="text-center">';
+			$str .= '&copy;'.$out['year'].'  ';
+			$str .= 'Powered By <a href="/about">'.$out['PowerBy'].'</a></br>';
+			$str .= 'Page created in '.$out['time'].' seconds with '.$out['queries'].' queries';
+			$str .= '</footer></div></div></div>';
+			return $str;
+		}
+		else
+		{
+			return $out;
+		}
+	}
 	
 }
