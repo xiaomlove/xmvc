@@ -38,11 +38,16 @@ final class App
 		self::setErrorHandler();
 		
 		self::$_ins = new Application();
+		
 //		echo '<pre>';
 //		var_dump($_POST);exit;
-		
 
 		Router::parseUrl();
+		
+		if (defined('FLUSH_CACHE') && FLUSH_CACHE && self::isComponentEnabled('Memcache'))
+		{
+			App::ins()->mem->flush();//清除缓存
+		}
 		
 		self::runController();
 	}

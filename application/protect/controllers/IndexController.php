@@ -189,5 +189,13 @@ class IndexController extends CommonController
 		echo $this->render('about');
 	}
 	
+	public function actionTest()
+	{
+// 		$mem = new \Memcache;
+// 		$mem->connect('localhost', 11211);
+		$mem = App::ins()->mem;
+		var_dump($mem->getversion());
+	}
+	
 	
 }

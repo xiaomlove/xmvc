@@ -88,6 +88,8 @@ return array(
 			'admin/category/sublist' => 'manage/category/subList',
 			'admin/category/addsub' => 'manage/category/addSub',
 			'admin/category/editsub' => 'manage/category/editSub',
+				
+			'test' => 'Index/test',
 		),
 	),
 	
@@ -106,6 +108,12 @@ return array(
 					'host' => 'localhost',
 					'port' => 11211,
 			),
+			'FileCache' => array(
+					'path' => 'application.runtime.filecache',
+					'folderRule' => 'Y-m-d',//目录下再建文件夹规则，使用Date()函数格式
+					'folderPrefix' => '',//前缀
+					'folderSuffix' => '',//后缀
+			)
 	),
 
 	'cache'=>array(

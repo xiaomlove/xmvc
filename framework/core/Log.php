@@ -130,7 +130,15 @@ final class Log
 		if (App::isComponentEnabled('Memcache'))
 		{
 			echo '<h1>Memcache缓存中的有效键：</h1>';
-			self::_outPutMemcache();
+// 			self::_outPutMemcache();
+			$memKeys = App::ins()->mem->getKeys();
+			if (!empty($memKeys))
+			{
+				foreach ($memKeys as $key)
+				{
+					echo $key.'<br/>';
+				}
+			}
 		}
 		$endTime = microtime(true);
 		echo '<h1>结束时间：'.$endTime.'，脚本总耗时：'.number_format(($endTime - App::getStartTime()), 4).'秒</h1></div>';
