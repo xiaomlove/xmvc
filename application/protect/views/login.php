@@ -25,7 +25,6 @@
     </form>
   </div>
 
-  <script src="http://cdn.bootcss.com/jquery/1.11.2/jquery.min.js"></script>
   <script src="<?php echo framework\App::ins()->request->getBaseUrl()?>application/assets/js/login.js"></script>
   <script type="text/javascript">
   var $name = $("#inputName"), $password = $("#inputPassword"),$submit = $("#login-submit");

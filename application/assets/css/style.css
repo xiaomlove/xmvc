@@ -95,26 +95,37 @@ body{-background-image:url('../images/light_grey.png');-font-family: Tahoma,"Mic
 
 #upload-success-flash{margin: 10px}
 #upload-success-flash strong{box-shadow:0 0 10px red;}
-.comment-head {text-align: left; margin: 10px 0;}
-#comment-list .item {margin: 20px 0;border-bottom: 1px dotted #999;}
-#comment-list .item .avatar, .comment-content, .comment-box {text-align: left;}
-#comment-list .item .action span {cursor: pointer}
-.comment-content {border: 1px solid gray;padding: 5px}
-.comment-content .floor-reply .reply{visibility:hidden}
-.comment-box {border:none}
-.expression {overflow: hidden}
-.expression img{cursor: pointer;}
-.comment {text-align:left;height: 100px}
-.comment-foot {height: 25px; line-height: 25px}
-.comment-foot .social{text-align: center;}
-.comment-foot .social span{margin-left: 15px;}
-.comment-foot .action{text-align: right;}
-.comment-foot .action span {margin-left: 15px}
-.comment-list-nav a {cursor: pointer}
-.floor-reply{text-align:right;margin:0;}
-.reply{cursor:pointer}
-#comment-list .comment-list-nav:first-of-type {border-bottom: 1px dotted #999;}
-#quick-comment{margin-bottom:50px}
+
+/*torrent comment*/
+.comment-main-header{background-color:#f5f5f5;border-top: 1px solid #ddd;margin-bottom: 10px;}
+.comment-main-header span:not(:last-of-type){margin-right: 10px;}
+.comment-item{padding-bottom: 20px;background-color: hsl(85,123%,205%) !important}
+.comment-item .lead{margin-botton: 0}
+.comment-header{font-size: 13px;}
+.comment-header span:not(:last-of-type){margin-right: 10px;}
+.comment-item>div>.comment-header{margin-top: 0;padding: 10px 0;background-color:#f5f5f5;}
+.comment-action a{margin-left: 10px;}
+.comment-quote-wrap blockquote{padding: 5px;border: 1px solid #ccc;margin-bottom: 5px;}
+.comment-action{font-size: 13px;}
+.comment-reply-content{width: 100%;max-width: 100%}
+.comment-reply-action{margin: 5px 0;position: relative}
+.comment-reply-action>span{position: absolute;left: 0}
+.comment-reply-action label{margin-right: 10px}
+.comment-tip{font-weight: bold;color: red;position: absolute;display: none;opacity: 0;}
+
+.comment-add{margin-top: 30px;margin-bottom: 50px}
+.comment-add textarea{width: 100%;min-height: 80px;height: auto}
+.comment-add button{margin: 20px}
+.comment-pagination a,.comment-pagination span{
+	padding: 8px 15px;
+	border: 1px solid #ccc;
+	margin: 5px;
+	font-weight: bold;
+	display: inline-block;
+}
+.comment-pagination .current{background-color: darkcyan}
+
+
 
 #checkout-logout-modal .modal-body{padding:30px;text-align:center}
 #checkout-logout-modal .modal-footer{text-align:center}

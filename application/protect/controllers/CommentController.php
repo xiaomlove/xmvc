@@ -1,7 +1,7 @@
 <?php
 namespace application\protect\controllers;
 
-use framework\App as App;
+use framework\App;
 use application\protect\models as models;
 
 class CommentController extends CommonController
@@ -10,54 +10,81 @@ class CommentController extends CommonController
 	{
 		if (App::ins()->request->isPost())
 		{
-			if (empty($_POST['torrentId']) || empty($_POST['comment']) || empty($_POST['floor']))
+			if (empty($_POST['torrentId']) || !ctype_digit($_POST['torrentId']) || empty($_POST['content']))
 			{
-				echo json_encode(array('code' => -1, 'msg' => '参数不全'));exit;
+				$this->goError('参数错误');
 			}
-			$parentId = empty($_POST['parentId']) ? 0 : $_POST['parentId'];
-			if ($parentId !== 0)
+			//先添加楼层
+			$userId = App::ins()->user->getId();
+			$userName = App::ins()->user->getName();
+			$content = nl2br(htmlspecialchars($_POST['content']));
+			$floorData = array(
+					'torrent_id' => $_POST['torrentId'],
+					'user_id' => $userId,
+					'user_name' => $userName,
+					'content' => $content,
+					'add_time' => TIME_NOW,
+					'path' => '/',
+					'position' => 1,
+			);
+			$floorModel = models\CommenFloortModel::model();
+			$buildingFloors = '';//楼栋的floors
+			if (!empty($_POST['parentId']))
 			{
-				$model = models\CommentModel::model();
-				$parent = $model->findByPk($parentId, 'id, path, level');
-				if (empty($parent))
+				if (!ctype_digit($_POST['parentId']))
 				{
-					echo json_encode(array('code' => 0, 'msg' => '父评论不存在！'));exit;
+					$this->goError('parentId错误');
 				}
-				$path = $parent['path'].','.$_POST['torrentId'];
-				$level = $parent['level']+1;
-			}
-			else 
-			{
-				$path = $_POST['torrentId'];
-				$level = 1;
-			}
-			$comment = new models\CommentModel();
-			$comment->parent_id = $parentId;
-			$comment->user_id = App::ins()->user->getId();
-			$comment->torrent_id = $_POST['torrentId'];
-			$comment->path = $path;
-			$comment->level = $level;
-			$comment->content = $_POST['comment'];
-			$comment->floor = $_POST['floor'];
-			$comment->add_time = $_SERVER['REQUEST_TIME'];
-			$result = $comment->save();
-			if (!empty($result))
-			{
-				$sql = "UPDATE torrent SET comment_count=comment_count+1 WHERE id=".$_POST['torrentId'];
-				$result = models\TorrentModel::model()->execute($sql);
-				if(!empty($result))
+				$parentFloor = $floorModel->findByPk($_POST['parentId']);
+				if (empty($parentFloor))
 				{
-					echo json_encode(array('code' => 1, 'msg' => '添加成功'));
+					$this->goError('父楼层不存在');
 				}
-				else
-				{
-					echo json_encode(array('code' => 0, 'msg' => '添加成功，更新评论数量失败'));
-				}
+				$floorData['path'] = $parentFloor['path'].$parentFloor['id'].'/';
+				$floorData['position'] = $parentFloor['position'] + 1;
+				$buildingFloors = $parentFloor['floors'];
 			}
-			else
+			$floorModel->beginTransaction();//开启事务
+			$addFloor = $floorModel->insert($floorData);
+			if (!$addFloor)
 			{
-				echo json_encode(array('code' => 0, 'msg' => '添加失败'));
+				$floorModel->rollBack();
+				$this->goError('添加楼层失败');
 			}
+			//再添加楼栋
+			$buildingModel = models\CommentBuildingModel::model();
+			$buildingPosition = $buildingModel->getMaxPosition();
+			$buildingData = array(
+					'position' => $buildingPosition + 1,
+					'add_time' => TIME_NOW,
+					'floors' => empty($buildingFloors) ? $addFloor : $buildingFloors.','.$addFloor,
+					'torrent_id' => $_POST['torrentId'],
+					'user_id' => $userId,
+					'user_name' => $userName,
+			);
+			$addBuilding = $buildingModel->insert($buildingData);
+			if (!$addBuilding)
+			{
+				$floorModel->rollBack();
+				$this->goError('添加楼栋失败');
+			}
+			$floorModel->commit();
+			//取出这一栋的信息用于返回
+			$floorList = $floorModel->where('id IN ('.$buildingData['floors'].')')->order('position ASC')->select();
+			$floorListIdKey = array();
+			foreach ($floorList as &$floor)
+			{
+				$floorListIdKey[$floor['id']] = $floor;
+			}
+			unset($floor);
+			unset($floorList);
+			$buildingData['floors'] = explode(',', $buildingData);//转化为数组
+			$html = $this->renderPartial('comment_onebuilding', array('building' => $buildingData, 'floorListIdKey' => $floorListIdKey));
+			echo json_encode(array('code' => 1, 'msg' => '添加楼层成功', 'data' => $html));		
+		}
+		else
+		{
+			$this->goError('非法请求');
 		}
 	}
 	

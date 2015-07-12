@@ -109,7 +109,7 @@ abstract class Model
 		$chainedList = array('distinct', 'field', 'group', 'having', 'join', 'limit', 'order', 'table', 'where', 'active', 
 							'findByPk', 'findBySql', 'select', 'deleteByPk', 'delete', 'updateByPk', 'update', 'insert', 'execute',
 							'beginTransaction', 'commit', 'rollBack', 'count', 'validate', 'getError', 'setError', 'hasError', 'cache',
-							'setData', 'getData', 'hasData', 'getLastSql',
+							'setData', 'getData', 'hasData', 'getLastSql', 'setInc', 'setDec',
 						);
 		//活跃对象可以执行的方法
 		$activeList = array('delete', 'save');
@@ -308,6 +308,30 @@ abstract class Model
 			$this->active = TRUE;
 		}
 		return $this;	
+	}
+	
+	private function setInc($field, $value = 1)
+	{
+		if (empty($this->where))
+		{
+			trigger_error('请指定where条件再执行'.__FUNCTION__, E_USER_ERROR);
+			return FALSE;
+		}
+		$tableName = empty($this->table) ? $this->_tableName : $this->table;
+		$sql = "UPDATE $tableName SET $field=$field+$value WHERE ".$this->where;
+		return self::$_db->execute($sql);
+	}
+	
+	private function setDec($field, $value = 1)
+	{
+		if (empty($this->where))
+		{
+			trigger_error('请指定where条件再执行'.__FUNCTION__, E_USER_ERROR);
+			return FALSE;
+		}
+		$tableName = empty($this->table) ? $this->_tableName : $this->table;
+		$sql = "UPDATE $tableName SET $field=$field-$value WHERE ".$this->where;
+		return self::$_db->execute($sql);
 	}
 	
 	private function reset()

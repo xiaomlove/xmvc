@@ -21,6 +21,9 @@ final class App
 	{
 		self::$_startTime = microtime(TRUE);
 		self::setPath();
+		self::$_config = $config;
+		self::setErrorHandler();
+		
 		spl_autoload_register(__NAMESPACE__.'\\App::namespaceLoad');
 		if(defined('DEBUG') && (DEBUG === 1 || DEBUG === true))
 		{
@@ -29,13 +32,10 @@ final class App
 			register_shutdown_function('framework\\core\\Log::outPutLog');
 		}
 		
-		self::$_config = $config;	
-		
 		if(isset($config['component']))
 		{
 			self::$_enabledComponent = array_keys($config['component']);
 		}
-		self::setErrorHandler();
 		
 		self::$_ins = new Application();
 		
@@ -49,12 +49,26 @@ final class App
 			App::ins()->mem->flush();//清除缓存
 		}
 		
+		//去掉$_GET,$_POST值两边的空格
+		self::_trimSpace();
+		
 		self::runController();
 	}
 	
 	public static function ins()
 	{
 		return self::$_ins;
+	}
+	
+	private static function _trimSpace()
+	{
+		array_walk_recursive($_GET, 'self::_doTrimSpace');
+		array_walk_recursive($_POST, 'self::_doTrimSpace');
+	}
+	
+	private static function _doTrimSpace(&$param)
+	{
+		$param = trim($param);
 	}
 	
 	
@@ -317,4 +331,5 @@ final class App
 	{
 		return in_array($componentName, self::$_enabledComponent);
 	}
+	
 }

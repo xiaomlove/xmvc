@@ -1,7 +1,17 @@
 <?php
 
-$a = '山村      1999';
+$a = array(
+		'a' => '   b',
+		'1' => array(
+				'c' => 'dd      ',
+		),
+);
 
-$result = preg_split('/\s+/', $a);
+array_walk_recursive($a, 'myTrim');
 
-var_dump($result);
+function myTrim(&$param)
+{
+	$param = trim($param);
+}
+
+var_dump($a);
