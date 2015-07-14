@@ -33,6 +33,8 @@ return array(
 			'download'=>'torrent/download',
 			'comment/add'=>'comment/add',
 			'comment/list'=>'comment/list',
+			'comment/vote'=>'comment/vote',
+			'comment/hot'=>'comment/hot',
 			'addbookmark'=>'bookmark/add',
 			'profile'=>'user/profile',
 			'about'=>'index/about',

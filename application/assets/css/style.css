@@ -100,7 +100,7 @@ body{-background-image:url('../images/light_grey.png');-font-family: Tahoma,"Mic
 .comment-main-header{background-color:#f5f5f5;border-top: 1px solid #ddd;margin-bottom: 10px;}
 .comment-main-header span:not(:last-of-type){margin-right: 10px;}
 .comment-item{padding-bottom: 20px;background-color: hsl(85,123%,205%) !important}
-.comment-item .lead{margin-botton: 0}
+.comment-item .lead{margin-bottom: 0}
 .comment-header{font-size: 13px;}
 .comment-header span:not(:last-of-type){margin-right: 10px;}
 .comment-item>div>.comment-header{margin-top: 0;padding: 10px 0;background-color:#f5f5f5;}
@@ -124,7 +124,7 @@ body{-background-image:url('../images/light_grey.png');-font-family: Tahoma,"Mic
 	display: inline-block;
 }
 .comment-pagination .current{background-color: darkcyan}
-
+.view-all-comment{background-color: lavender;height: 40px;line-height: 40px;font-size: 20px}
 
 
 #checkout-logout-modal .modal-body{padding:30px;text-align:center}

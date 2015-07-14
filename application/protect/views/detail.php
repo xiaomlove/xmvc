@@ -93,8 +93,13 @@
         </tbody>
       </table>
     </div><!-- 评论详情表格结束 -->
-
     
+    <div class="row"><!-- 评论列表 -->
+    	<div class="col-md-12"><h2 id="hot-comment-head" class="text-center">评论加载中...</h2></div>
+    	<div class="col-md-12" id="comment-list"></div>
+    	<div class="col-md-12 text-center view-all-comment"><a href="#">查看所有评论>></a></div>
+    </div>
+
     <!-- 添加评论框 -->
 	 <div class="row comment-add">
     	<div class="col-md-offset-3 col-md-6">
@@ -106,7 +111,7 @@
     </div>
    
 
-    
+    <button class="btn btn-default comment-tip">+ 1</button>
     <input type="hidden" id="torrentId" value="<?php echo $torrent['id']?>">
     <input type="hidden" id="baseUrl" value="<?php echo framework\App::ins()->request->getBaseUrl()?>">
     <input type="hidden" id="username" value="<?php echo framework\App::ins()->user->getName()?>">

@@ -4,17 +4,16 @@
             <h5 class="">
                 <span class="comment-username"><?php echo $building['position']?>楼</span>
                 <span class="comment-username"><?php echo $floorList[$floorId]['user_name']?></span>
-                <span class="comment-address text-muted">来自[<?php echo $floorList[$floorId]['address']?>]</span>
                 <span class="comment-time pull-right text-muted">发表于<?php echo date('Y-m-d H:i:s', $floorList[$floorId]['add_time'])?></span>
             </h5>
         </div>
        
-        <div class="col-md-1 comment-avatar">
-            <a href="#"><img src="/Public/images/1.jpg" width="80" /></a>
+        <div class="col-md-2 comment-avatar">
+            <a href="#"><img src="/application/assets/images/avatar.jpg" class="img-responsive"/></a>
         </div>
-        <div class="col-md-11 comment-body">
+        <div class="col-md-10 comment-body">
             <div class="comment-quote-wrap">
-                <?php echo !empty($building['floors']) ? renderQuote($building['floors'], $floorList) : ''?>
+                <?php echo !empty($building['floors']) ? $this->renderQuote2($building['floors'], $floorList) : ''?>
             </div>
             <div class="comment-text lead"><?php echo $floorList[$floorId]['content']?></div>
             <div class="comment-action clearfix" data-floor-id="<?php echo $floorList[$floorId]['id']?>">

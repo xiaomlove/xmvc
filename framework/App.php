@@ -22,13 +22,14 @@ final class App
 		self::$_startTime = microtime(TRUE);
 		self::setPath();
 		self::$_config = $config;
-		self::setErrorHandler();
 		
 		spl_autoload_register(__NAMESPACE__.'\\App::namespaceLoad');
+		
 		if(defined('DEBUG') && (DEBUG === 1 || DEBUG === true))
 		{
 			self::$_debug = TRUE;
 			Log::requireFile(__FILE__);
+			
 			register_shutdown_function('framework\\core\\Log::outPutLog');
 		}
 		
@@ -36,7 +37,7 @@ final class App
 		{
 			self::$_enabledComponent = array_keys($config['component']);
 		}
-		
+		self::setErrorHandler();//这个得放到判断debug与否的后面，否则不出错误信息
 		self::$_ins = new Application();
 		
 //		echo '<pre>';

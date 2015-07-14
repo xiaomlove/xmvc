@@ -319,6 +319,7 @@ abstract class Model
 		}
 		$tableName = empty($this->table) ? $this->_tableName : $this->table;
 		$sql = "UPDATE $tableName SET $field=$field+$value WHERE ".$this->where;
+		$this->reset();
 		return self::$_db->execute($sql);
 	}
 	
@@ -331,6 +332,7 @@ abstract class Model
 		}
 		$tableName = empty($this->table) ? $this->_tableName : $this->table;
 		$sql = "UPDATE $tableName SET $field=$field-$value WHERE ".$this->where;
+		$this->reset();
 		return self::$_db->execute($sql);
 	}
 	

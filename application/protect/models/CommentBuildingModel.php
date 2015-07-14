@@ -18,9 +18,9 @@ class CommentBuildingModel extends \framework\core\Model
 	
 	public function getMaxPosition()
 	{
-		$sql = "SELECT max(`position`) as maxPosition FROM ".self::tableName();
-		$result = $this->getOneBySql($sql);
-		return empty($result) ? 0 : $result['maxPosition'];
+		$sql = "SELECT max(position) as maxPosition FROM ".self::tableName();
+		$result = $this->findBySql($sql);
+		return empty($result) ? 0 : $result[0]['maxPosition'];
 	}
 	
 	
