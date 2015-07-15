@@ -288,12 +288,12 @@ final class App
 		
 		if(!defined('CONTROLLER') || CONTROLLER === NULL)
 		{
-			trigger_error('没有定义控制器！', E_USER_ERROR);
+			trigger_error('Not defined controller!,and the request is：'.$_SERVER['REQUEST_URI'], E_USER_ERROR);
 			return;
 		}
 		if(!defined('ACTION') || ACTION === NULL)
 		{
-			trigger_error('没有定义方法！', E_USER_ERROR);
+			trigger_error('Not defined action!,and the request is：'.$_SERVER['REQUEST_URI'], E_USER_ERROR);
 			return;
 		}
 		if (MODULE === NULL)
@@ -313,7 +313,7 @@ final class App
 		}
 		else 
 		{
-			trigger_error(CONTROLLER.'中没有找到方法：'.ACTION, E_USER_ERROR);
+			trigger_error('in Controller:"'.CONTROLLER.'" can\'t find action:'.ACTION, E_USER_ERROR);
 		}
 	}
 	
