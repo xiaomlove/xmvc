@@ -154,7 +154,7 @@ class CommentController extends CommonController
 			{
 				echo json_encode(array('code' => -1, 'msg' => '参数不全'));exit;
 			}
-			$torrentInfo = models\TorrentModel::model()->field('id,name')->findByPk($_GET['torrentId']);
+			$torrentInfo = models\TorrentModel::model()->findByPk($_GET['torrentId'], 'id,name');
 			if (empty($torrentInfo))
 			{
 				$this->goError('种子不存在');
