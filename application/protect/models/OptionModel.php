@@ -2,6 +2,7 @@
 namespace application\protect\models;
 
 use framework;
+use framework\App;
 
 class OptionModel extends \framework\core\Model
 {
@@ -19,6 +20,21 @@ class OptionModel extends \framework\core\Model
 	
 	public function get($key = '')
 	{
+		$doCache = FALSE;
+		if (App::isComponentEnabled('Memcache'))
+		{
+			if (empty($key))
+			{
+				$key = 'all_options';
+			}
+			$cacheKey = json_encode($key);
+			$result = App::ins()->mem->get($cacheKey);
+			if ($result !== FALSE)
+			{
+				return $result;
+			}
+			$doCache = TRUE;
+		}
 		if (empty($key))
 		{
 			$result = $this->select();
@@ -40,11 +56,11 @@ class OptionModel extends \framework\core\Model
 		
 		if (empty($result))
 		{
-			return '';
+			$result  = '';
 		}
 		elseif(count($result == 1))
 		{
-			return $result[0]['option_value'];
+			$result = $result[0]['option_value'];
 		}
 		else
 		{
@@ -53,8 +69,13 @@ class OptionModel extends \framework\core\Model
 			{
 				$data[$option['option_key']] = $option['option_value'];
 			}
-			return $data;
+			$result = $data;
 		}
+		if ($doCache)
+		{
+			App::ins()->mem->set($cacheKey, $result);
+		}
+		return $result;
 	}
 	
 	

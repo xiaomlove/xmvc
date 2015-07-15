@@ -97,7 +97,7 @@
     <div class="row"><!-- 评论列表 -->
     	<div class="col-md-12"><h2 id="hot-comment-head" class="text-center">评论加载中...</h2></div>
     	<div class="col-md-12" id="comment-list"></div>
-    	<div class="col-md-12 text-center view-all-comment"><a href="#">查看所有评论>></a></div>
+    	<div class="col-md-12 text-center view-all-comment"><a href="<?php echo $this->createUrl('comment/list', array('torrentId' => $torrent['id']))?>">查看所有评论>></a></div>
     </div>
 
     <!-- 添加评论框 -->
@@ -144,3 +144,26 @@
 </div>
  <script src="<?php echo framework\App::ins()->request->getBaseUrl()?>application/assets/lib/ueditor/ueditor.parse.min.js"></script>
  <script src="<?php echo framework\App::ins()->request->getBaseUrl()?>application/assets/js/torrent_detail.js"></script>
+ <script src="<?php echo framework\App::ins()->request->getBaseUrl()?>application/assets/js/comment.js"></script>
+<script>
+uParse('#introduce', {
+	rootPath: './'
+});
+//获取热门评论
+$(document).ready(function(){
+	$.ajax({
+		url: "comment/hot",
+		type: "GET",
+		dataType: "json",
+		data: "torrentId=" + torrentId,
+		success: function(result){
+			if (result.code === 1){
+				$('#hot-comment-head').text('热门评论');
+				$commentList.append(result.data);
+			}else{
+				$('#hot-comment-head').text(result.msg);
+			}
+		}
+	})
+});
+</script>

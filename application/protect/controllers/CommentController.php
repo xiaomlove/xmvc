@@ -6,6 +6,8 @@ use application\protect\models as models;
 
 class CommentController extends CommonController
 {
+	public $layout = 'tinypt';
+	
 	public function actionAdd()
 	{
 		if (App::ins()->request->isPost())
@@ -148,32 +150,33 @@ class CommentController extends CommonController
 	{
 		if (App::ins()->request->isGet())
 		{
-			if (empty($_GET['torrentId']))
+			if (empty($_GET['torrentId']) || !ctype_digit($_GET['torrentId']))
 			{
 				echo json_encode(array('code' => -1, 'msg' => '参数不全'));exit;
 			}
+			$torrentInfo = models\TorrentModel::model()->field('id,name')->findByPk($_GET['torrentId']);
+			if (empty($torrentInfo))
+			{
+				$this->goError('种子不存在');
+			}
 			$page = empty($_GET['page']) ? 1 : $_GET['page'];
-			$per = 5;//每页显示8条评论
+			$per = models\OptionModel::model()->get('comment_list_pagination');
 			$offset = ($page-1)*$per;
-			$model = models\CommentModel::model();
-			$navHtml = 0;
-			$total = 0;
-			$count = 0;
-			
-			$count = $model->where('torrent_id=:torrentId', array(':torrentId' => $_GET['torrentId']))->count();
-			if ($count == 0)//没有时是string类型的0，使用===时候要注意！
+			$model = models\CommentBuildingModel::model();
+			$result = $model->getList($offset, $per, 'position ASC', 'torrent_id='.$_GET['torrentId']);
+			if (empty($result))
 			{
 				echo json_encode(array('code' => 0, 'msg' => '暂无评论'));exit;
 			}
-			$total = ceil($count/$per);
-			$navHtml = $this->getAjaxNavHtml($page, $total);
+			$pageCount = ceil($result['total']/$per);
+			$navHtml = $this->getNavHtml($page, $per, $pageCount);
 			
-			
-			$sql = "SELECT a.*, b.name as user_name, b.avatar_url as user_avatar, b.id as user_id FROM comment as a LEFT JOIN user as b ON a.user_id = b.id WHERE a.torrent_id = :torrentId ORDER BY a.floor ASC LIMIT $offset, $per";
-			$comments = $model->findBySql($sql, array(':torrentId' => $_GET['torrentId']));
-			
-			$html = $this->renderPartial('comment', array('comments' => $comments, 'navHtml' => $navHtml, 'floor' => $count, 'page' => $total));
-			echo json_encode(array('code' => 1, 'msg' => $html));
+			$html = $this->render('comment', array('buildingList' => $result['buildingList'], 'floorList' => $result['floorList'], 'pagination' => $navHtml, 'torrentInfo' => $torrentInfo));
+			echo $html;
+		}
+		else 
+		{
+			$this->goError('非法请求');
 		}
 	}
 	

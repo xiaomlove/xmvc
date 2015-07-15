@@ -72,5 +72,13 @@
 				<li>论坛、种子列表及详情页适配平板、手机等小屏幕</li>
 			</ol>
 		</div>
+		
+		<h4 class="page-header"><em class="">2015-07-16</em></h4>
+		<div>
+			<ol>
+				<li>设定基本的缓存接口，实现Memcache缓存及File文件缓存</li>
+				<li>种子评论加入热门评论和支持、反对功能，展现形式类似网易跟帖&cnBeta评论</li>
+			</ol>
+		</div>
 	</div>
 </div>
