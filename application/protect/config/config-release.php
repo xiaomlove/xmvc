@@ -90,8 +90,16 @@ return array(
 			'admin/category/sublist' => 'manage/category/subList',
 			'admin/category/addsub' => 'manage/category/addSub',
 			'admin/category/editsub' => 'manage/category/editSub',
+		    
+		    'admin/nav' => 'manage/nav/show',
+		    'admin/nav/add' => 'manage/nav/add',
 				
 			'test' => 'Index/test',
+			'captcha' => 'index/captcha',	
+				
+			//API
+			'api/torrents' => 'api/torrent/list',//GET,获取种子列表，筛选参数page,per_page,order_field,order_type
+			
 		),
 	),
 	

@@ -52,7 +52,7 @@ final class App
 		
 		//去掉$_GET,$_POST值两边的空格
 		self::_trimSpace();
-		
+		self::_defineConstants();//设置一些常量
 		self::runController();
 	}
 	
@@ -72,6 +72,13 @@ final class App
 		$param = trim($param);
 	}
 	
+	private static function _defineConstants()
+	{
+	    define('TIME_NOW', $_SERVER['REQUEST_TIME']);//请求时间
+	    define('IS_POST', App::ins()->request->isPost());
+	    define('IS_GET', App::ins()->request->isGet());
+	    define('IS_AJAX', App::ins()->request->isAjax());
+	}
 	
 	private static function setPath()
 	{
@@ -82,7 +89,6 @@ final class App
 		define('LIB_PATH', __DIR__.DS.'lib'.DS);
 		define('HELPER_PATH', __DIR__.DS.'helper'.DS);
 		define('COM_PATH', __DIR__.DS.'component'.DS);
-		define('TIME_NOW', $_SERVER['REQUEST_TIME']);//定义常量方便使用
 	}
 	
 	private static function setErrorHandler()

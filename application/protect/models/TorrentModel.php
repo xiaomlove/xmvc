@@ -44,7 +44,6 @@ class TorrentModel extends \framework\core\Model
 	 */
 	public function getList(array $condition = array(), $where = '')
 	{
-		$condition = array_map('trim', $condition);
 		$per = OptionModel::model()->get('torrent_list_pagination');
 		$default = array(
 			'page'=>1,

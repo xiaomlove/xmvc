@@ -1,15 +1,16 @@
 <?php
 namespace application\protect\controllers;
 
-use framework\component\Db as Db;
-use framework\App as App;
-use application\protect\models as models;
+use framework\component\Db;
+use framework\App;
+use application\protect\models;
+use framework\lib\captcha\Captcha;
 
 
 class IndexController extends CommonController
 {
 	public $layout = 'main';
-	public $admitActions = array('CheckRegister', 'CheckLogin', 'Logout', 'GetIpInfo', 'Ueditor', 'Error', 'About');
+	public $admitActions = array('CheckRegister', 'CheckLogin', 'Logout', 'GetIpInfo', 'Ueditor', 'Error', 'About', 'Captcha');
 	
 	public function actionIndex()//action不接收参数运行，参数通过$_GET等获得
 	{	
@@ -195,6 +196,21 @@ class IndexController extends CommonController
 // 		$mem->connect('localhost', 11211);
 		$mem = App::ins()->mem;
 		var_dump($mem->getversion());
+	}
+	
+	public function actionCaptcha()
+	{
+		$captcha = new Captcha(array(
+				'length' => 5,
+				'width' => 250,
+				'type' => 4,
+				'size' => 25,
+				'height' => 80,
+		));
+		
+		$code = $captcha->build();
+// 		App::ins()->session->set('captcha', $code);
+		var_dump(App::ins()->session->get('captcha'));
 	}
 	
 	

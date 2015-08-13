@@ -1,7 +1,7 @@
 <?php
 namespace application\protect\modules\forum\controllers;
 
-use framework\App as App;
+use framework\App;
 use application\protect\models as models;
 
 class ReplyController extends \application\protect\controllers\CommonController

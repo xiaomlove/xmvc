@@ -214,3 +214,10 @@ body{-background-image:url('../images/light_grey.png');-font-family: Tahoma,"Mic
 /*���ӷ���*/
 .sub-category-table td{vertical-align: middle !important;padding: 5px 8px !important}
 .sub-category-table .category-icon{width: 45px;height: 46px;background-position: 0 0;display: inline-block}
+
+
+/*manage nav*/
+.manage .nav-structure ul{padding-left: 40px}
+.manage .nav-structure .nav-item{font-size: 20px;font-weight: bold;display: block;margin-bottom: 5px;padding: 5px;border: 1px solid #dfdfdf;width: 400px;background-color: #fafafa;cursor: move}
+.manage .nav-structure .nav-item .glyphicon{color: #777 !important;cursor: pointer}
+.manage .nav-structure .nav-item .structure-form{font-size: 14px;font-weight: normal;margin-top: 10px}

@@ -1,17 +1,7 @@
 <?php
 
-$a = array(
-		'a' => '   b',
-		'1' => array(
-				'c' => 'dd      ',
-		),
-);
+$a = 'ss';
 
-array_walk_recursive($a, 'myTrim');
+preg_match_all('/./u', $a, $arr);
+var_dump($arr);
 
-function myTrim(&$param)
-{
-	$param = trim($param);
-}
-
-var_dump($a);
